@@ -23,8 +23,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#if __i386__
-#else
+#if defined (SYS_rt_sigreturn)
 void
 _restorer_for_siginfo (void)
 {
@@ -35,9 +34,10 @@ _restorer_for_siginfo (void)
 sighandler_t
 signal (int signum, sighandler_t action)
 {
-#if __i386__
-  return (sighandler_t) _sys_call2 (SYS_signal, signum, (long) action);
-#else
+#if defined (SYS_signal)
+  long long_action = cast_int_to_long (action);
+  return _sys_call2 (SYS_signal, signum, long_action);
+#elif defined (SYS_rt_sigaction)
   static struct sigaction setup_action = { 0 };
   static struct sigaction old = { 0 };
   unsigned short bitindex;
@@ -68,5 +68,7 @@ signal (int signum, sighandler_t action)
   if (r)
     return 0;
   return old.sa_handler;
+#else
+#error no signal
 #endif
 }
