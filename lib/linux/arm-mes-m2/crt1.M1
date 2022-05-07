@@ -17,7 +17,7 @@
 ### You should have received a copy of the GNU General Public License
 ### along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
 
-:_start
+:UNUSED_start
 	'0' SP BP NO_SHIFT MOVE_ALWAYS  ; Setup Base Pointer
 
 	;; Prepare argv
@@ -35,12 +35,80 @@
 	;; Stack offset
 	!4 BP ADD BP ARITH_ALWAYS       ; Fix BP
 
-	^~FUNCTION___init_io CALL_ALWAYS ; Init libc
-	^~FUNCTION_main CALL_ALWAYS     ; Jump right into main
+	# ^~FUNCTION___init_io CALL_ALWAYS ; Init libc
+	# ^~FUNCTION_main CALL_ALWAYS     ; Jump right into main
 
+	^~FUNCTION___init_io bl
+	^~FUNCTION_main bl
+	!0x0 add____$i8,%esp
+	!0x0 cmp____$i8,%r0
 	SYS_exit mov____$i8,%r7
 	swi____$0
+:__start_15_loop
+	wfi
+:__start_15_continue
+	!0x1 mov____$i8,%r0
+					# jmp test LABEL
+	!0x0 cmp____$i8,%r0
+	^~__start_15_break je
+	^~__start_15_loop b
+:__start_15_break
+	mov____%ebp,%esp
+	pop____%ebp
+	ret
 
+:_start
+	push___%lr
+	push___%ebp
+	mov____%esp,%ebp
+	allocate_stack_4180
+
+	!8 ldr____%r0,(%fp,+#$i8)
+	mov____%fp,%r1
+	!12 add____%r1,$i8
+	add____%r2,%r1,%r0,lsl#2
+	!4 add____%r2,$i8
+
+        ; M2-Planet pushes forward
+	push___%r0 ; argc
+	push___%r1 ; argv
+	push___%r2 ; environ
+
+        # XXX REMOVEME
+	mov____%r2,0x32 &GLOBAL_environ
+
+        # Segfault?!
+	#^~FUNCTION___init_io bl
+
+	mov____0x32,%r2 &GLOBAL_environ
+	mov____%r2,0x32 &GLOBAL_environ
+
+        # XXX REMOVEME
+        # ;; Initialize MesCC lib file descriptors.
+	!0 mov____$i8,%r0
+	mov____%r0,0x32 &GLOBAL___stdin
+	!1 mov____$i8,%r0
+	mov____%r0,0x32 &GLOBAL___stdout
+	!2 mov____$i8,%r0
+	mov____%r0,0x32 &GLOBAL___stderr
+        # XXX END REMOVEME
+
+	^~FUNCTION_main bl
+	!0x0 cmp____$i8,%r0
+	SYS_exit mov____$i8,%r7
+	swi____$0
+:__start_15_loop
+	wfi
+:__start_15_continue
+	!0x1 mov____$i8,%r0
+					# jmp test LABEL
+	!0x0 cmp____$i8,%r0
+	^~__start_15_break je
+	^~__start_15_loop b
+:__start_15_break
+	mov____%ebp,%esp
+	pop____%ebp
+	ret
 
 # Unsigned Divide
 :divide
