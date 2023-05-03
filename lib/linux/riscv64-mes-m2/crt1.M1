@@ -19,6 +19,20 @@
 :_start
 	RD_FP RS1_SP MV        ; Protect stack pointer
 
+        li_____%t0,$i16_0000 @0
+        li_____%t1,$i32 &GLOBAL___stdin
+        sw_____%t0,0(%t1)
+
+        li_____%t0,$i16_0000 @1
+        srai___%t0,16
+        li_____%t1,$i32 &GLOBAL___stdout
+        sw_____%t0,0(%t1)
+
+        li_____%t0,$i16_0000 @2
+        srai___%t0,16
+        li_____%t1,$i32 &GLOBAL___stderr
+        sw_____%t0,0(%t1)
+
 	; Prepare argv
 	RD_A0 RS1_FP !8 ADDI   ; ARGV_address = FP + 8
 	RD_SP RS1_SP !-8 ADDI
@@ -35,43 +49,6 @@
 
 	; Stack offset
 	RD_FP RS1_FP !8 ADDI
-
-	RD_A0 ~GLOBAL___stdin AUIPC
-	RD_A0 RS1_A0 !GLOBAL___stdin ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 !0 ADDI
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
-
-	RD_A0 ~GLOBAL___stdout AUIPC
-	RD_A0 RS1_A0 !GLOBAL___stdout ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 !1 ADDI
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
-
-	RD_A0 ~GLOBAL___stderr AUIPC
-	RD_A0 RS1_A0 !GLOBAL___stderr ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 !2 ADDI
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
-
-	RD_A0 ~GLOBAL_environ AUIPC
-	RD_A0 RS1_A0 !GLOBAL_environ ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 RS1_FP !-24 ADDI
-	RD_A0 RS1_A0 LD
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
 
 	; Call main function
 	RD_RA $FUNCTION_main JAL
