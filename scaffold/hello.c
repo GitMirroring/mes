@@ -23,6 +23,7 @@
 int
 main (int argc, char **argv)
 {
+  __stderr = 2;
   eputs ("Hello, Mescc!\n");
   return 42;
 }
