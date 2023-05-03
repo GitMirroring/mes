@@ -20,12 +20,11 @@
 
 #include "mes/lib-mini.h"
 
-int
+void
 __init_io (int argc, char** argv, char** envp)
 {
   __stdin = 0;
   __stdout = 1;
   __stderr = 2;
   environ = envp;
-  return main (argc, argv, envp);
 }
