@@ -375,14 +375,12 @@
           ((equal? arch "riscv64") "riscv64.M1"))))
 
 (define (arch-get-architecture options)
-  (let* ((arch (arch-get options))
-         (numbered-arch? (option-ref options 'numbered-arch? #f))
-        (flag (if numbered-arch? "--Architecture" "--architecture")))
-    (list flag
-          (cond ((equal? arch "arm") (if numbered-arch? "40" "armv7l"))
-                ((equal? arch "x86") (if numbered-arch? "1" "x86"))
-                ((equal? arch "x86_64") (if numbered-arch? "2" "amd64"))
-                ((equal? arch "riscv64") (if numbered-arch? "243" "riscv64"))))))
+  (let ((arch (arch-get options)))
+    (list "--architecture"
+          (cond ((equal? arch "arm") "armv7l")
+                ((equal? arch "x86") "x86")
+                ((equal? arch "x86_64") "amd64")
+                ((equal? arch "riscv64") "riscv64")))))
 
 (define (multi-opt option-name) (lambda (o) (and (eq? (car o) option-name) (cdr o))))
 (define (count-opt options option-name)
