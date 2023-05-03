@@ -25,15 +25,6 @@ int main (int argc, char *argv[], char *envp[]);
 int
 _start ()
 {
-  asm ("mov____$i8,%eax !0");
-  asm ("mov____%eax,0x32 &__stdin");
-
-  asm ("mov____$i8,%eax !1");
-  asm ("mov____%eax,0x32 &__stdout");
-
-  asm ("mov____$i8,%eax !2");
-  asm ("mov____%eax,0x32 &__stderr");
-
   asm ("mov____%ebp,%eax");
   asm ("add____$i8,%eax !4");
 
@@ -42,7 +33,6 @@ _start ()
 
   asm ("shl____$i8,%eax !0x02");
   asm ("add____%ebp,%eax");
-  asm ("mov____%eax,0x32 &environ");
   asm ("push___%eax");
 
   asm ("mov____%ebp,%eax");
@@ -54,6 +44,7 @@ _start ()
   asm ("mov____(%eax),%eax");
   asm ("push___%eax");
 
+  __init_io ();
   main ();
 
   asm ("mov____%eax,%ebx");
