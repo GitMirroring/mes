@@ -23,8 +23,12 @@
 #include <stdlib.h>
 
 int
-main (int argc, char **argv)
+main (int argc, char **argv, char** envp)
 {
+  __stdin = 0;
+  __stdout = 1;
+  __stderr = 2;
+  environ = envp;
   __stdin = open ("scaffold/read.data", 0, 0);
   int c = getchar ();
   if (c != 'm')
