@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2016,2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2016,2017,2018,2023 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -25,7 +25,9 @@ int
 main (int argc, char **argv)
 {
   eputs ("Hi Mes!\n");
-#if __MESC_MES__
+#if __M2__
+  eputs ("MESC.M2\n");
+#elif __MESC_MES__
   eputs ("MESC.MES\n");
 #else
   eputs ("MESC.GUILE\n");

@@ -337,16 +337,16 @@ DEFINE ld_____%a0,0x10(%fp) 03350401
 DEFINE ld_____%a1,0x18(%fp) 83358401
 DEFINE ld_____%a2,0x20(%fp) 03360402
 
-DEFINE ld_____%a0,-0x08(%fp) 033580ff
-DEFINE ld_____%a1,-0x10(%fp) 833500ff
-DEFINE ld_____%a2,-0x18(%fp) 033680fe
+DEFINE ld_____%a0,-0x08(%fp) 033584ff
+DEFINE ld_____%a1,-0x10(%fp) 833504ff
+DEFINE ld_____%a2,-0x18(%fp) 033684fe
 
-DEFINE ld_____%a7,-0x08(%fp) 833040ff
-DEFINE ld_____%a0,-0x10(%fp) 033040ff
-DEFINE ld_____%a1,-0x18(%fp) 833040fe
-DEFINE ld_____%a2,-0x20(%fp) 033040fe
-DEFINE ld_____%a3,-0x28(%fp) 833040fd
-DEFINE ld_____%a4,-0x30(%fp) 033040fd
+DEFINE ld_____%a7,-0x08(%fp) 833884ff
+DEFINE ld_____%a0,-0x10(%fp) 033504ff
+DEFINE ld_____%a1,-0x18(%fp) 833584fe
+DEFINE ld_____%a2,-0x20(%fp) 033604fe
+DEFINE ld_____%a3,-0x28(%fp) 833684fd
+DEFINE ld_____%a4,-0x30(%fp) 033704fd
 
 DEFINE ld_____%fp,0x10(%fp) 03340401
 DEFINE ld_____%t0,0x8(%fp) 83328400

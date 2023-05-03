@@ -19,20 +19,6 @@
 :_start
 	RD_FP RS1_SP MV        ; Protect stack pointer
 
-        li_____%t0,$i16_0000 @0
-        li_____%t1,$i32 &GLOBAL___stdin
-        sw_____%t0,0(%t1)
-
-        li_____%t0,$i16_0000 @1
-        srai___%t0,16
-        li_____%t1,$i32 &GLOBAL___stdout
-        sw_____%t0,0(%t1)
-
-        li_____%t0,$i16_0000 @2
-        srai___%t0,16
-        li_____%t1,$i32 &GLOBAL___stderr
-        sw_____%t0,0(%t1)
-
 	; Prepare argv
 	RD_A0 RS1_FP !8 ADDI   ; ARGV_address = FP + 8
 	RD_SP RS1_SP !-8 ADDI
@@ -46,6 +32,27 @@
 	RD_A0 RS1_FP RS2_A0 ADD ; ENVP_address = RSP + OFFSET
 	RD_SP RS1_SP !-8 ADDI
 	RS1_SP RS2_A0 SD       ; Put envp on the stack
+
+        # AAARG, this also does not work!?
+        # pop____%t0 ; envp
+        # push___%t0
+        # li_____%t0,$i32 &GLOBAL_environ
+
+        # li_____%t0,$i16_0000 @0
+        # XXX avoid Illegal instruction
+        # li_____%t1,$i32 &GLOBAL___stdin
+        # sw_____%t0,0(%t1)
+
+        # li_____%t0,$i16_0000 @1
+        # srai___%t0,16
+        # li_____%t1,$i32 &GLOBAL___stdout
+        # sw_____%t0,0(%t1)
+
+        # li_____%t0,$i16_0000 @2
+        # XXX avoid Segmentation fault
+        # srai___%t0,16
+        # li_____%t1,$i32 &GLOBAL___stderr
+        # sw_____%t0,0(%t1)
 
 	; Stack offset
 	RD_FP RS1_FP !8 ADDI

@@ -47,6 +47,7 @@ M2-Planet                                       \
     -f lib/mes/fdgetc.c                         \
     -f lib/stdio/getchar.c                      \
     -f lib/stdio/putchar.c                      \
+    -f include/fcntl.h                          \
     -f lib/linux/open.c                         \
     -f include/m2/types.h                       \
     -f include/sys/types.h                      \
