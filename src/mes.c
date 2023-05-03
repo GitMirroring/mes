@@ -164,7 +164,12 @@ read_boot ()                    /*:((internal)) */
 void
 init (char **envp)
 {
+#if __M2__ && __riscv_xlen == 64
   environ = envp;
+  __stdin = 0;
+  __stdout = 1;
+  __stderr = 2;
+#endif
   __execl_c_argv = malloc (1024 * sizeof (char *));     /* POSIX minimum: 4096 */
   __gettimeofday_time = malloc (sizeof (struct timeval));
   __get_internal_run_time_ts = malloc (sizeof (struct timespec));
