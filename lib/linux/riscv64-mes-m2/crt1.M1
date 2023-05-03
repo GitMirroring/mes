@@ -57,6 +57,9 @@
 	; Stack offset
 	RD_FP RS1_FP !8 ADDI
 
+        ; Init libc
+        RD_RA $FUNCTION___init_io JAL
+
 	; Call main function
 	RD_RA $FUNCTION_main JAL
 
