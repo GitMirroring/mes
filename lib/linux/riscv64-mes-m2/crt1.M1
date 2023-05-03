@@ -36,42 +36,8 @@
 	; Stack offset
 	RD_FP RS1_FP !8 ADDI
 
-	RD_A0 ~GLOBAL___stdin AUIPC
-	RD_A0 RS1_A0 !GLOBAL___stdin ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 !0 ADDI
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
-
-	RD_A0 ~GLOBAL___stdout AUIPC
-	RD_A0 RS1_A0 !GLOBAL___stdout ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 !1 ADDI
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
-
-	RD_A0 ~GLOBAL___stderr AUIPC
-	RD_A0 RS1_A0 !GLOBAL___stderr ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 !2 ADDI
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
-
-	RD_A0 ~GLOBAL_environ AUIPC
-	RD_A0 RS1_A0 !GLOBAL_environ ADDI
-	RD_SP RS1_SP !-8 ADDI	# _common_recursion
-	RS1_SP RS2_A0 SD
-	RD_A0 RS1_FP !-24 ADDI
-	RD_A0 RS1_A0 LD
-	RD_A1 RS1_SP LD
-	RD_SP RS1_SP !8 ADDI	# _common_recursion
-	RS1_A1 RS2_A0 SD
+        ; Init libc
+        RD_RA $FUNCTION___init_io JAL
 
 	; Call main function
 	RD_RA $FUNCTION_main JAL
