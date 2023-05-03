@@ -20,7 +20,7 @@
  */
 
 #include <linux/syscall.h>
-#include <syscall.h>
+#include <arch/syscall.h>
 #include <fcntl.h>
 #include <unistd.h>
 

@@ -34,7 +34,7 @@ _restorer_for_siginfo (void)
 sighandler_t
 signal (int signum, sighandler_t action)
 {
-#if defined (SYS_signal)
+#if __i386__
   return _sys_call2 (SYS_signal, signum, (long) action);
 #elif defined (SYS_rt_sigaction)
   static struct sigaction setup_action = { 0 };
