@@ -35,8 +35,7 @@ sighandler_t
 signal (int signum, sighandler_t action)
 {
 #if defined (SYS_signal)
-  long long_action = cast_int_to_long (action);
-  return _sys_call2 (SYS_signal, signum, long_action);
+  return _sys_call2 (SYS_signal, signum, (long) action);
 #elif defined (SYS_rt_sigaction)
   static struct sigaction setup_action = { 0 };
   static struct sigaction old = { 0 };
