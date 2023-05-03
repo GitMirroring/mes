@@ -53,6 +53,7 @@ M2-Planet                                       \
     -f lib/stdio/getchar.c                      \
     -f lib/stdio/putchar.c                      \
     -f lib/stub/__buffered_read.c               \
+    -f include/fcntl.h                          \
     -f lib/linux/_open3.c                       \
     -f lib/linux/open.c                         \
     -f lib/mes/mes_open.c                       \
@@ -99,6 +100,7 @@ M2-Planet                                       \
     -f lib/linux/ioctl3.c                       \
     -f include/sys/ioctl.h                      \
     -f lib/m2/isatty.c                          \
+    -f include/signal.h                         \
     -f lib/linux/fork.c                         \
     -f lib/m2/execve.c                          \
     -f lib/m2/execv.c                           \
@@ -120,7 +122,6 @@ M2-Planet                                       \
     -f src/core.c                               \
     -f src/display.c                            \
     -f src/eval-apply.c                         \
-    -f include/fcntl.h                          \
     -f src/gc.c                                 \
     -f src/hash.c                               \
     -f src/lib.c                                \
