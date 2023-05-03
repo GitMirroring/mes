@@ -22,8 +22,10 @@
 #include <stdlib.h>
 
 int
-main (int argc, char **argv)
+main (int argc, char **argv, char** envp)
 {
+  __stderr = 2;
+  environ = envp;
   eputs ("SHELL=");
   eputs (getenv ("SHELL"));
   eputs ("\n");
