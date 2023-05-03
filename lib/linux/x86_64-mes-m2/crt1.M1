@@ -1,6 +1,6 @@
 ### GNU Mes --- Maxwell Equations of Software
 ### Copyright (C) 2016 Jeremiah Orians
-### Copyright © 2017,2018,2019,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+### Copyright © 2017,2018,2019,2022,2023 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
 ###
 ### This file is part of GNU Mes.
 ###
@@ -21,12 +21,6 @@
 	push___%rbp
 	mov____%rsp,%rbp
 	sub____$i32,%rsp %0x10a4
-	mov____$i8,%rax !0
-	movl___%eax,0x32 &GLOBAL___stdin
-	mov____$i8,%rax !1
-	movl___%eax,0x32 &GLOBAL___stdout
-	mov____$i8,%rax !2
-	movl___%eax,0x32 &GLOBAL___stderr
 
 	mov____%rbp,%rax
 	add____$i8,%rax !8
@@ -34,8 +28,7 @@
 	add____$i8,%rax !0x03
 	shl____$i8,%rax !0x03
 	add____%rbp,%rax
-	mov____%rax,0x32 &GLOBAL_environ
-        ;;	push___%rax     ;M2-Planet pushes forward
+	mov____%rax,%rbx
 
 	mov____%rbp,%rax        ;argc
 	add____$i8,%rax !8
@@ -46,12 +39,12 @@
 	add____$i8,%rax !16
 	push___%rax
 
-	mov____0x32,%rax &GLOBAL_environ
-	push___%rax             ;env
+	push___%rbx             ;envp
 
         mov____%rdi,%rbp    	;M2-Planet calling convention
 	add____$i8,%rbp !8
 
+	call32 %FUNCTION___init_io
 	call32 %FUNCTION_main
 	add____$i8,%rsp !0x0
 	test___%rax,%rax
@@ -79,36 +72,10 @@
 	ADD_rbp_to_rax              ; ENVP_address = RSP + OFFSET
 	PUSH_RAX                    ; Put envp on the stack
 
-        ;; mes c lib environ
-	mov____%rax,0x32 &GLOBAL_environ
-        ;; mes c lib io
-	mov____$i8,%rax !0
-	movl___%eax,0x32 &GLOBAL___stdin
-	mov____$i8,%rax !1
-	movl___%eax,0x32 &GLOBAL___stdout
-	mov____$i8,%rax !2
-	movl___%eax,0x32 &GLOBAL___stderr
-
-        LOAD_IMMEDIATE_rax &GLOBAL___stdin
-	PUSH_RAX	#_common_recursion
-        LOAD_IMMEDIATE_rax %0
-	POP_RBX	# _common_recursion
-	STORE_INTEGER
-
-	LOAD_IMMEDIATE_rax &GLOBAL___stdout
-	PUSH_RAX	#_common_recursion
-	LOAD_IMMEDIATE_rax %1
-        POP_RBX	# _common_recursion
-	STORE_INTEGER
-
-	LOAD_IMMEDIATE_rax &GLOBAL___stderr
-	PUSH_RAX	#_common_recursion
-	LOAD_IMMEDIATE_rax %2
-	POP_RBX	# _common_recursion
-	STORE_INTEGER
-
 	;; Stack offset
 	ADD_IMMEDIATE_to_rbp %8     ; Fix rbp
+
+	call32 %FUNCTION___init_io
 
 	;; Perform the main loop
 	CALL_IMMEDIATE %FUNCTION_main

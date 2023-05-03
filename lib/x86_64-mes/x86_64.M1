@@ -1,5 +1,5 @@
 ### GNU Mes --- Maxwell Equations of Software
-### Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+### Copyright © 2018,2023 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
 ### Copyright © 2018 Peter De Wachter <pdewacht@gmail.com>
 ### Copyright © 2022 Ekaitz Zarraga <ekaitz@elenq.tech>
 ###
@@ -104,6 +104,7 @@ DEFINE mov____%esi,%eax 89f0
 DEFINE mov____%esi,(%rdi) 8937
 DEFINE mov____%r8,%rdi 4c89c7
 DEFINE mov____%rax,%rax 4889c0
+DEFINE mov____%rax,%rbx 4889c3
 DEFINE mov____%rax,%rdi 4889c7
 DEFINE mov____%rax,(%rdi) 488907
 DEFINE mov____%rax,0x32 48890425
@@ -197,6 +198,7 @@ DEFINE pop____%rdx 5a
 DEFINE push___$i32 68
 DEFINE push___%r15 4157
 DEFINE push___%rax 50
+DEFINE push___%rbx 53
 DEFINE push___%rbp 55
 DEFINE push___%rdi 57
 DEFINE push___%rdx 52
