@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2018,2019,2021,2022,2023 Janneke Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2018,2019,2021,2022,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
 # Copyright © 2023 Ekaitz Zarraga <ekaitz@elenq.tech>
 #
 # This file is part of GNU Mes.
@@ -61,7 +61,7 @@ courageous=${courageous-false}
 
 BASH=${BASH-$(command -v bash || command -v sh)}
 BLOOD_ELF=${BLOOD_ELF-$(command -v blood-elf)}
-CC=${CC-$(command -v gcc)} || true
+CC=${CC-$(command -v gcc || echo "true")}
 CFLAGS=${CFLAGS-}
 CPPFLAGS=${CPPFLAGS-}
 DIFF=${DIFF-$(command -v diff || echo $PWD/pre-inst-env diff.scm)}
