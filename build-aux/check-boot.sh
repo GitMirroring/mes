@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2018,2019 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2018,2019,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
@@ -117,7 +117,13 @@ scaffold/boot/memory.scm
 scaffold/boot/numbers.scm
 "
 
-XFAIL_TESTS=
+xfail_tests=
+
+recheck=true
+
+# Allow for make check BOOT_TESTS=scaffold/boot/call-cc.scm
+TESTS=${BOOT_TESTS-$boot_tests}
+XFAIL_TESTS=${BOOT_XFAIL_TESTS-$xfail_tests}
 
 test_ext=.scm
 log_compiler="${SHELL} ${srcdest}build-aux/test-boot.sh"

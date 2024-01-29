@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2017,2018,2023 Janneke Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2017,2018,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
@@ -27,7 +27,7 @@ if [ -n "$srcdest" ]; then
 fi
 set -u
 
-TESTS="
+mes_tests="
 tests/boot.test
 tests/read.test
 tests/srfi-0.test
@@ -61,7 +61,13 @@ tests/match.test
 tests/psyntax.test
 "
 
-XFAIL_TESTS=
+# Allow for make check MES_TESTS=tests/optargs.test
+TESTS="${MES_TESTS-$mes_tests}"
+
+xfail_tests=
+
+# Allow for make check MES_XFAIL_TESTS=tests/optargs.test
+XFAIL_TESTS="${MES_XFAIL_TESTS-$xfail_tests}"
 
 test_ext=.test
 log_compiler=${SHELL}
