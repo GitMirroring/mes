@@ -58,6 +58,13 @@ exec ${MES-bin/mes} --no-auto-compile -L ${0%/*} -L module -C module -e '(tests 
 (pass-if "optargs key" ((lambda* (#:key (foo #f)) foo) #:foo #t))
 (pass-if-equal "optargs key default" #f ((lambda* (#:key (foo #f)) foo)))
 
+(pass-if-not "optargs #:optional #:key optional"
+  ((lambda* (#:optional x #:key y) x) #:y 'y))
+
+(pass-if-equal  "optargs #:optional #:key key"
+    "y"
+  ((lambda* (#:optional x #:key y) y) #:y "y"))
+
 (define <info> '<info>)
 (define <functions> '<functions>)
 (define <globals> '<globals>)
