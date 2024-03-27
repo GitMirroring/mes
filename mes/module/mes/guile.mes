@@ -59,6 +59,7 @@
 (mes-use-module (mes display))
 (mes-use-module (mes simple-format))
 
+(define %host-type (string-append %arch "-linux-gnu"))
 (define %load-path (or (and=> (getenv "GUILE_LOAD_PATH") (lambda (x) (string-split x #\:))) '()))
 
 (define (drain-input port) (read-string))
@@ -165,3 +166,13 @@
 
 (define (file-exists? o)
   (access? o R_OK))
+
+
+;;;
+;;; Nyacc 1.04.0
+;;;
+(define (close-port port)
+  #t)
+
+(define (export . rest)
+  #t)
