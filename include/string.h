@@ -51,6 +51,7 @@ char *strpbrk (char const *string, char const *stopset);
 char *strrchr (char const *s, int c);
 size_t strspn (char const *string, char const *skipset);
 char *strstr (char const *haystack, char const *needle);
+char *strtok (char *new_string, char const *delimiters);
 char *strlwr (char *string);
 char *strupr (char *string);
 
