@@ -37,6 +37,7 @@ void *memmove (void *dest, void const *src, size_t n);
 void *memset (void *s, int c, size_t n);
 int memcmp (void const *s1, void const *s2, size_t n);
 void *memmem (void const *haystack, int haystack_len, void const *needle, int needle_len);
+char *stpcpy (char *dest, char const *src);
 char *strcat (char *dest, char const *src);
 char *strdup (char const *s);
 char *strchr (char const *s, int c);
