@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018,2019,2020,2023 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2019,2020,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2019,2020 Danny Milosavljevic <dannym@scratchpost.org>
  * Copyright © 2021 W. J. van der Laan <laanwj@protonmail.com>
  *
@@ -34,9 +34,11 @@ int main (int argc, char *argv[], char *envp[]);
 void
 _start ()
 {
-  int argc, retval;
-  char ** argv;
-  char ** envp;
+  int argc;
+  int r;
+  int retval;
+  char **argv;
+  char **envp;
   asm (
        ".option push\n\t"
        ".option norelax\n\t"
@@ -56,17 +58,17 @@ _start ()
        "lw    %[a0], 0(s0)\n\t"  // a0 argc
        "addi  %[a1], s0, 8\n\t"  // a1 argv
        "mv    %[a2], t0\n\t"     // a2 envp
-       : [a0] "r" (argc), [a1] "r" (argv), [a2] "r" (envp)
-       : "r" (environ)
+       : // no outputs "=" (r)
+       : [a0] "r" (argc), [a1] "r" (argv), [a2] "r" (envp), "r" (environ)
       );
-  __init_io();
-  retval = main(argc, argv, envp);
+  __init_io ();
+  retval = main (argc, argv, envp);
   asm (
        "mv    a0, %1\n\t"
        "li    a7, 93\n\t"     // SYS_exit
        "ecall\n\t"            // exit(return value from main)
        "ebreak\n\t"
-       : //no outputs ""
+       : // no outputs "=" (r)
        : "r" (environ), "r" (retval)
       );
 }
