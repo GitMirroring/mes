@@ -1,7 +1,7 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2018,2019 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2018,2019,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
