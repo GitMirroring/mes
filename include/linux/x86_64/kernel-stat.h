@@ -33,15 +33,15 @@ struct stat
   unsigned int	st_gid;
   unsigned int	__pad0;
   unsigned long	st_rdev;
-  unsigned long	st_size;
+  long		st_size;
+  long		st_blksize;
+  long		st_blocks;
   unsigned long	st_atime;
   unsigned long	st_atime_nsec;
   unsigned long	st_mtime;
   unsigned long	st_mtime_nsec;
   unsigned long	st_ctime;
   unsigned long	st_ctime_nsec;
-  unsigned long	st_blksize;
-  long		st_blocks;
   unsigned long	__pad1;
   unsigned long	__pad2;
   unsigned long	__pad3;
