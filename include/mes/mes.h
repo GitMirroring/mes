@@ -54,7 +54,6 @@ struct scm
     long length;
     struct scm *ref;
     struct scm *binding;
-    struct scm *macro;
     long port;
   };
   union
@@ -63,7 +62,6 @@ struct scm
     long cdr_value;
     struct scm *closure;
     struct scm *continuation;
-    char *name;
     struct scm *builtin;
     struct scm *string;
     struct scm *structure;
@@ -104,8 +102,6 @@ extern struct scm *R3;
 extern struct scm *M0;
 /* current module */
 extern struct scm *M1;
-/* macro */
-extern struct scm *g_macros;
 extern struct scm *g_ports;
 
 /* gc */
@@ -176,7 +172,6 @@ struct scm *make_continuation (long n);
 struct scm *make_hash_table_ (long size);
 struct scm *make_hash_table_type ();
 struct scm *make_initial_module (struct scm *a);
-struct scm *make_macro (struct scm *name, struct scm *x);
 struct scm *make_number (long n);
 struct scm *make_ref (struct scm *x);
 struct scm *make_string (char const *s, size_t length);

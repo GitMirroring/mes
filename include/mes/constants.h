@@ -32,7 +32,6 @@ enum cell_type
   TCONTINUATION,
   TBUILTIN,
   TKEYWORD,
-  TMACRO,
   TNUMBER,
   TPAIR,
   TPORT,

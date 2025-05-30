@@ -160,6 +160,10 @@
 (define (eval form)
   (core:eval-expanded (bind! (expand form) '()) '((#f . #f))))
 
+;; Emulate the old 'core:eval'.
+(define (core:eval form env)
+  (core:eval-expanded (bind! (expand form) (list env)) env))
+
 ;; System macros
 (define (quote-expander form)
   (list 'quote form))

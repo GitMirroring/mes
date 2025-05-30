@@ -240,11 +240,6 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
         fdputc (')', fd);
       }
       break;
-    case TMACRO:
-      fdputs ("#<macro", fd);
-      display_helper (x->cdr, cont, "", fd, 0);
-      fdputc ('>', fd);
-      break;
     default:
       fdputs ("<", fd);
       fdputs (ltoa (t), fd);

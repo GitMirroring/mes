@@ -268,12 +268,6 @@ make_continuation (long n)
 }
 
 struct scm *
-make_macro (struct scm *name, struct scm *x)    /*:((internal)) */
-{
-  return make_cell (TMACRO, x, name->string);
-}
-
-struct scm *
 make_number (long n)
 {
   return make_value_cell (TNUMBER, 0, n);
@@ -412,7 +406,6 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
           dest->car_value = a;
           dest->cdr_value = d - dist;
           break;
-        case TMACRO:
         case TPAIR:
           dest->car_value = a - dist;
           dest->cdr_value = d - dist;
@@ -471,7 +464,6 @@ gc_flip ()
   long dist = g_news - g_cells;
   g_free = g_free - dist;
   g_symbols = g_symbols - dist;
-  g_macros = g_macros - dist;
   g_ports = g_ports - dist;
   if (scm_hash_table_type)
     scm_hash_table_type = scm_hash_table_type - dist;
@@ -571,7 +563,6 @@ gc_loop (struct scm *scan)
         case TBROKEN_HEART:
           assert_msg (0, "gc_loop: broken heart");
           break;
-        case TMACRO:
         case TPAIR:
           car = gc_copy (scan->car);
           gc_relocate_car (scan, car);
@@ -657,7 +648,6 @@ gc_ ()
     gc_copy (s);
 
   g_symbols = gc_copy (g_symbols);
-  g_macros = gc_copy (g_macros);
   g_ports = gc_copy (g_ports);
   if (scm_hash_table_type)
     scm_hash_table_type = gc_copy (scm_hash_table_type);
@@ -775,7 +765,6 @@ gc_dump_state ()
   gc_dump_register ("M1", M1);
   gc_dump_register ("g_symbols", g_symbols);
   gc_dump_register ("g_symbol_max", g_symbol_max);
-  gc_dump_register ("g_macros", g_macros);
   gc_dump_register ("g_ports", g_ports);
   gc_dump_register ("cell_zero", cell_zero);
   gc_dump_register ("cell_nil", cell_nil);
@@ -827,8 +816,7 @@ gc_dump_arena (struct scm *cells, long size)
             {
               dumps (ltoa (t));
               dumpc (' ');
-              if (t == TMACRO
-                  || t == TPAIR
+              if (t == TPAIR
                   || t == TREF
                   || t == TBINDING)
                 {
@@ -844,7 +832,6 @@ gc_dump_arena (struct scm *cells, long size)
                       || t == TCONTINUATION
                       || t == TBUILTIN
                       || t == TKEYWORD
-                      || t == TMACRO
                       || t == TPAIR
                       || t == TPORT
                       || t == TSPECIAL

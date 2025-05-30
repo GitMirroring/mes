@@ -178,32 +178,6 @@ make_binding (struct scm *name, struct scm *variable)
 }
 
 struct scm *
-macro_get_handle (struct scm *name)     /*:((internal)) */
-{
-  if (name->type == TSYMBOL)
-    return hashq_get_handle (g_macros, name);
-  return cell_f;
-}
-
-struct scm *
-get_macro (struct scm *name)            /*:((internal)) */
-{
-  struct scm *m = macro_get_handle (name);
-  if (m != cell_f)
-    {
-      struct scm *d = m->cdr;
-      return d->macro;
-    }
-  return cell_f;
-}
-
-struct scm *
-macro_set_x (struct scm *name, struct scm *value)       /*:((internal)) */
-{
-  return hashq_set_x (g_macros, name, value);
-}
-
-struct scm *
 push_cc (struct scm *p1, struct scm *p2, struct scm *a, struct scm *c)  /*:((internal)) */
 {
   struct scm *x = R3;
@@ -295,7 +269,7 @@ expand_variable_ (int top_p)        /*:((internal)) */
         break;
       if (a->type == TPAIR)
         {
-          if (a->car == cell_symbol_define || a->car == cell_symbol_define_macro)
+          if (a->car == cell_symbol_define)
             {
               if (a->cdr->car->type == TPAIR)
                 R2 = cons (a->cdr->car->car, R2);
@@ -320,7 +294,7 @@ expand_variable_ (int top_p)        /*:((internal)) */
               R2 = add_formals (R2, f);
               R1 = R1->cdr;
             }
-          else if (a == cell_symbol_define || a == cell_symbol_define_macro)
+          else if (a == cell_symbol_define)
             {
               f = R1->cdr->car;
               if (top_p != 0)
@@ -460,14 +434,12 @@ eval_apply ()
   struct scm *formals;
   struct scm *input;
   struct scm *name;
-  struct scm *macro;
   struct scm *p;
   struct scm *program;
   struct scm *sc_expand;
   struct scm *v;
   struct scm *x;
   int global_p;
-  int macro_p;
   struct scm *a;
   struct scm *c;
   struct scm *d;
@@ -491,44 +463,20 @@ eval_apply ()
     goto begin_eval;
   else if (R3 == cell_vm_eval_set_x)
     goto eval_set_x;
-  else if (R3 == cell_vm_macro_expand_car)
-    goto macro_expand_car;
   else if (R3 == cell_vm_return)
     goto vm_return;
-  else if (R3 == cell_vm_macro_expand_cdr)
-    goto macro_expand_cdr;
   else if (R3 == cell_vm_eval_define)
     goto eval_define;
-  else if (R3 == cell_vm_macro_expand)
-    goto macro_expand;
-  else if (R3 == cell_vm_macro_expand_lambda)
-    goto macro_expand_lambda;
-  else if (R3 == cell_vm_begin_expand_macro)
-    goto begin_expand_macro;
-  else if (R3 == cell_vm_macro_expand_define)
-    goto macro_expand_define;
-  else if (R3 == cell_vm_begin_expand_eval)
-    goto begin_expand_eval;
   else if (R3 == cell_vm_call_with_current_continuation2)
     goto call_with_current_continuation2;
-  else if (R3 == cell_vm_macro_expand_set_x)
-    goto macro_expand_set_x;
-  else if (R3 == cell_vm_macro_expand_define_macro)
-    goto macro_expand_define_macro;
   else if (R3 == cell_vm_evlis)
     goto evlis;
   else if (R3 == cell_vm_apply)
     goto apply;
   else if (R3 == cell_vm_eval)
     goto eval;
-  else if (R3 == cell_vm_eval_macro_expand_eval)
-    goto eval_macro_expand_eval;
-  else if (R3 == cell_vm_eval_macro_expand_expand)
-    goto eval_macro_expand_expand;
   else if (R3 == cell_vm_begin)
     goto begin;
-  else if (R3 == cell_vm_begin_expand)
-    goto begin_expand;
   else if (R3 == cell_vm_if)
     goto vm_if;
   else if (R3 == cell_vm_call_with_values2)
@@ -599,11 +547,6 @@ eval_apply ()
         {
           push_cc (R1->cdr->car, R1, R1->cdr->cdr->car, cell_vm_return);
           goto eval;
-        }
-      else if (c == cell_vm_begin_expand)
-        {
-          push_cc (cons (R1->cdr->car, cell_nil), R1, R1->cdr->cdr->car, cell_vm_return);
-          goto begin_expand;
         }
       else
         check_apply (cell_f, R1->car);
@@ -692,43 +635,23 @@ eval_apply ()
           R1 = set_x (R2->cdr->car, R1, 0);
           goto vm_return;
         }
-      else if (c == cell_vm_macro_expand)
-        {
-          push_cc (R1->cdr->car, R1, R0, cell_vm_eval_macro_expand_eval);
-          goto eval;
-        eval_macro_expand_eval:
-          push_cc (R1, R2, R0, cell_vm_eval_macro_expand_expand);
-          goto macro_expand;
-        eval_macro_expand_expand:
-          goto vm_return;
-        }
       else
         {
           if (R1->type == TPAIR)
-            if (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro)
+            if (R1->car == cell_symbol_define)
               {
                 global_p = 0;
                 if (R0->car->car != cell_closure)
                   global_p = 1;
-                macro_p = 0;
-                if (R1->car == cell_symbol_define_macro)
-                  macro_p = 1;
                 if (global_p != 0)
                   {
                     name = R1->cdr->car;
                     aa = R1->cdr->car;
                     if (aa->type == TPAIR)
                       name = name->car;
-                    if (macro_p != 0)
-                      {
-                        entry = macro_get_handle (name);
-                        if (entry == cell_f)
-                          macro_set_x (name, cell_f);
-                      }
-                    else
-                      /* Ensure this name is bound in the current
-                         module. */
-                      lookup_binding (name, cell_t);
+                    /* Ensure this name is bound in the current
+                       module. */
+                    lookup_binding (name, cell_t);
                   }
                 R2 = R1;
                 aa = R1->cdr->car;
@@ -742,7 +665,7 @@ eval_apply ()
                     formals = R1->cdr->car->cdr;
                     body = R1->cdr->cdr;
 
-                    if (macro_p != 0 || global_p != 0)
+                    if (global_p != 0)
                       expand_variable (body, formals);
 
                     /* The GC may have moved 'formals' and 'body' during
@@ -761,21 +684,11 @@ eval_apply ()
                 global_p = 0;
                 if (R0->car->car != cell_closure)
                   global_p = 1;
-                macro_p = 0;
-                if (R2->car == cell_symbol_define_macro)
-                  macro_p = 1;
-
                 name = R2->cdr->car;
                 aa = R2->cdr->car;
                 if (aa->type == TPAIR)
                   name = name->car;
-                if (macro_p != 0)
-                  {
-                    entry = macro_get_handle (name);
-                    R1 = make_macro (name, R1);
-                    set_cdr_x (entry, R1);
-                  }
-                else if (global_p != 0)
+                if (global_p != 0)
                   {
                     set_x (name, R1, 1);
                   }
@@ -835,96 +748,6 @@ eval_apply ()
   else
     goto vm_return;
 
- macro_expand:
-  if (R1->type != TPAIR || R1->car == cell_symbol_quote)
-    goto vm_return;
-
-  if (R1->car == cell_symbol_lambda)
-    {
-      push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_lambda);
-      goto macro_expand;
-    macro_expand_lambda:
-      R2->cdr->cdr = R1;
-      R1 = R2;
-      goto vm_return;
-    }
-
-  if (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro)
-    {
-      push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_define);
-      goto macro_expand;
-    macro_expand_define:
-      R2->cdr->cdr = R1;
-      R1 = R2;
-      if (R1->car == cell_symbol_define_macro)
-        {
-          push_cc (R1, R1, R0, cell_vm_macro_expand_define_macro);
-          goto eval;
-        macro_expand_define_macro:
-          R1 = R2;
-        }
-      goto vm_return;
-    }
-
-  if (R1->car == cell_symbol_set_x)
-    {
-      push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_set_x);
-      goto macro_expand;
-    macro_expand_set_x:
-      R2->cdr->cdr = R1;
-      R1 = R2;
-      goto vm_return;
-    }
-
-  macro = get_macro (R1->car);
-  if (macro != cell_f)
-    {
-      R1 = cons (macro, R1->cdr);
-      push_cc (R1, cell_nil, R0, cell_vm_macro_expand);
-      goto apply;
-    }
-  a = R1->car;
-  if (a->type == TSYMBOL && a != cell_symbol_begin)
-    {
-      macro = macro_get_handle (cell_symbol_portable_macro_expand);
-      if (macro != cell_f)
-        {
-          expanders = lookup_value (cell_symbol_sc_expander_alist);
-          if (expanders != cell_undefined)
-            {
-              macro = assq (R1->car, expanders);
-              if (macro != cell_f)
-                {
-                  sc_expand = lookup_value (cell_symbol_macro_expand);
-                  R2 = R1;
-                  if (sc_expand != cell_undefined && sc_expand != cell_f)
-                    {
-                      R1 = cons (sc_expand, cons (R1, cell_nil));
-                      goto apply;
-                    }
-                }
-            }
-        }
-    }
-
-  push_cc (R1->car, R1, R0, cell_vm_macro_expand_car);
-  goto macro_expand;
-
- macro_expand_car:
-  R2->car = R1;
-  R1 = R2;
-  if (R1->cdr == cell_nil)
-    goto vm_return;
-
-  push_cc (R1->cdr, R1, R0, cell_vm_macro_expand_cdr);
-  goto macro_expand;
-
- macro_expand_cdr:
-  R2->cdr = R1;
-  R1 = R2;
-
-  goto vm_return;
-
  begin:
   x = cell_unspecified;
   while (R1 != cell_nil)
@@ -953,60 +776,6 @@ eval_apply ()
   R1 = x;
   goto vm_return;
 
-
- begin_expand:
-  x = cell_unspecified;
-  while (R1 != cell_nil)
-    {
-    begin_expand_while:
-      gc_check ();
-
-      if (R1->type == TPAIR)
-        {
-          a = R1->car;
-          if (a->type == TPAIR)
-            if (R1->car->car == cell_symbol_begin)
-              R1 = append2 (R1->car->cdr, R1->cdr);
-        }
-
-      push_cc (R1->car, R1, R0, cell_vm_begin_expand_macro);
-      goto macro_expand;
-    begin_expand_macro:
-      if (R1 != R2->car)
-        {
-          R2->car = R1;
-          R1 = R2;
-          goto begin_expand_while;
-          continue; /* FIXME: M2-PLanet */
-        }
-      R1 = R2;
-
-      /* If we expand a 'define' form that refers to itself, and it also
-         reuses a name higher up in the module chain, the self-reference
-         will be bound to the variable from the other module.  We hack
-         around this by binding the name in the current module before
-         expansion.  */
-      if (R1->type == TPAIR
-          && R1->car->type == TPAIR
-          && R1->car->car == cell_symbol_define)
-        {
-          /* Split the '&&' expression up to prevent a segfault when
-             compiled with M2-Planet. */
-          if (R1->car->cdr->type == TPAIR
-              && R1->car->cdr->car->type == TPAIR)
-            lookup_binding (R1->car->cdr->car->car, cell_t);
-        }
-
-
-      expand_variable (R1->car, cell_nil);
-      push_cc (R1->car, R1, R0, cell_vm_begin_expand_eval);
-      goto eval;
-    begin_expand_eval:
-      x = R1;
-      R1 = R2->cdr;
-    }
-  R1 = x;
-  goto vm_return;
 
  vm_if:
   push_cc (R1->car, R1, R0, cell_vm_if_expr);

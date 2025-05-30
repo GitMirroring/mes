@@ -63,7 +63,6 @@ mes_environment (int argc, char **argv)
   a = acons (cell_symbol_if, cell_symbol_if, a);
   a = acons (cell_symbol_set_x, cell_symbol_set_x, a);
   a = acons (cell_symbol_define, cell_symbol_define, a);
-  a = acons (cell_symbol_define_macro, cell_symbol_define_macro, a);
 
   char *compiler = "gnuc";
 #if __MESC__
@@ -216,7 +215,6 @@ main (int argc, char **argv)
   a = init_time (a);
   M0 = make_initial_module (a);
   M1 = cell_f;
-  g_macros = make_hash_table_ (0);
 
   if (g_debug > 5)
     {
@@ -237,7 +235,7 @@ main (int argc, char **argv)
       write_error_ (R1);
       eputs ("\n");
     }
-  R3 = cell_vm_begin_expand;
+  R3 = cell_vm_begin;
   R1 = eval_apply ();
   if (g_debug != 0)
     {
