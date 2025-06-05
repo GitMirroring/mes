@@ -273,19 +273,23 @@ check-mescc: $(MES)
 TIME = time
 TIME_FMT = $(TIME) -f "CMD:\t%C\nWALL:\t%es\nUSER:\t%Us\nKERNEL:\t%Ss\nCPU:\t%P\nCTX-SW:\t%w\nEXIT:\t%x\n"
 
-.PHONY: benchmark benchmark-gcc benchmark-m2 benchmark-fib benchmark-mescc-hello benchmark-mescc-mes
+.PHONY: benchmark benchmark-gcc benchmark-m2 benchmark-fib benchmark-mescc-hello benchmark-mescc-mes benchmark-guile guile
 benchmark-gcc:
 	$(MAKE) -f simple.make benchmark MES=bin/mes-gcc
 benchmark-m2:
 	$(MAKE) -f simple.make benchmark MES=bin/mes-m2
+guile:
+	guile -v
+benchmark-guile:
+	$(MAKE) -f simple.make benchmark MES=guile
 benchmark: benchmark-fib benchmark-mescc-hello benchmark-mescc-mes
 
 benchmark-fib: $(MES) | benchmarks/out benchmarks/log
 	$(TIME_FMT) -o benchmarks/out/fib  ./pre-inst-env $(MES) benchmarks/fib.scm > benchmarks/log/fib
 benchmark-mescc-hello: $(MES) | benchmarks/out benchmarks/log
-	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/out/mescc-hello sh scripts/mescc -S -m 32 -I include benchmarks/mescc-hello.c -o benchmarks/log/mescc-hello.M1
+	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/out/mescc-hello ./pre-inst-env scripts/mescc -S -m 32 -I include benchmarks/mescc-hello.c -o benchmarks/log/mescc-hello.M1
 benchmark-mescc-mes: $(MES) | benchmarks/out benchmarks/log
-	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/out/mescc-mes sh scripts/mescc -S -m 32 -I include $(MES_SOURCES) -o benchmarks/log/mescc-mes.M1
+	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/out/mescc-mes ./pre-inst-env scripts/mescc -S -m 32 -I include $(MES_SOURCES) -o benchmarks/log/mescc-mes.M1
 
 
 
