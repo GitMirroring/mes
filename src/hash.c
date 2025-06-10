@@ -176,7 +176,8 @@ hash_set_x (struct scm *table, struct scm *key, struct scm *value)
   return hash_set_x_ (table, hash, key, value);
 }
 
-struct scm *hash_remove_x (struct scm *table, struct scm *key)
+struct scm *
+hash_remove_x (struct scm *table, struct scm *key)
 {
   struct scm *s = struct_ref_ (table, 3);
   long size = s->value;
