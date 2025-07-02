@@ -338,7 +338,7 @@ expand_variable_ (int top_p)        /*:((internal)) */
                    && a != cell_symbol_current_environment
                    && formal_p (a, R2) == 0)
             {
-              v = lookup_binding (R1->car, cell_f);
+              v = lookup_binding (a, cell_f);
               if (v != cell_f)
                 R1->car = v;
               else
@@ -346,7 +346,7 @@ expand_variable_ (int top_p)        /*:((internal)) */
                   /* Lookup the binding again, but this time make a
                      local definition in case the name becomes bound in
                      the future. */
-                  R1->car = lookup_binding (R1->car, cell_t);
+                  R1->car = lookup_binding (a, cell_t);
                 }
             }
         }
