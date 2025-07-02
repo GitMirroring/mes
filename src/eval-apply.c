@@ -817,17 +817,6 @@ macro_expand:
       goto vm_return;
     }
 
-  if (R1->type == TPAIR)
-    {
-      macro = get_macro (R1->car);
-      if (macro != cell_f)
-        {
-          R1 = cons (macro, R1->cdr);
-          push_cc (R1, cell_nil, R0, cell_vm_macro_expand);
-          goto apply;
-        }
-    }
-
   if (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro)
     {
       push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_define);
@@ -855,27 +844,31 @@ macro_expand:
       goto vm_return;
     }
 
-  if (R1->type == TPAIR)
+  macro = get_macro (R1->car);
+  if (macro != cell_f)
     {
-      a = R1->car;
-      if (a->type == TSYMBOL && a != cell_symbol_begin)
+      R1 = cons (macro, R1->cdr);
+      push_cc (R1, cell_nil, R0, cell_vm_macro_expand);
+      goto apply;
+    }
+  a = R1->car;
+  if (a->type == TSYMBOL && a != cell_symbol_begin)
+    {
+      macro = macro_get_handle (cell_symbol_portable_macro_expand);
+      if (macro != cell_f)
         {
-          macro = macro_get_handle (cell_symbol_portable_macro_expand);
-          if (macro != cell_f)
+          expanders = lookup_value (cell_symbol_sc_expander_alist);
+          if (expanders != cell_undefined)
             {
-              expanders = lookup_value (cell_symbol_sc_expander_alist);
-              if (expanders != cell_undefined)
+              macro = assq (R1->car, expanders);
+              if (macro != cell_f)
                 {
-                  macro = assq (R1->car, expanders);
-                  if (macro != cell_f)
+                  sc_expand = lookup_value (cell_symbol_macro_expand);
+                  R2 = R1;
+                  if (sc_expand != cell_undefined && sc_expand != cell_f)
                     {
-                      sc_expand = lookup_value (cell_symbol_macro_expand);
-                      R2 = R1;
-                      if (sc_expand != cell_undefined && sc_expand != cell_f)
-                        {
-                          R1 = cons (sc_expand, cons (R1, cell_nil));
-                          goto apply;
-                        }
+                      R1 = cons (sc_expand, cons (R1, cell_nil));
+                      goto apply;
                     }
                 }
             }
