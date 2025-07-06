@@ -148,7 +148,7 @@ set_x (struct scm *x, struct scm *e, int define_p)
 }
 
 struct scm *
-call_lambda (struct scm *e, struct scm *x, struct scm *aa, struct scm *a)       /*:((internal)) */
+call_lambda (struct scm *e, struct scm *x, struct scm *aa)       /*:((internal)) */
 {
   struct scm *cl = cons (cons (cell_closure, x), x);
   R1 = e;
@@ -537,7 +537,7 @@ apply:
       aa = aa->cdr;
       check_formals (R1->car, formals, R1->cdr);
       p = pairlis (formals, args, aa);
-      call_lambda (body, p, aa, R0);
+      call_lambda (body, p, aa);
       goto begin;
     }
   else if (t == TCONTINUATION)
@@ -602,7 +602,7 @@ apply:
           body = R1->car->cdr->cdr;
           p = pairlis (formals, R1->cdr, R0);
           check_formals (R1, formals, args);
-          call_lambda (body, p, p, R0);
+          call_lambda (body, p, p);
           goto begin;
         }
     }
