@@ -1,5 +1,5 @@
 ;;; GNU Mes --- Maxwell Equations of Software
-;;; Copyright © 2016,2017,2018,2019,2020,2021,2022,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;; Copyright © 2023 Ekaitz Zarraga <ekaitz@elenq.tech>
 ;;;
 ;;; This file is part of GNU Mes.

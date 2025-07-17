@@ -2579,6 +2579,12 @@
        `((#:address ,var)
          ,@(if (= reg-size 8) '((#:address 0))
                '()))))
+    ;; Nyacc >= 1.02.0
+    ((ref-to (i-sel (ident ,field) (cast (type-name (decl-spec-list ,struct) (abs-ptr-declr (pointer))) (p-expr (fixed ,base)))))
+     (let* ((type (ast->type struct info))
+            (offset (field-offset info type field))
+            (base (cstring->int base)))
+       (int->bv type (+ base offset) info)))
     ((ref-to (i-sel (ident ,field) (cast (type-name (decl-spec-list ,struct) (abs-declr (pointer))) (p-expr (fixed ,base)))))
      (let* ((type (ast->type struct info))
             (offset (field-offset info type field))
