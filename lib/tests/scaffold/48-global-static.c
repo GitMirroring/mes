@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -31,13 +31,14 @@ test (size u)
   void *r;
   if (u)
     r = test (u);
+  return r;
 }
 
 static int i = 2;
 int
 main ()
 {
-  void (*foo) () = &test;
+  void* (*foo) (size) = &test;
   test (0);
   return 0;
 }

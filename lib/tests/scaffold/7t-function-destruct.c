@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -26,7 +26,7 @@ struct foo
 struct foo *
 test (struct foo *f)
 {
-  void (*fun) () = test;
+  struct foo* (*fun) () = test;
   return f;
 }
 

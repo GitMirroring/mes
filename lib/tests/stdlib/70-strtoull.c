@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2022 Rick Masters <grick23@gmail.com>
  *
  * This file is part of GNU Mes.
@@ -28,7 +28,7 @@
 int
 main ()
 {
-  char *p = "42foo\n";
+  char const *p = "42foo\n";
   int n = abtol (&p, 0);
   if (n != 42)
     return 1;

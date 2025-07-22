@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -32,7 +32,7 @@ add (void *ptab, int *nb_ptr, void *data)
   int **pp;
 
   nb = *nb_ptr;
-  pp = *(void ***) ptab;
+  pp = *(int ***) ptab;
   /* every power of two we double array size */
   if ((nb & (nb - 1)) == 0)
     {
@@ -41,7 +41,7 @@ add (void *ptab, int *nb_ptr, void *data)
       else
         nb_alloc = nb * 2;
       pp = realloc (pp, nb_alloc * sizeof (void *));
-      *(void ***) ptab = pp;
+      *(void ***) ptab = (void*)pp;
     }
   pp[nb++] = data;
   *nb_ptr = nb;
@@ -93,10 +93,10 @@ main ()
     return 1;
 
   eputs ("&PATHS=");
-  eputs (itoa (&s->paths));
+  eputs (itoa ((size_t)&s->paths));
   eputs ("\n");
   eputs ("&FILES=");
-  eputs (itoa (&s->files));
+  eputs (itoa ((size_t)&s->files));
   eputs ("\n");
 
   // struct file *fs;
@@ -104,20 +104,20 @@ main ()
   // fs = s->files[0];
   struct file *fs = s->files[0];
   eputs ("add s=   ");
-  eputs (itoa (s));
+  eputs (itoa ((size_t)s));
   eputs ("\n");
   eputs ("add fs=  ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   eputs ("&fs->[0]=");
-  eputs (itoa (fs->name));
+  eputs (itoa ((size_t)fs->name));
   eputs ("\n");
   eputs ("fs->name=");
   eputs (fs->name);
   eputs ("\n");
 
   eputs ("ps=      ");
-  eputs (itoa (s->paths));
+  eputs (itoa ((size_t)s->paths));
   eputs ("\n");
   eputs ("*ps      ");
   eputs (*s->paths);
@@ -127,14 +127,14 @@ main ()
     return 2;
 
   eputs ("&fs->[0]=");
-  eputs (itoa (fs->name));
+  eputs (itoa ((size_t)fs->name));
   eputs ("\n");
   eputs ("fs->name=");
   eputs (fs->name);
   eputs ("\n");
 
   eputs ("ps=      ");
-  eputs (itoa (s->paths));
+  eputs (itoa ((size_t)s->paths));
   eputs ("\n");
   eputs ("*ps      ");
   eputs (*s->paths);
@@ -150,29 +150,29 @@ main ()
   fs = pf[0];
   eputs ("\n");
   eputs ("&fs0*=    ");
-  eputs (itoa (&pf[0]));
+  eputs (itoa ((size_t)&pf[0]));
   eputs ("\n");
 
   eputs ("fs0*=     ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   fs = s->files[0];
   eputs ("fs0*=     ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   eputs ("\n");
 
   pf = s->files;
   fs = pf[1];
   eputs ("&fs1*=    ");
-  eputs (itoa (&pf[1]));
+  eputs (itoa ((size_t)&pf[1]));
   eputs ("\n");
   eputs ("fs1*=     ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   fs = s->files[1];
   eputs ("fs1*=     ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   eputs ("\n");
   if (strcmp (fs->name, file_name))
@@ -180,11 +180,11 @@ main ()
 
   fs = g_s.files[0];
   eputs ("gfs0*=    ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   fs = g_s.files[1];
   eputs ("gfs1*=    ");
-  eputs (itoa (fs));
+  eputs (itoa ((size_t)fs));
   eputs ("\n");
   eputs ("\n");
   if (strcmp (fs->name, file_name))

@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -28,7 +28,6 @@ typedef struct foo foo_struct;
 
 struct foo
 {
-  //struct foo **foo;
   foo_struct **foo;
 };
 
@@ -38,20 +37,20 @@ int
 main ()
 {
   struct foo foo;
-  foo.foo = g_foo;
+  foo.foo = (void*)g_foo;
   void *p;
   void *q;
 
   p = &foo.foo[0];
   q = foo.foo;
   eputs ("f:");
-  eputs (itoa (foo.foo));
+  eputs (itoa ((size_t)foo.foo));
   eputs ("\n");
   eputs ("p:");
-  eputs (itoa (p));
+  eputs (itoa ((size_t)p));
   eputs ("\n");
   eputs ("q:");
-  eputs (itoa (q));
+  eputs (itoa ((size_t)q));
   eputs ("\n");
   if (q != p)
     return 1;
@@ -59,13 +58,13 @@ main ()
   p = &foo.foo[1];
   q = foo.foo + 1;
   eputs ("f:");
-  eputs (itoa (foo.foo));
+  eputs (itoa ((size_t)foo.foo));
   eputs ("\n");
   eputs ("p:");
-  eputs (itoa (p));
+  eputs (itoa ((size_t)p));
   eputs ("\n");
   eputs ("q:");
-  eputs (itoa (q));
+  eputs (itoa ((size_t)q));
   eputs ("\n");
   if (q != p)
     return 2;
@@ -74,13 +73,13 @@ main ()
   p = &pfoo->foo[1];
   q = pfoo->foo + 1;
   eputs ("f:");
-  eputs (itoa (pfoo->foo));
+  eputs (itoa ((size_t)pfoo->foo));
   eputs ("\n");
   eputs ("p:");
-  eputs (itoa (p));
+  eputs (itoa ((size_t)p));
   eputs ("\n");
   eputs ("q:");
-  eputs (itoa (q));
+  eputs (itoa ((size_t)q));
   eputs ("\n");
   if (q != p)
     return 3;

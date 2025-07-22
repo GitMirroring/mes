@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -37,6 +37,13 @@ struct scm *g_cells = (struct scm *) g_arena;
 char *g_chars = g_arena;
 
 int
+xexit (int code)
+{
+  _exit (code);
+  return 0;
+};
+
+int
 foo ()
 {
   oputs ("t: foo\n");
@@ -52,11 +59,11 @@ bar (int i)
 
 struct function
 {
-  int (*function) (void);
+  int (*function) ();
   int arity;
   char *name;
 };
-struct function g_fun = { &exit, 1, "fun" };
+struct function g_fun = { &xexit, 1, "fun" };
 struct function g_foo = { &foo, 0, "foo" };
 struct function g_bar = { &bar, 1, "bar" };
 

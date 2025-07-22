@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -36,14 +36,14 @@ int
 main ()
 {
   struct foo *f;
-  f = &g_arena;
+  f = (void*)&g_arena;
 
   f[0].baz = 1;
-  f[1].s = -1;
+  f[1].s = (void*)-1;
   if (f[0].baz != 1)
     return 1;
 
-  if (f[1].s != -1)
+  if (f[1].s != (void*)-1)
     return 2;
 
   return 0;

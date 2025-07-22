@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -58,7 +58,7 @@ main ()
   printf ("eentje: %d\n", f.bar[0]);
   printf ("tweetje: %d\n", f.bar[1]);
 
-  int *pf = &f;
+  int *pf = (int*)&f;
   if (*pf != 0x22)
     return 1;
   if (*(pf + 1) != 0x34)
@@ -86,7 +86,7 @@ main ()
   oputs (g_foo.name);
 
   char buf[10];
-  struct foo *s = &buf;
+  struct foo *s = (struct foo*)&buf;
   strcpy (s->name, "hi\n");
   oputs (s->name);
 

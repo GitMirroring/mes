@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -51,7 +51,7 @@ main ()
   s.stack_ptr = s.stack;
   ps->stack_ptr = ps->stack;
   eputs ("ps->stack=");
-  eputs (itoa (ps->stack));
+  eputs (itoa ((size_t)ps->stack));
   eputs ("\n");
 
   eputs ("1\n");

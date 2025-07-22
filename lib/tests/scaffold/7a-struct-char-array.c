@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -94,7 +94,7 @@ main ()
   if (p[5] != '5')
     return 13;
 
-  xfile.buffer = &buffer;
+  xfile.buffer = (void*)&buffer;
   struct xfile *pxfile = &xfile;
   strcpy (xfile.buffer, "0123456789\n");
   eputs (xfile.buffer);
@@ -147,7 +147,7 @@ main ()
     return 33;
 
   short *ps;
-  ps = pfile->buffer;
+  ps = (void*)pfile->buffer;
   p = pfile->buffer;
 
   strcpy (file.buffer, "0123456789\n");
