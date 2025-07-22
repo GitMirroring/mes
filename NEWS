@@ -2,7 +2,7 @@
 #+TITLE: GNU Mes NEWS – history of user-visible changes
 #+STARTUP: content hidestars
 
-Copyright © 2016,2017,2018,2019,2021,2022,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+Copyright © 2016,2017,2018,2019,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -10,6 +10,31 @@ Copyright © 2016,2017,2018,2019,2021,2022,2023,2024 Janneke Nieuwenhuizen <jann
 
 Please send Mes bug reports to bug-mes@gnu.org.
 
+* Changes in 0.27.1 since 0.27
+** Core
+*** The pmatch-car/pmatch-cdr hack was removed.
+** Build
+*** Development build with gcc-14 is now supported.
+*** Using M2-Planet 1.12.0 is now supported.
+*** On x86-linux, using M2-Planet 1.13.0 is now supported.
+*** A benchmark suite was added.
+*** The "simple.make" build was resurrected.
+*** Scripts with bashisms now use bash in shebang.
+** Mes
+*** 1 New module stub:
+(system foreign).
+*** 1 New function:
+string-every.
+*** 3 New symbols:
+W_OK, X_OK, F_OK.
+** MesCC
+*** Using the "-Dinline=" kludge is no longer necessary.
+*** Building bootstrappable-tcc using 1.00.02 <= NYACC <= 2.02.2 now works.
+*** kernel-stat was fixed for x86_64-linux.
+*** Four new prototypes:
+strcspn, strncat, strpbrk, strspn.
+** Noteworthy bug fixes
+*** A bug was fixed in "match" to support NYACC 2.01.0.
 * Changes in 0.27 since 0.26.2
 ** Core
 *** Support for running Mes on the Hurd has been resurrected.
