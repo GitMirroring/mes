@@ -1,5 +1,5 @@
 ;;; GNU Mes --- Maxwell Equations of Software
-;;; Copyright © 2016,2017,2018,2020,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2016,2017,2018,2020,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
@@ -28,6 +28,7 @@
   #:use-module (nyacc lang c99 parser)
   #:use-module (nyacc version)
   #:use-module (mes guile)
+  #:use-module (mes misc)
   #:export (c99-input->ast))
 
 (define mes-or-reproducible? #t)
@@ -98,7 +99,8 @@
 (define* (c99-input->ast #:key (prefix "") (defines '()) (includes '()) (arch "") verbose?)
   (when verbose?
     (format (current-error-port) "parsing: input\n"))
-  ((compose ast-strip-attributes
+  ((compose ast-strip-inline
+            ast-strip-attributes
             ast-strip-const
             ast-strip-comment)
    (c99-input->full-ast #:prefix prefix #:defines defines #:includes includes #:arch arch #:verbose? verbose?)))
@@ -118,6 +120,26 @@
   (or (equal? qual "const")             ;Nyacc <  1.04.0
       (equal? qual '(const))))          ;Nyacc >= 1.04.0
 
+
+(define (ast-strip-attributes o)
+  (pmatch o
+    ((decl-spec-list (@ (attributes . ,attributes)) . ,rest)
+     `(decl-spec-list ,@rest))
+    ((,h . ,t) (if (list? o) (filter-map ast-strip-attributes o)
+                   (cons (ast-strip-attributes h) (ast-strip-attributes t))))
+    (_  o)))
+
+(define (ast-strip-inline o)
+  (pmatch o
+    ((decl-spec-list (fctn-spec ,spec) . ,rest) (guard (equal? spec "inline"))
+     `(decl-spec-list ,@rest))
+    ((decl-spec-list (stor-spec (static)) (fctn-spec ,spec) . ,rest)
+     (guard (equal? spec "inline"))
+     `(decl-spec-list (stor-spec (static)) ,@rest))
+    ((,h . ,t) (if (list? o) (filter-map ast-strip-inline o)
+                   (cons (ast-strip-inline h) (ast-strip-inline t))))
+    (_  o)))
+
 (define (ast-strip-const o)
   (pmatch o
     ((type-qual ,qual) (if (qual-const? qual) #f o))
@@ -134,12 +156,4 @@
          `(decl-spec-list (type-qual-list (type-qual ,qual)) ,@(map ast-strip-const rest))))
     ((,h . ,t) (if (list? o) (filter-map ast-strip-const o)
                    (cons (ast-strip-const h) (ast-strip-const t))))
-    (_  o)))
-
-(define (ast-strip-attributes o)
-  (pmatch o
-    ((decl-spec-list (@ (attributes . ,attributes)) . ,rest)
-      `(decl-spec-list ,@rest))
-    ((,h . ,t) (if (list? o) (filter-map ast-strip-attributes o)
-                   (cons (ast-strip-attributes h) (ast-strip-attributes t))))
     (_  o)))
