@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,20225 janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -43,10 +43,14 @@ char *strchr (char const *s, int c);
 int strcasecmp (char const *s1, char const *s2);
 int strcmp (char const *, char const *);
 char *strcpy (char *dest, char const *src);
+size_t strcspn (char const *string, char const *stopset);
 size_t strlen (char const *);
+char *strncat (char *to, char const *from, size_t size);
 char *strncpy (char *to, char const *from, size_t size);
 int strncmp (char const *, char const *, size_t);
+char *strpbrk (char const *string, char const *stopset);
 char *strrchr (char const *s, int c);
+size_t strspn (char const *string, char const *skipset);
 char *strstr (char const *haystack, char const *needle);
 char *strlwr (char *string);
 char *strupr (char *string);
