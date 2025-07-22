@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2018, 2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -18,7 +18,9 @@
  * along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <mes/lib.h>
 #include <string.h>
+
 int one_two_three[3] = {
   1, 2, 3
 };
@@ -35,7 +37,7 @@ char *foo = "foo";
 char *bar = "bar";
 char *baz = "baz";
 
-char *foo_bar_baz_mwhuhahaha[3] = {
+char **foo_bar_baz_mwhuhahaha[3] = {
   &foo, &bar, &baz
 };
 

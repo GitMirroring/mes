@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2023 Janneke Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2023,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -53,6 +53,13 @@ struct scm *g_cells = (struct scm *) g_arena;
 char *g_chars = g_arena;
 
 int
+xexit (int code)
+{
+  _exit (code);
+  return 0;
+};
+
+int
 foo ()
 {
   oputs ("t: foo\n");
@@ -68,12 +75,12 @@ bar (int i)
 
 struct function
 {
-  int (*function) (void);
+  int (*function) ();
   int arity;
   //long arity;
   char *name;
 };
-struct function g_fun = { &exit, 1, "fun" };
+struct function g_fun = { &xexit, 1, "fun" };
 struct function g_foo = { &foo, 0, "foo" };
 struct function g_bar = { &bar, 1, "bar" };
 
@@ -194,18 +201,18 @@ ok:
     return 16;
 
   oputs ("t: g_fun.function != exit;\n");
-  if (g_fun.function != &exit)
+  if (g_fun.function != &xexit)
     return 17;
 
   oputs ("t: struct fun = {&exit,1,\"exit\"};\n");
-  struct function fun = { &exit, 1, "exit" };
+  struct function fun = { &xexit, 1, "exit" };
 
   oputs ("t: fun.arity != 1;\n");
   if (fun.arity != 1)
     return 18;
 
   oputs ("t: fun.function != exit;\n");
-  if (fun.function != &exit)
+  if (fun.function != &xexit)
     return 19;
 
   oputs ("t: oputs (fun.name)\n");
@@ -231,17 +238,7 @@ ok:
   if (g_functions[g_cells[fn].cdr].arity != 0)
     return 24;
 
-
-
-
-
-
-
-
-
-
-
-  int (*functionx) (void) = 0;
+  int (*functionx) () = 0;
   functionx = g_functions[0].function;
   oputs ("t: functionx == foo\n");
   if (functionx != foo)

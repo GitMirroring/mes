@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2016,2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2016,2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -31,12 +31,11 @@ main (int argc, char *argv[])
 {
   int size = 5000;
   oputs ("m!\n");
-  //int *p = 0;
   char *p = 0;
   p = malloc (size);
   size = 5000;
   oputs ("p=");
-  oputs (itoa (p));
+  oputs (itoa ((size_t)p));
   oputs ("\n");
   int i;
   for (i = 0; i < size; i = i + 1)

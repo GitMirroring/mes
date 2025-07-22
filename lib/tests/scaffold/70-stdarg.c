@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2021 W. J. van der Laan <laanwj@protonmail.com>
  *
  * This file is part of GNU Mes.
@@ -23,8 +23,7 @@
 #include <stdarg.h>
 
 int
-//stdarg1 (long one, ...)
-stdarg1 (long *one, ...)
+stdarg1 (long one, ...)
 {
   va_list ap;
   char c;
@@ -47,8 +46,7 @@ stdarg1 (long *one, ...)
 }
 
 int
-///stdarg2 (long one, long two, ...)
-stdarg2 (long *one, long *two, ...)
+stdarg2 (long one, long two, ...)
 {
   va_list ap;
   char c;
@@ -71,8 +69,7 @@ stdarg2 (long *one, long *two, ...)
 }
 
 int
-//stdarg3 (long one, long two, long three, ...)
-stdarg3 (long *one, long *two, long *three, ...)
+stdarg3 (long one, long two, long three, ...)
 {
   va_list ap;
   char c;

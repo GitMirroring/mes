@@ -20,6 +20,7 @@
 
 #include <mes/lib.h>
 #include <string.h>
+#include <stdlib.h>
 
 int
 qsort_strcmp (void const *a, void const *b)
