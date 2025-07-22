@@ -94,7 +94,12 @@ if [ -f "$b".exit ]; then
 else
     e=0
 fi
-[ $r = $e ] || exit 1
+if [ $r != $e ]; then
+    if [ $r != 0 ]; then
+        exit $r;
+    fi
+    exit 1
+fi
 if [ -f "$b".stdout ]; then
     $DIFF -ub "$b".stdout "$o".1
 fi
