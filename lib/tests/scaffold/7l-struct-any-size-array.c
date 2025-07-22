@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -55,7 +55,7 @@ main ()
   tab14[1].c = -1;
   tab14[1].d = -1;
 
-  p = &tab14;
+  p = (void*)&tab14;
   for (int i = 0; i < sizeof (struct foo13) * 2; i++)
     {
       if (i < 10)
@@ -79,7 +79,7 @@ main ()
   tab16[1].c = -1;
   tab16[1].d = -1;
 
-  p = &tab16;
+  p = (void*)&tab16;
   for (int i = 0; i < sizeof (struct foo16) * 2; i++)
     {
       if (i < 10)

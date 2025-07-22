@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2019 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2019,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -34,7 +34,7 @@ typedef struct
 } bar;
 
 
-bar baz[2] = { 1, 2, 3, 4, 5, 6 };
+bar baz[2] = { 1, 2, (void*)3, 4, 5, (void*)6 };
 
 bar *list[2];
 

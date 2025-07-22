@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -25,7 +25,7 @@ int bla[2] = { 0, -1 };
 int
 main ()
 {
-  int *b = &bla;
+  int *b = (void*)&bla;
 
   int c[2] = { 201, 211 };
   b[0] = 3;

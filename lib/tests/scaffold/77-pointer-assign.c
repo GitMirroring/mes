@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -38,7 +38,7 @@ add0 (void *ptab)
 {
   void **pp = *(void ***) ptab;
 bla:
-  pp[0] = 0x11223344;
+  pp[0] = (void*)0x11223344;
 }
 
 void
@@ -46,7 +46,7 @@ add1 (void *ptab)
 {
   void ***x = (void ***) ptab;
 bla:
-  *(void ***) ptab = 0x22334455;
+  *(void ***) ptab = (void*)0x22334455;
 }
 
 void
@@ -54,7 +54,7 @@ add2 (void *ptab)
 {
   void ***x = (void ***) ptab;
 bla:
-  *x = 0x33445566;
+  *x = (void*)0x33445566;
 }
 
 struct foo *hash_ident[10];
@@ -67,31 +67,31 @@ main ()
   struct foo f;
   f.bar = &p;
   eputs ("f.bar:");
-  eputs (itoa (f.bar));
+  eputs (itoa ((size_t)f.bar));
   eputs ("\n");
 
   add0 (&f.bar);
   eputs ("f.bar:");
-  eputs (itoa (*f.bar));
+  eputs (itoa ((size_t)*f.bar));
   eputs ("\n");
-  if (*f.bar != 0x11223344)
+  if (*f.bar != (void*)0x11223344)
     return 1;
 
   add1 (&f.bar);
   eputs ("f.bar:");
-  eputs (itoa (f.bar));
+  eputs (itoa ((size_t)f.bar));
   eputs ("\n");
-  if (f.bar != 0x22334455)
+  if (f.bar != (void*)0x22334455)
     return 2;
 
   add2 (&f.bar);
   eputs ("f.bar:");
-  eputs (itoa (f.bar));
+  eputs (itoa ((size_t)f.bar));
   eputs ("\n");
-  if (f.bar != 0x33445566)
+  if (f.bar != (void*)0x33445566)
     return 3;
 
-  hash_ident[0] = 10;
+  hash_ident[0] = (void*)10;
   *hash_ident = 0;
   memset (hash_ident, 0, 10);
 

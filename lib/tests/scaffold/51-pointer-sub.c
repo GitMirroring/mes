@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -23,10 +23,10 @@
 int
 main ()
 {
-  int **p = 1;
-  int **q = -1;
+  int **p = (void*)1;
+  int **q = (void*)-1;
   oputs ("p - q");
-  oputs (itoa (p - q));
+  oputs (itoa ((size_t) (p - q)));
   oputs ("\n");
 
   return 0;

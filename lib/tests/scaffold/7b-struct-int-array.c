@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -57,22 +57,22 @@ main ()
   if (pfoo->b != 3)
     return 6;
 
-  int *pi = &g_foo;
+  int *pi = (void*)&g_foo;
   if (*pi != 0)
     return 7;
 
-  pi = &g_bar;
+  pi = (void*)&g_bar;
   if (*pi != 101)
     return 8;
 
   struct bar bar = { 0x22, 0x33 };
-  pi = &bar;
+  pi = (void*)&bar;
   if (*pi != 0x22)
     return 9;
 
   bar_struct bs;
   bs.bar[0] = 102;
-  pi = &bs;
+  pi = (void*)&bs;
   if (*pi != 102)
     return 10;
 
@@ -80,7 +80,7 @@ main ()
   fs.bar[0] = 0x22;
   fs.bar[1] = 0x33;
 
-  pi = &fs;
+  pi = (void*)&fs;
   if (*pi != 0x22)
     return 11;
   pi++;

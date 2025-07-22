@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2018,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2018,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -19,8 +19,9 @@
  */
 
 
-int puts (char const *);
+#include <mes/lib.h>
 #include <string.h>
+
 char global_arena[10];
 int global_i = 1;
 int global_unitialized;

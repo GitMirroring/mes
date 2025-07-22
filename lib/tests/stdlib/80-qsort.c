@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -20,10 +20,11 @@
 
 #include <mes/lib.h>
 
+#include <stdlib.h>
 #include <string.h>
 
 int
-compare_int (void *a, void *b)
+compare_int (void const *a, void const *b)
 {
   eputs ("compare: ");
   eputs (itoa (*(int *) a));

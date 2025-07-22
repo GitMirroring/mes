@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2017,2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2021 W. J. van der Laan <laanwj@protonmail.com>
  *
  * This file is part of GNU Mes.
@@ -42,7 +42,7 @@ struct section section;
     for (elem = (type *) sec->data + startoff; \
          elem < (type *) (sec->data + sec->offset); elem++)
 #define for_each_elem2(sec, startoff, elem, type) \
-  elem = sec->data + sizeof (type) * startoff; \
+  elem = (type *) sec->data + sizeof (type) * startoff; \
   for (;elem < ((type *) (sec->data + sec->offset)); elem++)
 
 int
@@ -58,7 +58,7 @@ main ()
 
   struct sym *p;
   p = tab3;
-  section.data = tab;
+  section.data = (void*)tab;
   section.offset = 24;
 
   int size = sizeof (struct sym);
@@ -70,15 +70,15 @@ main ()
   struct section *psection = &section;
   p = (struct sym *) psection->data + 1;
   struct sym *q = tab;
-  int i = (int) p;
-  i -= (int) q;
+  int i = (size_t) p;
+  i -= (size_t) q;
   eputs ("diff=");
   eputs (itoa (i));
   eputs ("\n");
   if (i != sym_size)
     return 2;
 
-  for_each_elem (psection, 1, p, struct section)
+  for_each_elem (psection, 1, p, struct sym)
   {
     eputs ("i=");
     eputs (itoa (p->index));
@@ -87,7 +87,7 @@ main ()
     eputs ("\n");
   }
 
-  for_each_elem2 (psection, 1, p, struct section)
+  for_each_elem2 (psection, 1, p, struct sym)
   {
     eputs ("i=");
     eputs (itoa (p->index));

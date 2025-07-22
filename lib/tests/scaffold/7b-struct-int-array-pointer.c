@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2018,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -31,7 +31,7 @@ int
 main ()
 {
   int *pi;
-  pi = &g_bar;
+  pi = (void*)&g_bar;
   if (*pi == 0)
     return 1;
   if (*pi != 101)
