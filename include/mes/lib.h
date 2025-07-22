@@ -74,7 +74,6 @@ void __assert_fail (char const *s, char const *file, unsigned line,
                     char const *function);
 ssize_t __buffered_read (int filedes, void *buffer, size_t size);
 size_t __buffered_read_clear (int filedes);
-void _exit (int code);
 long brk (void *addr);
 #ifndef __raise
 int __raise (int signal);
@@ -82,7 +81,6 @@ int __raise (int signal);
 #endif // !SYSTEM_LIBC
 
 #if !__M2__
-extern void (*__call_at_exit) (void);
 double abtod (char const **p, int base);
 char *dtoab (double number, int base, int signed_p);
 char *ultoa (unsigned long number);
