@@ -10,6 +10,15 @@ Copyright © 2016,2017,2018,2019,2021,2022,2023,2024 Janneke Nieuwenhuizen <jann
 
 Please send Mes bug reports to bug-mes@gnu.org.
 
+* Changes in 0.27.1 since 0.27
+** Core
+*** The pmatch-car/pmatch-cdr hack was removed.
+** Build
+*** Using M2-Planet 0.12.0 is now supported.
+*** The "simple.make" build was resurrected.
+** MesCC
+*** Using the "-Dinline=" kludge is no longer necessary.
+*** Building bootstrappable-tcc using 1.00.02 <= NYACC <= 1.09.4 now works.
 * Changes in 0.27 since 0.26.2
 ** Core
 *** Support for running Mes on the Hurd has been resurrected.
