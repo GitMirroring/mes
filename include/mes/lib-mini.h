@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2016,2017,2018,2020,2022,2023 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2016,2017,2018,2020,2022,2023,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -58,6 +58,7 @@ int oputs (char const *s);
 
 #if SYSTEM_LIBC
 
+#include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -101,6 +102,12 @@ typedef int error_t;
 extern int errno;
 #endif // !__MES_ERRNO_T
 
+#if !__M2__
+extern void (*__call_at_exit) (void);
+#endif
+
+void _exit (int status);
+void exit (int status);
 size_t strlen (char const *s);
 ssize_t _write ();
 ssize_t write (int filedes, void const *buffer, size_t size);
