@@ -229,7 +229,7 @@ main (int argc, char **argv)
 
   struct scm *program = read_boot ();
   R0 = acons (cell_symbol_program, program, R0);
-  push_cc (R2, cell_unspecified, R0, cell_unspecified);
+  push_cc (program, cell_unspecified, R0, cell_unspecified);
 
   if (g_debug > 2)
     gc_stats_ ("\n gc boot");
@@ -239,6 +239,24 @@ main (int argc, char **argv)
       write_error_ (R1);
       eputs ("\n");
     }
+  R3 = cell_vm_begin_expand;
+  struct scm *expanded = macro_expand (program);
+  if (g_debug > 3)
+    {
+      eputs ("expanded program: ");
+      write_error_ (expanded);
+      eputs ("\n");
+    }
+  R0 = acons (cell_symbol_program, expanded, R0);
+  push_cc (expanded, cell_unspecified, R0, cell_unspecified);
+
+  if (g_debug > 3)
+    {
+      eputs ("=>R1: ");
+      write_error_ (R1);
+      eputs ("\n");
+    }
+
   R3 = cell_vm_begin_expand;
   R1 = eval_apply ();
   if (g_debug != 0)

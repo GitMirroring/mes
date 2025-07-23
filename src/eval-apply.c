@@ -22,6 +22,7 @@
 #include "mes/lib.h"
 #include "mes/mes.h"
 
+#include <assert.h> // REMOVEME
 #include <string.h>
 
 struct scm *
@@ -414,7 +415,7 @@ apply_builtin (struct scm *fn, struct scm *x)   /*:((internal)) */
 }
 
 struct scm *
-eval_apply ()
+macro_expand ()
 {
   struct scm *aa;
   struct scm *args;
@@ -439,7 +440,10 @@ eval_apply ()
   int t;
   long i;
 
-eval_apply:
+  // do nothing
+  return R1;
+
+ eval_apply:
   if (R3 == cell_vm_evlis2)
     goto evlis2;
   else if (R3 == cell_vm_evlis3)
@@ -503,21 +507,21 @@ eval_apply:
   else
     assert_msg (0, "eval/apply unknown continuation");
 
-evlis:
+ evlis:
   if (R1 == cell_nil)
     goto vm_return;
   if (R1->type != TPAIR)
     goto eval;
   push_cc (R1->car, R1, R0, cell_vm_evlis2);
   goto eval;
-evlis2:
+ evlis2:
   push_cc (R2->cdr, R1, R0, cell_vm_evlis3);
   goto evlis;
-evlis3:
+ evlis3:
   R1 = cons (R2, R1);
   goto vm_return;
 
-apply:
+ apply:
   g_stack_array[g_stack + GC_FRAME_PROCEDURE] = R1->car;
   a = R1->car;
   t = a->type;
@@ -608,12 +612,12 @@ apply:
     }
   push_cc (R1->car, R1, R0, cell_vm_apply2);
   goto eval;
-apply2:
+ apply2:
   check_apply (R1, R2->car);
   R1 = cons (R1, R2->cdr);
   goto apply;
 
-eval:
+ eval:
   t = R1->type;
   if (t == TPAIR)
     {
@@ -801,7 +805,7 @@ eval:
   else
     goto vm_return;
 
-macro_expand:
+ macro_expand:
   if (R1->type != TPAIR || R1->car == cell_symbol_quote)
     goto vm_return;
 
@@ -883,7 +887,7 @@ macro_expand:
   push_cc (R1->car, R1, R0, cell_vm_macro_expand_car);
   goto macro_expand;
 
-macro_expand_car:
+ macro_expand_car:
   R2->car = R1;
   R1 = R2;
   if (R1->cdr == cell_nil)
@@ -892,13 +896,13 @@ macro_expand_car:
   push_cc (R1->cdr, R1, R0, cell_vm_macro_expand_cdr);
   goto macro_expand;
 
-macro_expand_cdr:
+ macro_expand_cdr:
   R2->cdr = R1;
   R1 = R2;
 
   goto vm_return;
 
-begin:
+ begin:
   x = cell_unspecified;
   while (R1 != cell_nil)
     {
@@ -927,7 +931,7 @@ begin:
   goto vm_return;
 
 
-begin_expand:
+ begin_expand:
   x = cell_unspecified;
   while (R1 != cell_nil)
     {
@@ -981,10 +985,10 @@ begin_expand:
   R1 = x;
   goto vm_return;
 
-vm_if:
+ vm_if:
   push_cc (R1->car, R1, R0, cell_vm_if_expr);
   goto eval;
-if_expr:
+ if_expr:
   x = R1;
   R1 = R2;
   if (x != cell_f)
@@ -1000,7 +1004,7 @@ if_expr:
   R1 = cell_unspecified;
   goto vm_return;
 
-call_with_current_continuation:
+ call_with_current_continuation:
   x = make_continuation (g_continuations);
   g_continuations = g_continuations + 1;
   v = make_vector_ (STACK_SIZE - g_stack, cell_unspecified);
@@ -1009,17 +1013,17 @@ call_with_current_continuation:
   x->continuation = v;
   push_cc (cons (R1->car, cons (x, cell_nil)), x, R0, cell_vm_call_with_current_continuation2);
   goto apply;
-call_with_current_continuation2:
+ call_with_current_continuation2:
   v = make_vector_ (STACK_SIZE - g_stack, cell_unspecified);
   for (i = g_stack; i < STACK_SIZE; i = i + 1)
     vector_set_x_ (v, i - g_stack, g_stack_array[i]);
   R2->continuation = v;
   goto vm_return;
 
-call_with_values:
+ call_with_values:
   push_cc (cons (R1->car, cell_nil), R1, R0, cell_vm_call_with_values2);
   goto apply;
-call_with_values2:
+ call_with_values2:
   if (R1->type == TVALUES)
     R1 = R1->cdr;
   else
@@ -1027,7 +1031,628 @@ call_with_values2:
   R1 = cons (R2->cdr->car, R1);
   goto apply;
 
-vm_return:
+ vm_return:
+  x = R1;
+  gc_pop_frame ();
+  R1 = x;
+  goto eval_apply;
+}
+
+struct scm *
+eval_apply ()
+{
+  struct scm *aa;
+  struct scm *args;
+  struct scm *body;
+  struct scm *cl;
+  struct scm *entry;
+  struct scm *expanders;
+  struct scm *formals;
+  struct scm *input;
+  struct scm *name;
+  struct scm *macro;
+  struct scm *p;
+  struct scm *program;
+  struct scm *sc_expand;
+  struct scm *v;
+  struct scm *x;
+  int global_p;
+  int macro_p;
+  struct scm *a;
+  struct scm *c;
+  struct scm *d;
+  int t;
+  long i;
+
+ eval_apply:
+  if (R3 == cell_vm_evlis2)
+    goto evlis2;
+  else if (R3 == cell_vm_evlis3)
+    goto evlis3;
+  else if (R3 == cell_vm_eval_check_func)
+    goto eval_check_func;
+  else if (R3 == cell_vm_eval2)
+    goto eval2;
+  else if (R3 == cell_vm_apply2)
+    goto apply2;
+  else if (R3 == cell_vm_if_expr)
+    goto if_expr;
+  else if (R3 == cell_vm_begin_eval)
+    goto begin_eval;
+  else if (R3 == cell_vm_eval_set_x)
+    goto eval_set_x;
+  else if (R3 == cell_vm_macro_expand_car)
+    goto macro_expand_car;
+  else if (R3 == cell_vm_return)
+    goto vm_return;
+  else if (R3 == cell_vm_macro_expand_cdr)
+    goto macro_expand_cdr;
+  else if (R3 == cell_vm_eval_define)
+    goto eval_define;
+  else if (R3 == cell_vm_macro_expand)
+    goto macro_expand;
+  else if (R3 == cell_vm_macro_expand_lambda)
+    goto macro_expand_lambda;
+  else if (R3 == cell_vm_begin_expand_macro)
+    goto begin_expand_macro;
+  else if (R3 == cell_vm_macro_expand_define)
+    goto macro_expand_define;
+  else if (R3 == cell_vm_begin_expand_eval)
+    goto begin_expand_eval;
+  else if (R3 == cell_vm_call_with_current_continuation2)
+    goto call_with_current_continuation2;
+  else if (R3 == cell_vm_macro_expand_set_x)
+    goto macro_expand_set_x;
+  else if (R3 == cell_vm_macro_expand_define_macro)
+    goto macro_expand_define_macro;
+  else if (R3 == cell_vm_evlis)
+    goto evlis;
+  else if (R3 == cell_vm_apply)
+    goto apply;
+  else if (R3 == cell_vm_eval)
+    goto eval;
+  else if (R3 == cell_vm_eval_macro_expand_eval)
+    goto eval_macro_expand_eval;
+  else if (R3 == cell_vm_eval_macro_expand_expand)
+    goto eval_macro_expand_expand;
+  else if (R3 == cell_vm_begin)
+    goto begin;
+  else if (R3 == cell_vm_begin_expand)
+    goto begin_expand;
+  else if (R3 == cell_vm_if)
+    goto vm_if;
+  else if (R3 == cell_vm_call_with_values2)
+    goto call_with_values2;
+  else if (R3 == cell_unspecified)
+    return R1;
+  else
+    assert_msg (0, "eval/apply unknown continuation");
+
+ evlis:
+  if (R1 == cell_nil)
+    goto vm_return;
+  if (R1->type != TPAIR)
+    goto eval;
+  push_cc (R1->car, R1, R0, cell_vm_evlis2);
+  goto eval;
+ evlis2:
+  push_cc (R2->cdr, R1, R0, cell_vm_evlis3);
+  goto evlis;
+ evlis3:
+  R1 = cons (R2, R1);
+  goto vm_return;
+
+ apply:
+  g_stack_array[g_stack + GC_FRAME_PROCEDURE] = R1->car;
+  a = R1->car;
+  t = a->type;
+  if (t == TSTRUCT && builtin_p (R1->car) == cell_t)
+    {
+      check_formals (R1->car, builtin_arity (R1->car), R1->cdr);
+      R1 = apply_builtin (R1->car, R1->cdr);
+      goto vm_return;
+    }
+  else if (t == TCLOSURE)
+    {
+      cl = R1->car->closure;
+      body = cl->cdr->cdr;
+      formals = cl->cdr->car;
+      args = R1->cdr;
+      aa = cl->car->cdr;
+      aa = aa->cdr;
+      check_formals (R1->car, formals, R1->cdr);
+      p = pairlis (formals, args, aa);
+      call_lambda (body, p, aa, R0);
+      goto begin;
+    }
+  else if (t == TCONTINUATION)
+    {
+      a = R1->car;
+      v = a->continuation;
+      if (v->length != 0)
+        {
+          for (i = 0; i < v->length; i = i + 1)
+            g_stack_array[STACK_SIZE - v->length + i] = vector_ref_ (v, i);
+          g_stack = STACK_SIZE - v->length;
+        }
+      R1 = R1->cdr->car;
+      goto vm_return;
+    }
+  else if (t == TSPECIAL)
+    {
+      c = R1->car;
+      if (c == cell_vm_apply)
+        {
+          push_cc (cons (R1->cdr->car, R1->cdr->cdr->car), R1, R0, cell_vm_return);
+          goto apply;
+        }
+      else if (c == cell_vm_eval)
+        {
+          push_cc (R1->cdr->car, R1, R1->cdr->cdr->car, cell_vm_return);
+          goto eval;
+        }
+      else if (c == cell_vm_begin_expand)
+        {
+          push_cc (cons (R1->cdr->car, cell_nil), R1, R1->cdr->cdr->car, cell_vm_return);
+          goto begin_expand;
+        }
+      else
+        check_apply (cell_f, R1->car);
+    }
+  else if (t == TSYMBOL)
+    {
+      c = R1->car;
+      if (c == cell_symbol_call_with_current_continuation)
+        {
+          R1 = R1->cdr;
+          goto call_with_current_continuation;
+        }
+      if (c == cell_symbol_call_with_values)
+        {
+          R1 = R1->cdr;
+          goto call_with_values;
+        }
+      if (c == cell_symbol_current_environment)
+        {
+          R1 = R0;
+          goto vm_return;
+        }
+    }
+  else if (t == TPAIR)
+    {
+      if (R1->car->car == cell_symbol_lambda)
+        {
+          formals = R1->car->cdr->car;
+          args = R1->cdr;
+          body = R1->car->cdr->cdr;
+          p = pairlis (formals, R1->cdr, R0);
+          check_formals (R1, formals, args);
+          call_lambda (body, p, p, R0);
+          goto begin;
+        }
+    }
+  push_cc (R1->car, R1, R0, cell_vm_apply2);
+  goto eval;
+ apply2:
+  check_apply (R1, R2->car);
+  R1 = cons (R1, R2->cdr);
+  goto apply;
+
+ eval:
+  t = R1->type;
+  if (t == TPAIR)
+    {
+      c = R1->car;
+
+      /* If the car is a bound identifier, we want to dispatch on the
+         value to which it is bound. */
+      if (c->type == TBINDING)
+        {
+          if (c->lexical_p != 0)
+            R1->car = c->binding->cdr;
+          else
+            R1->car = variable_ref (c->binding->cdr);
+
+          if (R1->car == cell_undefined)
+            return error (cell_symbol_unbound_variable, c->binding->car);
+        }
+
+      c = R1->car;
+      if (c == cell_symbol_quote)
+        {
+          R1 = R1->cdr->car;
+          goto vm_return;
+        }
+      else if (c == cell_symbol_begin)
+        goto begin;
+      else if (c == cell_symbol_lambda)
+        {
+          R1 = make_closure_ (R1->cdr->car, R1->cdr->cdr, R0);
+          goto vm_return;
+        }
+      else if (c == cell_symbol_if)
+        {
+          R1 = R1->cdr;
+          goto vm_if;
+        }
+      else if (c == cell_symbol_set_x)
+        {
+          push_cc (R1->cdr->cdr->car, R1, R0, cell_vm_eval_set_x);
+          goto eval;
+        eval_set_x:
+          R1 = set_x (R2->cdr->car, R1, 0);
+          goto vm_return;
+        }
+      else if (c == cell_vm_macro_expand)
+        {
+          push_cc (R1->cdr->car, R1, R0, cell_vm_eval_macro_expand_eval);
+          goto eval;
+        eval_macro_expand_eval:
+          push_cc (R1, R2, R0, cell_vm_eval_macro_expand_expand);
+          goto macro_expand;
+        eval_macro_expand_expand:
+          goto vm_return;
+        }
+      else
+        {
+          if (R1->type == TPAIR)
+            if (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro)
+              {
+                global_p = 0;
+                if (R0->car->car != cell_closure)
+                  global_p = 1;
+                macro_p = 0;
+                if (R1->car == cell_symbol_define_macro)
+                  macro_p = 1;
+                if (global_p != 0)
+                  {
+                    name = R1->cdr->car;
+                    aa = R1->cdr->car;
+                    if (aa->type == TPAIR)
+                      name = name->car;
+                    if (macro_p != 0)
+                      {
+                        entry = macro_get_handle (name);
+                        if (entry == cell_f)
+                          macro_set_x (name, cell_f);
+                      }
+                    else
+                      /* Ensure this name is bound in the current
+                         module. */
+                      lookup_binding (name, cell_t);
+                  }
+                R2 = R1;
+                aa = R1->cdr->car;
+                if (aa->type != TPAIR)
+                  {
+                    push_cc (R1->cdr->cdr->car, R2, cons (cons (R1->cdr->car, R1->cdr->car), R0), cell_vm_eval_define);
+                    goto eval;
+                  }
+                else
+                  {
+                    formals = R1->cdr->car->cdr;
+                    body = R1->cdr->cdr;
+
+                    if (macro_p != 0 || global_p != 0)
+                      expand_variable (body, formals);
+
+                    /* The GC may have moved 'formals' and 'body' during
+                       variable expansion, so get fresh pointers. */
+                    formals = R1->cdr->car->cdr;
+                    body = R1->cdr->cdr;
+                    p = pairlis (R1->cdr->car, R1->cdr->car, R0);
+
+                    R1 = cons (cell_symbol_lambda, cons (formals, body));
+                    push_cc (R1, R2, p, cell_vm_eval_define);
+                    goto eval;
+                  }
+              eval_define:
+                /* These may have been clobbered by an inline define
+                   during evaluation, so they must be recomputed. */
+                global_p = 0;
+                if (R0->car->car != cell_closure)
+                  global_p = 1;
+                macro_p = 0;
+                if (R2->car == cell_symbol_define_macro)
+                  macro_p = 1;
+
+                name = R2->cdr->car;
+                aa = R2->cdr->car;
+                if (aa->type == TPAIR)
+                  name = name->car;
+                if (macro_p != 0)
+                  {
+                    entry = macro_get_handle (name);
+                    R1 = make_macro (name, R1);
+                    set_cdr_x (entry, R1);
+                  }
+                else if (global_p != 0)
+                  {
+                    set_x (name, R1, 1);
+                  }
+                else
+                  {
+                    entry = cons (name, R1);
+                    aa = cons (entry, cell_nil);
+                    /* Push the definition onto the current lexical
+                       environment, but keep the first element (named
+                       '*closure*') pointing to the rest of the
+                       environment. */
+                    set_cdr_x (aa, cdr (R0));
+                    set_cdr_x (R0, aa);
+                    set_cdr_x (car (R0), aa);
+                  }
+                R1 = cell_unspecified;
+                goto vm_return;
+              }
+          push_cc (R1->car, R1, R0, cell_vm_eval_check_func);
+          gc_check ();
+          goto eval;
+        eval_check_func:
+          push_cc (R2->cdr, R2, R0, cell_vm_eval2);
+          goto evlis;
+        eval2:
+          R1 = cons (R2->car, R1);
+          goto apply;
+        }
+    }
+  else if (t == TSYMBOL)
+    {
+      if (R1 == cell_symbol_current_environment)
+        goto vm_return;
+      if (R1 == cell_symbol_begin)
+        goto vm_return;
+      if (R1 == cell_symbol_call_with_current_continuation)
+        goto vm_return;
+      R1 = assert_defined (R1, lookup_value (R1));
+      goto vm_return;
+    }
+  else if (t == TBINDING)
+    {
+      name = R1->binding->car;
+
+      if (R1->lexical_p != 0)
+        R1 = R1->binding->cdr;
+      else
+        R1 = variable_ref (R1->binding->cdr);
+
+      if (R1 == cell_undefined)
+        return error (cell_symbol_unbound_variable, name);
+
+      goto vm_return;
+    }
+  else if (t == TBROKEN_HEART)
+    error (cell_symbol_system_error, R1);
+  else
+    goto vm_return;
+
+ macro_expand:
+  if (R1->type != TPAIR || R1->car == cell_symbol_quote)
+    goto vm_return;
+
+  if (R1->car == cell_symbol_lambda)
+    {
+      push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_lambda);
+      goto macro_expand;
+    macro_expand_lambda:
+      R2->cdr->cdr = R1;
+      R1 = R2;
+      goto vm_return;
+    }
+
+  if (R1->type == TPAIR)
+    {
+      macro = get_macro (R1->car);
+      if (macro != cell_f)
+        {
+          R1 = cons (macro, R1->cdr);
+          push_cc (R1, cell_nil, R0, cell_vm_macro_expand);
+          goto apply;
+        }
+    }
+
+  if (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro)
+    {
+      push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_define);
+      goto macro_expand;
+    macro_expand_define:
+      R2->cdr->cdr = R1;
+      R1 = R2;
+      if (R1->car == cell_symbol_define_macro)
+        {
+          push_cc (R1, R1, R0, cell_vm_macro_expand_define_macro);
+          goto eval;
+        macro_expand_define_macro:
+          R1 = R2;
+        }
+      goto vm_return;
+    }
+
+  if (R1->car == cell_symbol_set_x)
+    {
+      push_cc (R1->cdr->cdr, R1, R0, cell_vm_macro_expand_set_x);
+      goto macro_expand;
+    macro_expand_set_x:
+      R2->cdr->cdr = R1;
+      R1 = R2;
+      goto vm_return;
+    }
+
+  if (R1->type == TPAIR)
+    {
+      a = R1->car;
+      if (a->type == TSYMBOL && a != cell_symbol_begin)
+        {
+          macro = macro_get_handle (cell_symbol_portable_macro_expand);
+          if (macro != cell_f)
+            {
+              expanders = lookup_value (cell_symbol_sc_expander_alist);
+              if (expanders != cell_undefined)
+                {
+                  macro = assq (R1->car, expanders);
+                  if (macro != cell_f)
+                    {
+                      sc_expand = lookup_value (cell_symbol_macro_expand);
+                      R2 = R1;
+                      if (sc_expand != cell_undefined && sc_expand != cell_f)
+                        {
+                          R1 = cons (sc_expand, cons (R1, cell_nil));
+                          goto apply;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  push_cc (R1->car, R1, R0, cell_vm_macro_expand_car);
+  goto macro_expand;
+
+ macro_expand_car:
+  R2->car = R1;
+  R1 = R2;
+  if (R1->cdr == cell_nil)
+    goto vm_return;
+
+  push_cc (R1->cdr, R1, R0, cell_vm_macro_expand_cdr);
+  goto macro_expand;
+
+ macro_expand_cdr:
+  R2->cdr = R1;
+  R1 = R2;
+
+  goto vm_return;
+
+ begin:
+  x = cell_unspecified;
+  while (R1 != cell_nil)
+    {
+      gc_check ();
+      if (R1->type == TPAIR)
+        {
+          a = R1->car;
+          if (a->type == TPAIR)
+            {
+              if (a->car == cell_symbol_begin)
+                R1 = append2 (a->cdr, R1->cdr);
+            }
+        }
+      if (R1->cdr == cell_nil)
+        {
+          R1 = R1->car;
+          goto eval;
+        }
+      push_cc (R1->car, R1, R0, cell_vm_begin_eval);
+      goto eval;
+    begin_eval:
+      x = R1;
+      R1 = R2->cdr;
+    }
+  R1 = x;
+  goto vm_return;
+
+
+ begin_expand:
+  x = cell_unspecified;
+  while (R1 != cell_nil)
+    {
+    begin_expand_while:
+      gc_check ();
+
+      if (R1->type == TPAIR)
+        {
+          a = R1->car;
+          if (a->type == TPAIR)
+            if (R1->car->car == cell_symbol_begin)
+              R1 = append2 (R1->car->cdr, R1->cdr);
+        }
+
+      push_cc (R1->car, R1, R0, cell_vm_begin_expand_macro);
+      goto macro_expand;
+    begin_expand_macro:
+      if (R1 != R2->car)
+        {
+          R2->car = R1;
+          R1 = R2;
+          goto begin_expand_while;
+          continue; /* FIXME: M2-PLanet */
+        }
+      R1 = R2;
+
+      /* If we expand a 'define' form that refers to itself, and it also
+         reuses a name higher up in the module chain, the self-reference
+         will be bound to the variable from the other module.  We hack
+         around this by binding the name in the current module before
+         expansion.  */
+      if (R1->type == TPAIR
+          && R1->car->type == TPAIR
+          && R1->car->car == cell_symbol_define)
+        {
+          /* Split the '&&' expression up to prevent a segfault when
+             compiled with M2-Planet. */
+          if (R1->car->cdr->type == TPAIR
+              && R1->car->cdr->car->type == TPAIR)
+            lookup_binding (R1->car->cdr->car->car, cell_t);
+        }
+
+
+      expand_variable (R1->car, cell_nil);
+      push_cc (R1->car, R1, R0, cell_vm_begin_expand_eval);
+      goto eval;
+    begin_expand_eval:
+      x = R1;
+      R1 = R2->cdr;
+    }
+  R1 = x;
+  goto vm_return;
+
+ vm_if:
+  push_cc (R1->car, R1, R0, cell_vm_if_expr);
+  goto eval;
+ if_expr:
+  x = R1;
+  R1 = R2;
+  if (x != cell_f)
+    {
+      R1 = R1->cdr->car;
+      goto eval;
+    }
+  if (R1->cdr->cdr != cell_nil)
+    {
+      R1 = R1->cdr->cdr->car;
+      goto eval;
+    }
+  R1 = cell_unspecified;
+  goto vm_return;
+
+ call_with_current_continuation:
+  x = make_continuation (g_continuations);
+  g_continuations = g_continuations + 1;
+  v = make_vector_ (STACK_SIZE - g_stack, cell_unspecified);
+  for (i = g_stack; i < STACK_SIZE; i = i + 1)
+    vector_set_x_ (v, i - g_stack, g_stack_array[i]);
+  x->continuation = v;
+  push_cc (cons (R1->car, cons (x, cell_nil)), x, R0, cell_vm_call_with_current_continuation2);
+  goto apply;
+ call_with_current_continuation2:
+  v = make_vector_ (STACK_SIZE - g_stack, cell_unspecified);
+  for (i = g_stack; i < STACK_SIZE; i = i + 1)
+    vector_set_x_ (v, i - g_stack, g_stack_array[i]);
+  R2->continuation = v;
+  goto vm_return;
+
+ call_with_values:
+  push_cc (cons (R1->car, cell_nil), R1, R0, cell_vm_call_with_values2);
+  goto apply;
+ call_with_values2:
+  if (R1->type == TVALUES)
+    R1 = R1->cdr;
+  else
+    R1 = cons (R1, cell_nil);
+  R1 = cons (R2->cdr->car, R1);
+  goto apply;
+
+ vm_return:
   x = R1;
   gc_pop_frame ();
   R1 = x;
@@ -1041,6 +1666,7 @@ apply (struct scm *f, struct scm *x, struct scm *a)     /*:((internal)) */
   R3 = cell_vm_apply;
   return eval_apply ();
 }
+
 
 struct scm *
 primitive_load (struct scm *filename)     /*:((arity . 1))*/
@@ -1070,6 +1696,27 @@ primitive_load (struct scm *filename)     /*:((arity . 1))*/
   gc_push_frame ();
   /* Store 'input' in R2 so it does not get GCed during evaluation. */
   push_cc (forms, cell_unspecified, env, cell_unspecified);
+
+  if (g_debug > 3)
+    {
+      eputs ("PRIMITIVE_LOAD forms: ");
+      write_error_ (forms);
+      eputs ("\n");
+    }
+
+  struct scm *program = macro_expand (forms);
+
+  if (g_debug > 3)
+    {
+      eputs ("primitive expanded program: ");
+      write_error_ (program);
+      eputs ("\n");
+    }
+
+  /* Store 'input' in R2 so it does not get GCed during evaluation. */
+  push_cc (program, cell_unspecified, env, cell_unspecified);
+
+  R1 = program;
   R3 = cell_vm_begin_expand;
   struct scm *result = eval_apply ();
   input = R2;

@@ -56,6 +56,7 @@ struct scm *set_car_x (struct scm *x, struct scm *e);
 struct scm *set_cdr_x (struct scm *x, struct scm *e);
 struct scm *add_formals (struct scm *formals, struct scm *x);
 struct scm *eval_apply ();
+struct scm *macro_expand ();
 struct scm *primitive_load (struct scm *filename);
 struct scm *make_binding (struct scm *name, struct scm *variable);
 /* src/gc.c */
