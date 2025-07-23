@@ -414,7 +414,7 @@ apply_builtin (struct scm *fn, struct scm *x)   /*:((internal)) */
 }
 
 struct scm *
-eval_apply (int macro_expand_p)
+eval_apply ()
 {
   struct scm *aa;
   struct scm *args;
@@ -438,14 +438,6 @@ eval_apply (int macro_expand_p)
   struct scm *d;
   int t;
   long i;
-
-#if 0
-  if (macro_expand_p == 1)
-    {
-      // R1 = R3;
-      return R3;
-    }
-#endif
 
 eval_apply:
   if (R3 == cell_vm_evlis2)
@@ -678,8 +670,8 @@ eval:
         }
       else
         {
-          if (R1->type == TPAIR
-              && (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro))
+          if (R1->type == TPAIR)
+            if (R1->car == cell_symbol_define || R1->car == cell_symbol_define_macro)
               {
                 global_p = 0;
                 if (R0->car->car != cell_closure)
@@ -699,80 +691,74 @@ eval:
                         if (entry == cell_f)
                           macro_set_x (name, cell_f);
                       }
-                    else if (macro_expand_p == 0)
+                    else
                       /* Ensure this name is bound in the current
                          module. */
                       lookup_binding (name, cell_t);
                   }
-                if (macro_expand_p = 1)
+                R2 = R1;
+                aa = R1->cdr->car;
+                if (aa->type != TPAIR)
                   {
+                    push_cc (R1->cdr->cdr->car, R2, cons (cons (R1->cdr->car, R1->cdr->car), R0), cell_vm_eval_define);
+                    goto eval;
                   }
                 else
                   {
-                    R2 = R1;
-                    aa = R1->cdr->car;
-                    if (aa->type != TPAIR)
-                      {
-                        push_cc (R1->cdr->cdr->car, R2, cons (cons (R1->cdr->car, R1->cdr->car), R0), cell_vm_eval_define);
-                        goto eval;
-                      }
-                    else
-                      {
-                        formals = R1->cdr->car->cdr;
-                        body = R1->cdr->cdr;
+                    formals = R1->cdr->car->cdr;
+                    body = R1->cdr->cdr;
 
-                        if (macro_p != 0 || global_p != 0)
-                          expand_variable (body, formals);
+                    if (macro_p != 0 || global_p != 0)
+                      expand_variable (body, formals);
 
-                        /* The GC may have moved 'formals' and 'body' during
-                           variable expansion, so get fresh pointers. */
-                        formals = R1->cdr->car->cdr;
-                        body = R1->cdr->cdr;
-                        p = pairlis (R1->cdr->car, R1->cdr->car, R0);
+                    /* The GC may have moved 'formals' and 'body' during
+                       variable expansion, so get fresh pointers. */
+                    formals = R1->cdr->car->cdr;
+                    body = R1->cdr->cdr;
+                    p = pairlis (R1->cdr->car, R1->cdr->car, R0);
 
-                        R1 = cons (cell_symbol_lambda, cons (formals, body));
-                        push_cc (R1, R2, p, cell_vm_eval_define);
-                        goto eval;
-                      }
-                  eval_define:
-                    /* These may have been clobbered by an inline define
-                       during evaluation, so they must be recomputed. */
-                    global_p = 0;
-                    if (R0->car->car != cell_closure)
-                      global_p = 1;
-                    macro_p = 0;
-                    if (R2->car == cell_symbol_define_macro)
-                      macro_p = 1;
-
-                    name = R2->cdr->car;
-                    aa = R2->cdr->car;
-                    if (aa->type == TPAIR)
-                      name = name->car;
-                    if (macro_p != 0)
-                      {
-                        entry = macro_get_handle (name);
-                        R1 = make_macro (name, R1);
-                        set_cdr_x (entry, R1);
-                      }
-                    else if (global_p != 0)
-                      {
-                        set_x (name, R1, 1);
-                      }
-                    else
-                      {
-                        entry = cons (name, R1);
-                        aa = cons (entry, cell_nil);
-                        /* Push the definition onto the current lexical
-                           environment, but keep the first element (named
-                           '*closure*') pointing to the rest of the
-                           environment. */
-                        set_cdr_x (aa, cdr (R0));
-                        set_cdr_x (R0, aa);
-                        set_cdr_x (car (R0), aa);
-                      }
-                    R1 = cell_unspecified;
-                    goto vm_return;
+                    R1 = cons (cell_symbol_lambda, cons (formals, body));
+                    push_cc (R1, R2, p, cell_vm_eval_define);
+                    goto eval;
                   }
+              eval_define:
+                /* These may have been clobbered by an inline define
+                   during evaluation, so they must be recomputed. */
+                global_p = 0;
+                if (R0->car->car != cell_closure)
+                  global_p = 1;
+                macro_p = 0;
+                if (R2->car == cell_symbol_define_macro)
+                  macro_p = 1;
+
+                name = R2->cdr->car;
+                aa = R2->cdr->car;
+                if (aa->type == TPAIR)
+                  name = name->car;
+                if (macro_p != 0)
+                  {
+                    entry = macro_get_handle (name);
+                    R1 = make_macro (name, R1);
+                    set_cdr_x (entry, R1);
+                  }
+                else if (global_p != 0)
+                  {
+                    set_x (name, R1, 1);
+                  }
+                else
+                  {
+                    entry = cons (name, R1);
+                    aa = cons (entry, cell_nil);
+                    /* Push the definition onto the current lexical
+                       environment, but keep the first element (named
+                       '*closure*') pointing to the rest of the
+                       environment. */
+                    set_cdr_x (aa, cdr (R0));
+                    set_cdr_x (R0, aa);
+                    set_cdr_x (car (R0), aa);
+                  }
+                R1 = cell_unspecified;
+                goto vm_return;
               }
           push_cc (R1->car, R1, R0, cell_vm_eval_check_func);
           gc_check ();
@@ -1053,7 +1039,7 @@ apply (struct scm *f, struct scm *x, struct scm *a)     /*:((internal)) */
 {
   push_cc (cons (f, x), cell_unspecified, a, cell_unspecified);
   R3 = cell_vm_apply;
-  return eval_apply (0);
+  return eval_apply ();
 }
 
 struct scm *
@@ -1085,9 +1071,7 @@ primitive_load (struct scm *filename)     /*:((arity . 1))*/
   /* Store 'input' in R2 so it does not get GCed during evaluation. */
   push_cc (forms, cell_unspecified, env, cell_unspecified);
   R3 = cell_vm_begin_expand;
-  struct scm *result = eval_apply (1);
-  R3 = result;
-  result = eval_apply (0);
+  struct scm *result = eval_apply ();
   input = R2;
   gc_pop_frame ();
 

@@ -240,18 +240,7 @@ main (int argc, char **argv)
       eputs ("\n");
     }
   R3 = cell_vm_begin_expand;
-  R3 = eval_apply (1);
-  if (g_debug > 3)
-    {
-      eputs ("expanded program: ");
-      write_error_ (R3);
-      eputs ("\n");
-
-      eputs ("expanded program/R1: ");
-      write_error_ (R1);
-      eputs ("\n");
-    }
-  R1 = eval_apply (0);
+  R1 = eval_apply ();
   if (g_debug != 0)
     {
       write_error_ (R1);
