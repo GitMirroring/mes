@@ -415,7 +415,140 @@ apply_builtin (struct scm *fn, struct scm *x)   /*:((internal)) */
 }
 
 struct scm *
-macro_expand ()
+macro_expand (struct scm *program)
+{
+  struct scm *sexp = cell_nil;
+  struct scm *name;
+  struct scm *body;
+  struct scm *car;
+  struct scm *cdr;
+
+  struct scm *value;
+  struct scm *args;
+
+  struct scm *macro;
+  struct scm *lambda;
+  struct scm *environment;
+  struct scm *eval;
+  struct scm *arg;
+
+  struct scm* eval_sym = cstring_to_symbol ("primitive-eval");
+
+  while (program != cell_nil)
+    {
+      // eputs ("EXPAND program: ");
+      // write_error_ (program);
+      // eputs ("\n");
+      // eputs (" => sexp: ");
+      // write_error_ (sexp);
+      // eputs ("\n");
+      if (program->type != TPAIR)
+        {
+          // eputs ("00 atom\n");
+          return program;
+        }
+      else if (program->car == cell_symbol_define_macro)
+        {
+          // eputs ("10 macro!\n");
+          value = program->cdr;
+          args = value->car;
+          body = value->cdr;
+          body = macro_expand (body);
+          value = cons (args, body);
+          name = args->car;
+          // eputs ("*setting* macro: ");
+          // write_error_ (value);
+          // eputs ("\n");
+          macro_set_x (name, value);
+          return cell_unspecified;
+        }
+      else
+        {
+          // eputs ("20 pair\n");
+          macro = macro_get_handle (program->car);
+          // eputs ("21 pair\n");
+          // eputs ("macro?: ");
+          // write_error_ (macro);
+          // eputs ("\n");
+          if (macro != cell_f)
+            {
+              // eputs ("*expanding* macro: ");
+              // write_error_ (macro);
+              // eputs ("\n");
+              value = macro->cdr;
+              args = value->car;
+              body = value->cdr;
+
+              eputs ("00 *expanding* body: ");
+              write_error_ (body);
+              eputs ("\n");
+
+              // eputs ("body: ");
+              // write_error_ (body);
+              // eputs ("\n");
+
+#if 0
+              environment = cons (cell_symbol_current_environment, cell_nil);
+              environment = cons (environment, cell_nil);
+              //body = cons (body, environment);
+              body = append2 (body, environment);
+
+              eputs ("*expanding* body: ");
+              write_error_ (body);
+              eputs ("\n");
+
+              eval = cons (cell_vm_eval, body);
+#endif
+
+              eval = cons (eval_sym, body);
+              eval = cons (eval, cell_nil);
+
+              lambda = cons (args->cdr, eval);
+              lambda = cons (cell_symbol_lambda, lambda);
+
+              // eputs ("*expanding* lambda: ");
+              // write_error_ (lambda);
+              // eputs ("\n");
+#if 0
+              args = cons (cell_symbol_quote, args);
+              args = cons (args, environment);
+              //sexp = cons (args, cell_nil);
+#endif
+              args = program->cdr;
+              sexp = cell_nil;
+              while (args != cell_nil)
+                {
+                  arg = cons (args->car, cell_nil);
+                  arg = cons (cell_symbol_quote, arg);
+                  arg = cons (arg, cell_nil);
+                  // FIXME, creating garbage!
+                  //sexp = cons (arg, sexp);
+                  sexp = append2 (sexp, arg);
+                  args = args->cdr;
+                }
+              sexp = cons (lambda, sexp);
+              //sexp = cons (cell_vm_apply, sexp);
+
+              eputs ("*expanding* lambda: ");
+              write_error_ (sexp);
+              eputs ("\n");
+
+              return sexp;
+            }
+          else
+            {
+              car = macro_expand (program->car);
+              cdr = macro_expand (program->cdr);
+              sexp = cons (car, cdr);
+              return sexp;
+            }
+        }
+    }
+  return sexp;
+}
+
+struct scm *
+xmacro_expand ()
 {
   struct scm *aa;
   struct scm *args;
