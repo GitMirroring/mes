@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2016,2017,2018,2019,2020,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2016,2017,2018,2019,2020,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © Timothy Sample 2022 <samplet@ngyro.com>
  *
  * This file is part of GNU Mes.
@@ -687,16 +687,14 @@ eval:
                       name = name->car;
                     if (macro_p != 0)
                       {
-                        entry = assq (name, g_macros);
+                        entry = macro_get_handle (name);
                         if (entry == cell_f)
                           macro_set_x (name, cell_f);
                       }
                     else
-                      {
-                        /* Ensure this name is bound in the current
-                           module. */
-                        lookup_binding (name, cell_t);
-                      }
+                      /* Ensure this name is bound in the current
+                         module. */
+                      lookup_binding (name, cell_t);
                   }
                 R2 = R1;
                 aa = R1->cdr->car;
