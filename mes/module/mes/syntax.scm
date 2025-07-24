@@ -2,7 +2,7 @@
 
 ;;; GNU Mes --- Maxwell Equations of Software
 ;;; Copyright (c) 1993-2004 by Richard Kelsey and Jonathan Rees.
-;;; Copyright © 2016, 2025 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2016 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
 ;;; Copyright © 2021 Timothy Sample <samplet@ngyro.com>
 ;;;
 ;;; This file is part of GNU Mes.
@@ -57,32 +57,11 @@
 ;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 (define-macro (define-syntax macro-name transformer . stuff)
   `(define-macro (,macro-name . args)
      (,transformer (cons ',macro-name args)
-                   ;; FIXME: as syntax-rules is non-hygienic, make sure
-                   ;; we are using the right primitives in the code.
-                   (let ((rename-alist `( ;;(and . ,and)
-                                         (append . ,append)
-                                         (car . ,car)
-                                         (cadr . ,cadr)
-                                         (cdr . ,cdr)
-                                         (cddr . ,cddr)
-                                         ;; (cond . ,cond)
-                                         (cons . ,cons)
-                                         (else . ,else)
-                                         (eq? . ,eq?)
-                                         (equal? . ,equal?)
-                                         ;; (if . ,if)
-                                         ;; (lambda . ,lambda)
-                                         ;; (let . ,let)
-                                         (list . ,list)
-                                         (map . ,map)
-                                         (null? . ,null?)
-                                         (pair? . ,pair?)
-                                         (vector? . ,vector?))))
-                     (lambda (x0)
-                       (or (assoc-ref rename-alist x0) x0)))
+                   (lambda (x0) x0)
                    eq?)))
 
 ;; Rewrite-rule compiler (a.k.a. "extend-syntax")
@@ -104,14 +83,14 @@
       (and (segment-template? pattern)
            (or (null? (cddr pattern))
                (syntax-error "segment matching not implemented" pattern))))
-
+    
     (define (segment-template? pattern)
       (and (pair? pattern)
            (pair? (cdr pattern))
            (memq (cadr pattern) indicators-for-zero-or-more)))
-
+    
     (define indicators-for-zero-or-more (list (string->symbol "...") '---))
-
+    
     (lambda (exp r c)
 
       (define %input (r '%input))       ;Gensym these, if you like.
@@ -146,7 +125,7 @@
                                      0
                                      (meta-variables pattern 0 '())))))
             (syntax-error "ill-formed syntax rule" rule)))
-
+      
       ;; Generate code to test whether input expression matches pattern
 
       (define (process-match input pattern)
@@ -169,7 +148,7 @@
                `((eq? ,input ',pattern)))
               (else
                `((equal? ,input ',pattern)))))
-
+      
       (define (process-segment-match input pattern)
         (let ((conjuncts (process-match '(car l) pattern)))
           (if (null? conjuncts)
@@ -179,7 +158,7 @@
                       (and (pair? l)
                            ,@conjuncts
                            (loop (cdr l)))))))))
-
+      
       ;; Generate code to take apart the input expression
       ;; This is pretty bad, but it seems to work (can't say why).
 
