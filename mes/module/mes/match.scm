@@ -1,5 +1,6 @@
 ;;; GNU Mes --- Maxwell Equations of Software
 ;;; Copyright © 2025 Matt Wette <matt.wette@gmail.com>
+;;; Copyright © 2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
@@ -41,8 +42,8 @@
     ((_ v (quasiquote w) kt kf) (match-qqpat v w kt kf))
     ((_ v (unquote w) kt kf) (let ((w v)) kt))
     ((_ v (x . y) kt kf) (if (pair? v)
-                             (let ((vx (car v)) (vy (cdr y)))
-                               (match-pat vx x (match-pat vy y kt kf) kf))
+                             (match-pat (car v) x
+                                        (match-pat (cdr v) y kt kf) kf)
                              kf))
     ((_ v lit kt kf) (if (eq? v (quote lit)) kt kf))))
 
@@ -51,7 +52,7 @@
     ((_ v '() kt kf) (if (null? v) kt kf))
     ((_ v (unquote s) kt kf) (let ((s v)) kt))
     ((_ v (x . y) kt kf) (if (pair? v)
-                             (let ((vx (car v)) (vy (cdr v)))
-                               (match-qqpat vx x (match-qqpat vy y kt kf) kf))
+                             (match-qqpat (car v) x
+                                          (match-qqpat (cdr v) y kt kf) kf)
                              kf))
     ((_ v w kt kf) (if (eq? v (quote w)) kt kf))))
