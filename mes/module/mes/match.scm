@@ -446,14 +446,10 @@
      (match-quasiquote v p g+s sk fk i . depth))
     ((_ v (p . q) g+s sk fk i . depth)
      (if (pair? v)
-         (let ;;((w (car v)) (x (cdr v)))
-             ((W (car v)) (X (cdr v)))
          (match-quasiquote
-          ;;w p g+s
-          W p g+s
-          ;;(match-quasiquote-step x q g+s sk fk depth)
-          (match-quasiquote-step X q g+s sk fk depth)
-          fk i . depth))
+          (car v) p g+s
+          (match-quasiquote-step (cdr v) q g+s sk fk depth)
+          fk i . depth)
        fk))
     ((_ v #(elt ...) g+s sk fk i . depth)
      (if (vector? v)
