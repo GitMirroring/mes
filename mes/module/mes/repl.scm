@@ -1,5 +1,5 @@
 ;;; GNU Mes --- Maxwell Equations of Software
-;;; Copyright © 2016,2017,2018,2019,2020,2021,2022,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;; Copyright © 2022 Timothy Sample <samplet@ngyro.com>
 ;;;
 ;;; This file is part of GNU Mes.
@@ -24,12 +24,12 @@
 
 (define welcome
   (string-append "GNU Mes " %version "
-Copyright (C) 2016,2017,2018,2019,2020,2021,2022,2023 Janneke Nieuwenhuizen <janneke@gnu.org>
+Copyright (C) 2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 Copyright (C) 2019,2020,2021 Danny Milosavljevic <dannym@scratchpost.org>
 Copyright (C) 2021 Wladimir van der Laan <laanwj@protonmail.com>
 Copyright (C) 2022,2023 Timothy Sample <samplet@ngyro.com>
-Copyright (C) 2022,2023 Ekaitz Zarraga <ekaitz@elenq.tech>
-Copyright (C) 2023 Andrius Štikonas <andrius@stikonas.eu>
+Copyright (C) 2022,2023,2025 Ekaitz Zarraga <ekaitz@elenq.tech>
+Copyright (C) 2023,2025 Andrius Štikonas <andrius@stikonas.eu>
 and others.
 
 GNU Mes comes with ABSOLUTELY NO WARRANTY; for details type `,show w'.
