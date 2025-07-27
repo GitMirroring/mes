@@ -1,6 +1,6 @@
 # GNU Mes --- Maxwell Equations of Software
 # Copyright © 2019 Jeremiah Orians <jeremiah@pdp10.guru>
-# Copyright © 2018,2019,2020,2021,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2018,2019,2020,2021,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 # Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
 #
 # This file is part of GNU Mes.
@@ -271,7 +271,7 @@ check-mescc: $(MES)
 
 # Benchmarks
 TIME = time
-TIME_FMT = $(TIME) -f "CMD:\t%C\nWALL:\t%es\nUSER:\t%Us\nKERNEL:\t%Ss\nCPU:\t%P\nCTX-SW:\t%w\nEXIT:\t%x\n"
+TIME_FMT = $(TIME) -f "COMMAND:\tMES=$(MES) %C\nWALL:\t%es\nUSER:\t%Us\nKERNEL:\t%Ss\nCPU:\t%P\nCTX-SW:\t%w\nEXIT:\t%x\n"
 
 .PHONY: benchmark benchmark-gcc benchmark-m2 benchmark-fib benchmark-mescc-hello benchmark-mescc-mes benchmark-guile guile
 benchmark-gcc:
