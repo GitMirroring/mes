@@ -440,8 +440,10 @@ macro_expand ()
   int t;
   long i;
 
+#if 0
   // do nothing
   return R1;
+#endif
 
  eval_apply:
   if (R3 == cell_vm_evlis2)
