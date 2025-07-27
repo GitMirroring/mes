@@ -284,12 +284,12 @@ benchmark-guile:
 	$(MAKE) -f simple.make benchmark MES=guile
 benchmark: benchmark-fib benchmark-mescc-hello benchmark-mescc-mes
 
-benchmark-fib: $(MES) | benchmarks/out benchmarks/log
-	$(TIME_FMT) -o benchmarks/out/fib  ./pre-inst-env $(MES) benchmarks/fib.scm > benchmarks/log/fib
-benchmark-mescc-hello: $(MES) | benchmarks/out benchmarks/log
-	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/out/mescc-hello ./pre-inst-env scripts/mescc -S -m 32 -I include benchmarks/mescc-hello.c -o benchmarks/log/mescc-hello.M1
-benchmark-mescc-mes: $(MES) | benchmarks/out benchmarks/log
-	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/out/mescc-mes ./pre-inst-env scripts/mescc -S -m 32 -I include $(MES_SOURCES) -o benchmarks/log/mescc-mes.M1
+benchmark-fib: $(MES) | benchmarks/log benchmarks/out
+	$(TIME_FMT) -o benchmarks/log/fib  ./pre-inst-env $(MES) benchmarks/fib.scm > benchmarks/out/fib
+benchmark-mescc-hello: $(MES) | benchmarks/log benchmarks/out
+	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/log/mescc-hello ./pre-inst-env scripts/mescc -S -m 32 -I include benchmarks/mescc-hello.c -o benchmarks/out/mescc-hello.M1
+benchmark-mescc-mes: $(MES) | benchmarks/log benchmarks/out
+	MES_PREFIX=mes MES=$(MES) $(TIME_FMT) -o benchmarks/log/mescc-mes ./pre-inst-env scripts/mescc -S -m 32 -I include $(MES_SOURCES) -o benchmarks/out/mescc-mes.M1
 
 
 
@@ -300,9 +300,9 @@ bin:
 m2:
 	mkdir -p $@
 
-benchmarks/out:
-	mkdir -p $@
 benchmarks/log:
+	mkdir -p $@
+benchmarks/out:
 	mkdir -p $@
 
 TAGS:
