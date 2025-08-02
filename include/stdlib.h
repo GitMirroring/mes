@@ -38,6 +38,8 @@ typedef int (*comparison_fn_t) (void const *, void const *);
 #include <sys/types.h>
 #include <alloca.h>
 
+#define MB_CUR_MAX 1
+
 void abort (void);
 double atof (char const *s);
 int atoi (char const *s);

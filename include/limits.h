@@ -31,7 +31,6 @@
 
 #include <stdint.h>
 
-#define MB_CUR_MAX 1
 #define NAME_MAX 255
 #define PATH_MAX 512
 #define _POSIX_OPEN_MAX 16

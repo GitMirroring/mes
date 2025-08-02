@@ -35,7 +35,6 @@ void *memchr (void const *block, int c, size_t size);
 void *memcpy (void *dest, void const *src, size_t n);
 void *memmove (void *dest, void const *src, size_t n);
 void *memset (void *s, int c, size_t n);
-void *memchr (void const *block, int c, size_t size);
 int memcmp (void const *s1, void const *s2, size_t n);
 void *memmem (void const *haystack, int haystack_len, void const *needle, int needle_len);
 char *strcat (char *dest, char const *src);
@@ -57,7 +56,6 @@ char *strupr (char *string);
 
 
 char *strerror (int errnum);
-void perror (char const *message);
 
 #endif // ! SYSTEM_LIBC
 
