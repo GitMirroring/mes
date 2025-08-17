@@ -187,6 +187,7 @@ int sigemptyset (sigset_t * set);
 int sigprocmask (int how, sigset_t const *set, sigset_t * oldset);
 
 #endif // !__M2__
+
 #endif //! SYSTEM_LIBC
 
 #endif // __MES_SIGNAL_H
