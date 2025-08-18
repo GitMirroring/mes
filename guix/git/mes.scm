@@ -57,14 +57,14 @@
 (define-public mescc-tools
   (package
     (name "mescc-tools")
-    (version "1.5.2")
+    (version "1.6.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "mirror://savannah/" name "/"
                                   name "-" version ".tar.gz"))
               (sha256
                (base32
-                "1jak61gxab8bj8ddpgwfn9lqs917szq1phadmg8y5cjsndn1hv4k"))))
+                "189sxif0ahpyhjzwyh516fahsw40c4shw5pv52lw3qv1017sin06"))))
     (build-system gnu-build-system)
     (supported-systems '("i686-linux" "x86_64-linux"
                          "armhf-linux" "aarch64-linux"
