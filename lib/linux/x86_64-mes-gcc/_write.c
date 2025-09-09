@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2020 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -22,6 +23,14 @@
 
 #define SYS_write  "0x01"
 
+#if __TINYC__ && __x86_64__
+  // With tcc there are some troubles with constraints in the extended
+  // assembler syntax.  We place some values in memory.
+  #define RM "m"
+#else
+  #define RM "rm"
+#endif
+
 // *INDENT-OFF*
 ssize_t
 _write (int filedes, void const *buffer, size_t size)
@@ -35,7 +44,7 @@ _write (int filedes, void const *buffer, size_t size)
        "syscall \n\t"
        "mov     %%rax,%0\n\t"
        : "=r" (r)
-       : "rm" (filedes), "rm" (buffer), "rm" (size)
+       : "rm" (filedes), "rm" (buffer), RM (size)
        : "rax", "rdi", "rsi", "rdx"
        );
   return r;

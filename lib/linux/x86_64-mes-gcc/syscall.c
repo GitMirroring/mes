@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -20,6 +21,15 @@
 
 #include <errno.h>
 #include <linux/x86_64/syscall.h>
+
+#if __TINYC__ && __x86_64__
+  // With tcc there are some troubles with constraints in the extended
+  // assembler syntax.  We place some values in memory.
+  #define RM "m"
+#else
+  #define RM "rm"
+#endif
+
 
 // *INDENT-OFF*
 long
@@ -64,7 +74,7 @@ __sys_call2 (long sys_call, long one, long two)
        "syscall \n\t"
        "mov     %%rax,%0\n\t"
        : "=r" (r)
-       : "rm" (sys_call), "rm" (one), "rm" (two)
+       : "rm" (sys_call), "rm" (one), RM (two)
        : "rax", "rdi", "rsi"
        );
   return r;
@@ -82,7 +92,7 @@ __sys_call3 (long sys_call, long one, long two, long three)
        "syscall \n\t"
        "mov     %%rax,%0\n\t"
        : "=r" (r)
-       : "rm" (sys_call), "rm" (one), "rm" (two), "rm" (three)
+       : "rm" (sys_call), "rm" (one), RM (two), RM (three)
        : "rax", "rdi", "rsi", "rdx"
        );
   return r;
@@ -103,7 +113,7 @@ __sys_call4 (long sys_call, long one, long two, long three, long four)
        "syscall \n\t"
        "mov     %%rax,%0\n\t"
        : "=r" (r)
-       : "rm" (sys_call), "rm" (one), "rm" (two), "rm" (three), "rm" (four)
+       : "rm" (sys_call), "rm" (one), RM (two), RM (three), RM (four)
        : "rax", "rdi", "rsi", "rdx", "r10"
        );
   return r;
