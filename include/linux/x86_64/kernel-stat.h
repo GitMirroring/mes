@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2017,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -33,8 +34,8 @@ struct stat
   unsigned int	st_gid;
   unsigned int	__pad0;
   unsigned long	st_rdev;
-  long		st_size;
-  long		st_blksize;
+  unsigned long	st_size;
+  unsigned long	st_blksize;
   long		st_blocks;
   unsigned long	st_atime;
   unsigned long	st_atime_nsec;
@@ -45,7 +46,6 @@ struct stat
   unsigned long	__pad1;
   unsigned long	__pad2;
   unsigned long	__pad3;
-  unsigned long	__pad4;
 };
 
 #endif // __MES_LINUX_X86_64_KERNEL_STAT_H
