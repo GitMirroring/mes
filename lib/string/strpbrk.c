@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -26,8 +27,8 @@ strpbrk (char const *string, char const *stopset)
   char *p = (char *) string;
   while (*p)
     if (strchr (stopset, *p))
-      break;
+      return p;
     else
       p++;
-  return p;
+  return 0;
 }
