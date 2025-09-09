@@ -3,6 +3,7 @@
  * Copyright © 2017,2020 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2018 Peter De Wachter <pdewacht@gmail.com>
  * Copyright © 2024 Ekaitz Zarraga <ekaitz@elenq.tech>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -120,6 +121,11 @@ typedef unsigned long uintmax_t;
 #define LLONG_MAX INT64_MAX
 #define SIZE_MAX UINT64_MAX
 #endif
+
+//Mes misses some important integer constants for tcc.
+#define PTRDIFF_MIN LONG_MIN
+#define PTRDIFF_MAX LONG_MAX
+#define ULLONG_MAX UINT64_MAX
 
 #endif // ! SYSTEM_LIBC
 
