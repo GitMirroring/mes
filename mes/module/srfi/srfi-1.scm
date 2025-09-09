@@ -55,6 +55,7 @@
             lset-intersection
             lset-difference
             pair-for-each
+            take
             take-while
 
             append-reverse!
