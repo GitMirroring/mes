@@ -3,6 +3,7 @@
  * Copyright © 2017 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2021 W. J. van der Laan <laanwj@protonmail.com>
  * Copyright © 2023 Emily Trau <emily@downunderctf.com>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -33,13 +34,33 @@
 
 // *INDENT-OFF*
 #if __linux__
-#define O_RDONLY          0
-#define O_WRONLY          1
-#define O_RDWR            2
-#define O_CREAT        0x40
-#define O_EXCL         0x80
-#define O_TRUNC       0x200
-#define O_APPEND      0x400
+#define O_RDONLY           0
+#define O_WRONLY           1
+#define O_RDWR             2
+#define O_CREAT         0x40
+#define O_EXCL          0x80
+#define O_NOCTTY       0x100
+#define O_TRUNC        0x200
+#define O_APPEND       0x400
+#define O_NONBLOCK     0x800
+#define O_DSYNC       0x1000
+#define O_ASYNC       0x2000
+#define O_DIRECT      0x4000
+#define O_LARGEFILE   0x8000
+#define O_DIRECTORY  0x10000
+#define O_NOFOLLOW   0x20000
+#define O_NOATIME    0x40000
+#define O_CLOEXEC    0x80000
+#define O_SYNC      0x101000
+#define O_PATH      0x200000
+#define O_TMPFILE   0x410000
+#define O_ACCMODE   (O_RDONLY|O_WRONLY|O_RDWR|O_PATH)
+#define O_EXEC      O_PATH
+#define O_NDELAY    O_NONBLOCK
+#define O_READ      O_RDONLY
+#define O_WRITE     O_WRONLY
+#define O_RSYNC     O_SYNC
+#define O_SEARCH    O_PATH
 
 #ifdef __arm__
 #define O_DIRECTORY   0x4000
