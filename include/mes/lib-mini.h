@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2020,2022,2023,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -51,7 +52,7 @@ extern int __stdin;
 extern int __stdout;
 extern int __stderr;
 
-void __init_io ();
+void __init_io (int argc, char** argv, char** envp);
 int eputs (char const *s);
 int puts (char const *s);
 int oputs (char const *s);
@@ -109,7 +110,7 @@ extern void (*__call_at_exit) (void);
 void _exit (int status);
 void exit (int status);
 size_t strlen (char const *s);
-ssize_t _write ();
+ssize_t _write (int filedes, void const *buffer, size_t size);
 ssize_t write (int filedes, void const *buffer, size_t size);
 #endif // !SYSTEM_LIBC
 
