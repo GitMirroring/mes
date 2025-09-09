@@ -1,5 +1,6 @@
 ### GNU Mes --- Maxwell Equations of Software
 ### Copyright © 2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+### Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
 ###
 ### This file is part of GNU Mes.
 ###
@@ -88,6 +89,7 @@ DEFINE mov____%al,(%ebx) 8803
 DEFINE mov____%al,0x8(%ebp) 8845
 DEFINE mov____%ax,(%ebx) 668903
 DEFINE mov____%ax,0x8(%ebp) 668945
+DEFINE mov____%ax,0x32(%ebp) 668985
 DEFINE mov____%bx,%bx 6689db
 DEFINE mov____%cl,(%ebx) 8a08
 DEFINE mov____%cx,(%ebx) 668b08
