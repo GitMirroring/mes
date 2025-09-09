@@ -2,6 +2,7 @@
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2017,2018,2019 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2018 Jeremiah Orians <jeremiah@pdp10.guru>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -21,6 +22,7 @@
 
 #include <mes/lib.h>
 #include <assert.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
@@ -69,6 +71,9 @@ fopen (char const *file_name, char const *opentype)
       assert (0);
     }
   if (fd < 0)
-    fd = 0;
+    {
+      errno = -fd;
+      fd = 0;
+    }
   return (FILE *) (long) fd;
 }
