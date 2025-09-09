@@ -61,6 +61,29 @@
 #define O_WRITE     O_WRONLY
 #define O_RSYNC     O_SYNC
 #define O_SEARCH    O_PATH
+#define F_RDLCK     0
+#define F_WRLCK     1
+#define F_UNLCK     2
+#if __SIZEOF_LONG__ == 8
+  #define F_GETLK   5
+  #define F_SETLK   6
+  #define F_SETLKW  7
+#else
+  #define F_GETLK  12
+  #define F_SETLK  13
+  #define F_SETLKW 14
+#endif
+#if !__M2__
+#include <sys/types.h>
+struct flock
+{
+  short l_type;
+  short l_whence;
+  off_t l_start;
+  off_t l_len;
+  pid_t l_pid;
+};
+#endif
 
 #ifdef __arm__
 #define O_DIRECTORY   0x4000
