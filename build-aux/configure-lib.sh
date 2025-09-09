@@ -410,6 +410,7 @@ lib/stub/exp.c
 lib/stub/fpurge.c
 lib/stub/freadahead.c
 lib/stub/frexp.c
+lib/stub/ftruncate.c
 lib/stub/getgrgid.c
 lib/stub/getgrnam.c
 lib/stub/getlogin.c

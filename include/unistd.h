@@ -77,6 +77,7 @@ int execve (char const *file, char *const argv[], char *const env[]);
 int execvp (char const *file, char *const argv[]);
 int fork (void);
 int fsync (int filedes);
+int ftruncate (int fd, off_t length);
 char *getcwd (char *buf, size_t size);
 uid_t getuid (void);
 gid_t getgid (void);
