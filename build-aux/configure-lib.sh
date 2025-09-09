@@ -441,6 +441,7 @@ lib/stub/strftime.c
 lib/stub/sys_siglist.c
 lib/stub/system.c
 lib/stub/times.c
+lib/stub/tmpfile.c
 lib/stub/ttyname.c
 lib/stub/utime.c
 "

@@ -92,6 +92,7 @@ size_t fread (void *ptr, size_t size, size_t count, FILE * stream);
 size_t freadahead (FILE * fp);
 size_t fwrite (void const *ptr, size_t size, size_t count, FILE * stream);
 void perror (char const *message);
+FILE *tmpfile (void);
 
 #if !__M2__
 int fprintf (FILE * stream, char const *format, ...);
