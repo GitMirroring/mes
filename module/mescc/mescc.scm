@@ -155,7 +155,6 @@
          (libraries (delete-duplicates (append libraries default-libraries)))
          (hex2-libraries (map (cut find-library options ".a" <>) libraries))
          (hex2-files (append hex2-files hex2-libraries))
-         (s-files (append s-files (map (cut find-library options ".s" <>)  libraries)))
          (debug-info? (option-ref options 'debug-info #f))
          (s-files (if (string-suffix? ".S" input-file-name) s-files
                       (cons (replace-suffix input-file-name ".s") s-files)))
