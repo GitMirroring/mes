@@ -3,6 +3,7 @@
 ### Copyright © 2018 Peter De Wachter <pdewacht@gmail.com>
 ### Copyright © 2022 Ekaitz Zarraga <ekaitz@elenq.tech>
 ### Copyright © 2024 Andrius Štikonas <andrius@stikonas.eu>
+### Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
 ###
 ### This file is part of GNU Mes.
 ###
@@ -93,6 +94,12 @@ DEFINE mov____$i8,%rax b0
 DEFINE mov____%al,(%rdi) 8807
 DEFINE mov____%al,0x32(%rbp) 8885
 DEFINE mov____%al,0x8(%rbp) 8845
+DEFINE mov____%al,(%r10) 418802
+DEFINE mov____%ax,0x32(%rbp) 668985
+DEFINE mov____%dil,0x8(%rbp) 4088bd
+DEFINE mov____%dil,(%r10) 41883a
+DEFINE cmp____$i32,%rdi 483b3c25
+DEFINE mov____%rdi,(%r10) 49893a
 DEFINE mov____%ax,(%rdi) 668907
 DEFINE mov____%ax,(%r10) 66418902
 DEFINE mov____%ax,0x8(%rbp) 668945
