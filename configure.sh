@@ -158,6 +158,7 @@ subst () {
     -e s,"@GUILD@,$GUILD,"\
     -e s,"@GUILE@,$GUILE,"\
     -e s,"@PERL@,$PERL,"\
+    -e s,"@CPPFLAGS@,$CPPFLAGS,"\
     -e s,"@CFLAGS@,$CFLAGS,"\
     -e s,"@HEX2@,$HEX2,"\
     -e s,"@HEX2FLAGS@,$HEX2FLAGS,"\
