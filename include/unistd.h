@@ -2,6 +2,7 @@
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2017,2018,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2023 Timothy Sample <samplet@ngyro.com>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -30,7 +31,7 @@
 
 #else // ! SYSTEM_LIBC
 
-#if defined (BOOTSTRAP_WITH_POSIX)
+#ifndef _POSIX_VERSION
 #define _POSIX_VERSION 199009L
 #endif
 
