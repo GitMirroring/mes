@@ -290,6 +290,7 @@ lib/ctype/islower.c
 lib/ctype/isupper.c
 lib/ctype/tolower.c
 lib/ctype/toupper.c
+lib/math/ldexpl.c
 lib/mes/abtod.c
 lib/mes/dtoab.c
 lib/mes/search-path.c
