@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -55,8 +56,11 @@
 #define SEEK_CUR 1
 #define SEEK_END 2
 
+void clearerr (FILE * stream);
 FILE *fdopen (int fd, char const *mode);
+int fileno (FILE * stream);
 FILE *fopen (char const *file_name, char const *mode);
+FILE *freopen (char const *file_name, char const *opentype, FILE * stream);
 int eputc (int c);
 int eputs (char const *s);
 int fclose (FILE * stream);
@@ -77,6 +81,8 @@ int putchar (int c);
 int puts (char const *s);
 int remove (char const *file_name);
 int rename (char const *old_name, char const *new_name);
+int rewind (int x);
+int setbuf (int x);
 int setvbuf (FILE * stream, char *buf, int mode, size_t size);
 int ungetc (int c, FILE * stream);
 long ftell (FILE * stream);
