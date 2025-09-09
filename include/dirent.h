@@ -3,6 +3,7 @@
  * Copyright (C) 1991, 1992 Free Software Foundation, Inc.
  * Copyright © 2018,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2024 Andrius Štikonas <andrius@stikonas.eu>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -43,9 +44,18 @@
 
 #include <stddef.h>
 
+#define DT_UNKNOWN 0
+#define DT_FIFO    1
+#define DT_CHR     2
+#define DT_DIR     4
+#define DT_BLK     6
+#define DT_REG     8
+#define DT_LNK    10
+#define DT_SOCK   12
+#define DT_WHT    14
+
 int __getdirentries (int filedes, char *buffer, size_t nbytes, off_t * basep);
 
-// FIXME move to include/<kernel>/<arch>/dirent.h?
 struct dirent
 {
   ino_t d_ino;
