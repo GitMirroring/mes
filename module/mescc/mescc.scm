@@ -306,10 +306,14 @@
         (arch-find options file-name))))
 
 (define (assert-system* . args)
-  (let ((status (apply system* args)))
+  ;; The system* result is not necessarily 0 on success; for
+  ;; status:exit-val may return #false if wait4's result includes
+  ;; garbage it the upper bits of 64bit integers.
+  (let* ((status (apply system* args))
+         (status (or (status:exit-val status) 127)))
     (when (not (zero? status))
       (format (current-error-port) "mescc: failed: ~a\n" (string-join args))
-      (exit (status:exit-val status)))
+      (exit status))
     status))
 
 (define (arch-get options)
