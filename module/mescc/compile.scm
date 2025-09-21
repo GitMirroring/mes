@@ -809,6 +809,26 @@
 (define (r0->r1-mem*n info n size)
   (append-text info (r0->r1-mem*n- info n size)))
 
+(define (n/r0->r1-mem info n)
+  (append-text info
+               (wrap-as
+                (cond ((= n 1) (append (as info 'byte-r0->r1-mem)
+                                       (as info 'r+value 1)))
+                      ((= n 2) (append (as info 'word-r0->r1-mem)
+                                       (as info 'r+value 2)))
+                      ((= n 4) (append (as info 'long-r0->r1-mem)
+                                       (as info 'r+value 4)))
+                      ((= n 8)
+                       (if (= (->size "*" info) 8)
+                           (append (as info 'r0->r1-mem)
+                                   (as info 'r+value 8))
+                           (append (as info 'long-r0->r1-mem)
+                                   (as info 'r+value 4)
+                                   (as info 'value->r0 0)
+                                   (as info 'long-r0->r1-mem)
+                                   (as info 'r+value 4))))
+                      (else (error "n/r0->r1-mem: n not in (1 2 4 8)"))))))
+
 (define (expr->register* o info)
   (pmatch o
     ((p-expr (ident ,name))
