@@ -2026,6 +2026,12 @@
        (define (flatten-cases c)
          (define (flatten-case o)
            (pmatch o
+             ((case ,test (labeled-stmt ,label . ,body))
+              (cons `(case ,test (expr-stmt))
+                    (flatten-case `(labeled-stmt ,label ,@body))))
+             ((labeled-stmt ,label (case . ,body))
+              (cons `(labeled-stmt ,label (expr-stmt))
+                    (flatten-case `(case ,@body))))
              ((case ,test (case . ,body))
               (cons `(case ,test (expr-stmt)) (flatten-case `(case ,@body))))
              ((case ,test ,case-body (case . ,body))
