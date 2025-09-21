@@ -2667,7 +2667,7 @@
                     (_ (error "not supported enum field=~s\n" field)))))
           (loop (cdr fields)
                 (1+ i)
-                (append constants (list (ident->constant name i))))))))
+                (cons (ident->constant name i) constants))))))
 
 (define (init->data type o info)
   (pmatch o
