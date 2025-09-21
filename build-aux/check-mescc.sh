@@ -231,6 +231,7 @@ lib/tests/scaffold/87-cast-function-pointer.c
 lib/tests/scaffold/87-multiple-comma-operators.c
 lib/tests/scaffold/87-lookup-tag.c
 lib/tests/scaffold/87-call-function-pointer-cast.c
+lib/tests/scaffold/87-cond-expression-expression.c
 "
 
 gnu_tests="
