@@ -2196,15 +2196,9 @@
        (define (jump-z label)
          (wrap-as (as info 'jump-z label)))
        (define (test->text test)
-         (let ((value (pmatch test
-                        (0 0)
-                        ((p-expr (char ,value)) (char->integer (car (string->list value))))
-                        ((p-expr (ident ,constant)) (assoc-ref (.constants info) constant))
-                        ((p-expr (fixed ,value)) (cstring->int value))
-                        ((neg (p-expr (fixed ,value))) (- (cstring->int value)))
-                        (_ (error "case test: not supported: " test)))))
-           (append (wrap-as (as info 'r-cmp-value value))
-                   (jump-z body-label))))
+         ;; FIXME? parent problem??
+         (append (wrap-as (as info 'r-cmp-value (expr->number info test)))
+                 (jump-z body-label)))
        (let ((info (if clause? (append-text info (wrap-as `((#:label ,clause-label))))
                        info)))
          (append-text info (test->text test))))
