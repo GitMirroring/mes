@@ -224,6 +224,7 @@ lib/tests/scaffold/87-cond-expression-argument.c
 lib/tests/scaffold/87-nested-cond-expression.c
 lib/tests/scaffold/87-sizeof-tag.c
 lib/tests/scaffold/87-struct-tag-pointer.c
+lib/tests/scaffold/87-string-element-type.c
 "
 
 gnu_tests="
