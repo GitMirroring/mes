@@ -819,11 +819,8 @@
     ((i-sel (ident ,field) ,struct)
      (let* ((type (ast->basic-type struct info))
             (offset (field-offset info type field))
-            (info (expr->register* struct info))
-            (type (ast->type struct info)))
-       (append-text info (append (if (c-array? type) '()
-                                     (wrap-as (as info 'mem->r)))
-                                 (wrap-as (as info 'r+value offset))))))
+            (info (expr->register struct info)))
+       (append-text info (wrap-as (as info 'r+value offset)))))
 
     ((array-ref ,index ,array)
      (let* ((info (expr->register index info))
