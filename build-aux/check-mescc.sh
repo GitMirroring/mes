@@ -228,6 +228,7 @@ lib/tests/scaffold/87-string-element-type.c
 lib/tests/scaffold/87-sizeof-union.c
 lib/tests/scaffold/87-typedef-enum.c
 lib/tests/scaffold/87-cast-function-pointer.c
+lib/tests/scaffold/87-multiple-comma-operators.c
 "
 
 gnu_tests="
