@@ -2843,7 +2843,7 @@
 
     (_ (error "init-declr->info: not supported: " o))))
 
-(define (enum-def-list->constants constants fields)
+(define (enum-def-list->constants constants fields info)
   (let loop ((fields fields) (i 0) (constants constants))
     (if (pair? fields)
         (let ((field (car fields)))
@@ -2854,7 +2854,7 @@
                        ((enum-defn (ident ,name) . _) name)))
                (i (pmatch field
                     ((enum-defn ,name) i)
-                    ((enum-defn ,name ,exp) (expr->number #f exp))
+                    ((enum-defn ,name ,exp) (expr->number info exp))
                     (_ (error "not supported enum field=~s\n" field)))))
           (loop (cdr fields)
                 (1+ i)
@@ -2951,7 +2951,7 @@
     ((enum-def (ident ,name) (enum-def-list . ,fields))
      (mescc:trace name " <t>")
      (let* ((type-entry (enum->type-entry name fields))
-            (constants (enum-def-list->constants (.constants info) fields)))
+            (constants (enum-def-list->constants (.constants info) fields info)))
        (clone info
               #:types (cons type-entry (.types info))
               #:constants (append constants (.constants info)))))
@@ -2959,7 +2959,7 @@
     ((enum-def (enum-def-list . ,fields))
      (mescc:trace name " <t>")
      (let* ((type-entry (enum->type-entry name fields))
-            (constants (enum-def-list->constants (.constants info) fields)))
+            (constants (enum-def-list->constants (.constants info) fields info)))
        (clone info
               #:types (cons type-entry (.types info))
               #:constants (append constants (.constants info)))))
