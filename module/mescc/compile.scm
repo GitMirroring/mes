@@ -435,14 +435,15 @@
     ((bits . ,bits) bits)
     (_ (list o))))
 
-(define (struct->init-fields o) ;; FIXME REMOVEME: non-recursive unroll
+(define (struct->init-fields o)
   (pmatch o
     (_ (guard (and (type? o) (eq? (type:type o) 'struct)))
        (append-map struct->init-fields (type:description o)))
     (_ (guard (and (type? o) (eq? (type:type o) 'union)))
-       (list (car (type:description o))))
+       (struct->init-fields (car (type:description o))))
     ((struct . ,type) (struct->init-fields type))
-    ((union . ,type) (list (car (type:description type))))
+    ((union . ,type) (struct->init-fields type))
+    ((bits . ,bits) bits)
     (_ (list o))))
 
 (define (byte->hex.m1 o)
