@@ -1528,6 +1528,18 @@
                )
               (else '())))))
 
+(define (promote o info)
+  (let* ((type (ast->type o info))
+         (type (cond ((c-array? type) (make-pointer (c-array:type type) 1))
+                     ((bit-field? type) (bit-field:type type))
+                     (else type)))
+         (size (if (pointer? type)
+                   (->size "*" info)
+                   (type:size type)))
+         (int (get-type "int" info))
+         (int-size (type:size int)))
+    (if (> int-size size) int type)))
+
 (define (binop->r info)
   (lambda (a b c . rest)
     (let* ((info (expr->register a info))
