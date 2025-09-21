@@ -1089,6 +1089,12 @@
            (if array? info
                (append-text info (mem->r type info)))))
 
+        (,string (guard (string? string))
+                 (expr->register `(p-expr (string ,string)) info))
+
+        ((de-ref (ref-to ,expr))
+         (expr->register expr info))
+
         ((de-ref ,expr)
          (let* ((info (expr->register expr info))
                 (type (ast->type o info)))
