@@ -136,7 +136,47 @@
                           ((string-suffix? "U" value) "unsigned")
                           ((string-suffix? "LL" value) "long long")
                           ((string-suffix? "L" value) "long")
-                          (else "default"))))
+                          ;; FIXME If above the value is too big for the suffix,
+                          ;; then the type has to be increased similar to this.
+                          (else
+                           (let* ((int (get-type "int" info))
+                                  (long (get-type "long" info))
+                                  (long-long (get-type "long long" info))
+                                  (int-bitsize (* 8 (type:size int)))
+                                  (long-bitsize (* 8 (type:size long)))
+                                  (long-long-bitsize (* 8 (type:size long-long)))
+                                  (int-sign (ash 1 (1- int-bitsize)))
+                                  (unsigned-max (1+ (ash (1- int-sign) 1)))
+                                  (long-sign (ash 1 (1- long-bitsize)))
+                                  (unsigned-long-max (1+ (ash (1- long-sign) 1)))
+                                  (long-long-sign (ash 1 (1- long-long-bitsize)))
+                                  ;; The literal value may be the result of an
+                                  ;; integer overflow and not be reliable at all.
+                                  (literal (cstring->int value)))
+                             ;; The calculations above may be limited by a
+                             ;; certain bit size.  Then there is no possibility
+                             ;; to represent bigger types.  In such a case some
+                             ;; of the {int,long,long-long}-{sign,max} values are
+                             ;; negative and a negative literal value is a clear
+                             ;; indication to use an unsigned type.  However, a
+                             ;; positive literal value does not mean anything, if
+                             ;; an overflow happened.  Then we can only hope that
+                             ;; there was no overflow and assume a signed type.
+                             (cond ((< int-sign 0)
+                                    (if (< literal 0) "unsigned"
+                                        "int"))
+                                   ((< literal int-sign) "int")
+                                   ((<= literal unsigned-max) "unsigned")
+                                   ((< long-sign 0)
+                                    (if (< literal 0) "unsigned long"
+                                        "long"))
+                                   ((< literal long-sign) "long")
+                                   ((<= literal unsigned-long-max) "unsigned long")
+                                   ((< long-long-sign 0)
+                                    (if (< literal 0) "unsigned long long"
+                                        "long long"))
+                                   ((< literal long-long-sign) "long-long")
+                                   (else "unsigned long long")))))))
          (get-type type info)))
       ((float ,float) (get-type "float" info))
       ((void) (get-type "void" info))
