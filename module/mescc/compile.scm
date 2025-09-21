@@ -1808,6 +1808,7 @@
 (define (try-expr->number info o)
   (pmatch o
     ((fixed ,a) (cstring->int a))
+    ((char ,c) (char->integer (car (string->list c))))
     ((p-expr ,expr) (expr->number info expr))
     ((pos ,a)
      (expr->number info a))
