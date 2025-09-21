@@ -219,6 +219,8 @@
        (or (and=> (assoc-ref (.functions info) name) function:type)
            (get-type "default" info)))
 
+      ((fctn-call ,expr . _) (ast->type expr info))
+
       ((fixed-type ,type) (ast->type type info))
       ((float-type ,type) (ast->type type info))
       ((type-spec ,type) (ast->type type info))
