@@ -241,6 +241,7 @@ lib/tests/scaffold/87-switch-with-label.c
 lib/tests/scaffold/87-init-struct0.c
 lib/tests/scaffold/87-init-struct1.c
 lib/tests/scaffold/87-init-struct2.c
+lib/tests/scaffold/87-init-struct3.c
 "
 
 gnu_tests="
@@ -287,6 +288,7 @@ lib/tests/scaffold/87-init-struct1.c
         xfail_tests="$xfail_tests
 lib/tests/scaffold/87-indirect-bitfield.c
 lib/tests/scaffold/87-init-struct0.c
+lib/tests/scaffold/87-init-struct3.c
 "
     fi
 
@@ -299,6 +301,7 @@ lib/tests/scaffold/87-init-struct0.c
         xfail_tests="$xfail_tests
 lib/tests/scaffold/87-indirect-bitfield.c
 lib/tests/scaffold/87-init-struct0.c
+lib/tests/scaffold/87-init-struct3.c
 lib/tests/signal/90-signal.c
 "
     fi
