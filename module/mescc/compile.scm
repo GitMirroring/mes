@@ -1106,7 +1106,23 @@
                 (size (->size type info))
                 (array? (c-array? type)))
            (if array? info
-               (append-text info (mem->r type info)))))
+               (let* ((info (if (structured-type? type) info
+                                (append-text info (mem->r type info)))))
+                 (if (not (bit-field? type)) info
+                     (let* ((bit (bit-field:bit type))
+                            (bits (bit-field:bits type))
+                            (mask (- (ash 1 bits) 1))
+                            ;; FIXME: signed
+                            (info (allocate-register info))
+                            (info (append-text
+                                   info
+                                   (wrap-as (append (as info 'value->r bit)
+                                                    (as info 'r0>>r1)
+                                                    (as info 'swap-r0-r1)
+                                                    (as info 'r-and mask)
+                                                    (as info 'swap-r0-r1)))))
+                            (info (free-register info)))
+                       info))))))
 
         ((i-sel ,field ,struct)
          (let* ((info (expr->register* o info))
@@ -1115,7 +1131,23 @@
                 (size (->size type info))
                 (array? (c-array? type)))
            (if array? info
-               (append-text info (mem->r type info)))))
+               (let* ((info (if (structured-type? type) info
+                                (append-text info (mem->r type info)))))
+                 (if (not (bit-field? type)) info
+                     (let* ((bit (bit-field:bit type))
+                            (bits (bit-field:bits type))
+                            (mask (- (ash 1 bits) 1))
+                            ;; FIXME: signed
+                            (info (allocate-register info))
+                            (info (append-text
+                                   info
+                                   (wrap-as (append (as info 'value->r bit)
+                                                    (as info 'r0>>r1)
+                                                    (as info 'swap-r0-r1)
+                                                    (as info 'r-and mask)
+                                                    (as info 'swap-r0-r1)))))
+                            (info (free-register info)))
+                       info))))))
 
         (,string (guard (string? string))
                  (expr->register `(p-expr (string ,string)) info))
