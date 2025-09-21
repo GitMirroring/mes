@@ -354,6 +354,7 @@
 (define (get-type o info)
   (let ((t (assoc-ref (.types info) o)))
     (pmatch t
+      ((tag ,name) (or (get-type t info) t))
       ((typedef ,next) (or (get-type next info) o))
       (_ t))))
 
