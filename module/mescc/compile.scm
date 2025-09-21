@@ -3037,6 +3037,11 @@
     ((param-decl (decl-spec-list (type-spec ,type)) (param-declr (ptr-declr ,pointer (ident ,name))))
      (let ((rank (pointer->rank pointer)))
        (rank+= (ast->type type info) rank)))
+    ((param-decl (decl-spec-list ,type) (param-declr (ftn-declr (ptr-declr ,pointer (ident ,name)) _)))
+     (let ((rank (pointer->rank pointer)))
+       (rank+= (ast->type type info) (1+ rank))))
+    ((param-decl (decl-spec-list ,type) (param-declr (ary-declr _)))
+     (make-pointer (ast->type type info) 1))
     ;;Nyacc >= 1.02.0
     ((param-decl (decl-spec-list ,type) (param-declr (ptr-declr ,pointer (ary-declr _))))
      (let ((rank (pointer->rank pointer)))
