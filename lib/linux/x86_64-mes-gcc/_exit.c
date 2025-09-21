@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2020 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -27,8 +28,8 @@ void
 _exit (int code)
 {
   asm (
-       "mov     $"SYS_exit",%%rax\n\t"
        "mov     %0,%%rdi\n\t"
+       "mov     $"SYS_exit",%%rax\n\t"
        "syscall \n\t"
        : // no outputs "=" (r)
        : "rm" (code)
