@@ -1560,8 +1560,11 @@
 
 (define (binop->r info)
   (lambda (a b c . rest)
-    (let* ((info (expr->register a info))
+    (let* ((type (convert a b info))
+           (info (expr->register a info))
+           (info (append-text info (convert-r0 info type)))
            (info (expr->register b info))
+           (info (append-text info (convert-r0 info type)))
            (info (append-text info (wrap-as (apply as info (cons c rest))))))
       (free-register info))))
 

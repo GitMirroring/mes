@@ -270,9 +270,6 @@ lib/tests/scaffold/91-goto-array.c
 
     if test $mes_cpu = x86_64; then
         xfail_tests="$xfail_tests
-lib/tests/scaffold/16-cast.c
-lib/tests/scaffold/17-compare-unsigned-le.c
-lib/tests/scaffold/17-compare-rotated.c
 "
     fi
 
