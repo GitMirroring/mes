@@ -2862,6 +2862,10 @@
 
 (define (init->data type o info)
   (pmatch o
+    ((p-expr (string ,string)) (guard (c-array? type))
+     (array-init->data type (->size type info)
+                       `(initzer (p-expr (string ,string)))
+                       info))
     ((p-expr ,expr) (init->data type expr info))
     ((fixed ,fixed) (int->bv type (expr->number info o) info))
     ((char ,char) (int->bv type (char->integer (string-ref char 0)) info))
