@@ -124,7 +124,7 @@
             (_ p)))
       (,a (guard (c-array? a)) a)
       (,b (guard (bit-field? b)) b)
-
+      ((string . ,strings) (make-pointer (get-type "char" info) 1))
       ((char ,value) (get-type "char" info))
       ((enum-ref . _) (get-type "default" info))
       ((fixed ,value)
