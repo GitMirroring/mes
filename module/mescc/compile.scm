@@ -386,15 +386,7 @@
     (_ (error (format #f "field:size: ~s\n" o)))))
 
 (define (field-field info struct field)
-  (let ((fields (type:description struct)))
-    (let loop ((fields fields))
-      (if (null? fields) (error (format #f "no such field: ~a in ~s" field struct))
-          (let ((f (car fields)))
-            (cond ((equal? (car f) field) f)
-                  ((and (memq (car f) '(struct union)) (type? (cdr f))
-                        (find (lambda (x) (equal? (car x) field)) (struct->fields (cdr f)))))
-                  ((eq? (car f) 'bits) (assoc field (cdr f)))
-                  (else (loop (cdr fields)))))))))
+  (assoc field (struct->fields struct)))
 
 (define (field-offset info struct field)
   (if (eq? (type:type struct) 'union) 0
