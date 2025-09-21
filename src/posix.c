@@ -448,6 +448,13 @@ waitpid_ (struct scm *pid, struct scm *options)
 {
   int status;
   int child = waitpid (pid->value, &status, options->value);
+  /* If the exit status value of the child process is zero, then the
+     status value reported by waitpid is also zero.  This is guaranteed
+     by POSIX and Linux at C level.  However, stage0-posix does not
+     conform to this and leaves some bits uninitialized.  Mes previously
+     relied on it in its assert-system* function. */
+  if ((status & 0xff7f) == 0)
+    status = 0;
   return cons (make_number (child), make_number (status));
 }
 
