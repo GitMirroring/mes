@@ -1114,7 +1114,9 @@
                               (fold-right expr->arg info expr-list (reverse (iota (length expr-list))))))
                     (info (clone info #:allocated '() #:pushed 0 #:registers (append (reverse allocated) registers)))
                     (n (length expr-list))
-                    (info (if (not (assoc-ref locals name))
+                    (functor (or (and=> (assoc-ref locals name) local:type)
+                                 (and=> (assoc-ref globals name) global:type)))
+                    (info (if (not (pointer? functor))
                               (begin
                                 (when (and (not (assoc name (.functions info)))
                                            (not (assoc name globals))
