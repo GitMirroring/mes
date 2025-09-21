@@ -239,6 +239,7 @@ lib/tests/scaffold/87-char-case.c
 lib/tests/scaffold/87-complex-struct-field.c
 lib/tests/scaffold/87-switch-with-label.c
 lib/tests/scaffold/87-init-struct0.c
+lib/tests/scaffold/87-init-struct1.c
 "
 
 gnu_tests="
@@ -278,6 +279,7 @@ lib/tests/mes/90-abtod.c
 lib/tests/mes/90-dtoab.c
 lib/tests/scaffold/90-goto-var.c
 lib/tests/scaffold/91-goto-array.c
+lib/tests/scaffold/87-init-struct1.c
 "
 
     if test $mes_cpu = x86; then
