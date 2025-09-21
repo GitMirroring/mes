@@ -332,7 +332,7 @@
 
       ((cond-expr _ ,a ,b) (ast->type a info))
 
-      ((comma-expr _ ,a) (ast->type a info))
+      ((comma-expr . ,a) (ast->type (last a) info))
 
       (_ (get-type o info))))
 
