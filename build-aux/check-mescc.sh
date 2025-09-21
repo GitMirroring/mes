@@ -240,6 +240,7 @@ lib/tests/scaffold/87-complex-struct-field.c
 lib/tests/scaffold/87-switch-with-label.c
 lib/tests/scaffold/87-init-struct0.c
 lib/tests/scaffold/87-init-struct1.c
+lib/tests/scaffold/87-init-struct2.c
 "
 
 gnu_tests="
