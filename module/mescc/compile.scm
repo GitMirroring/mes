@@ -4,6 +4,7 @@
 ;;; Copyright © 2023 Ekaitz Zarraga <ekaitz@elenq.tech>
 ;;; Copyright © 2021 W. J. van der Laan <laanwj@protonmail.com>
 ;;; Copyright © 2024 Michael Forney <mforney@mforney.org>
+;;; Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
@@ -1454,13 +1455,12 @@
                        (info (if (not (bit-field? type)) info
                                  (let* ((bit (bit-field:bit type))
                                         (bits (bit-field:bits type))
-                                        (set-mask (- (ash bits 1) 1))
+                                        (set-mask (- (ash 1 bits) 1))
                                         (shifted-set-mask (ash set-mask bit))
-                                        (clear-mask (logxor shifted-set-mask
-                                                            (if (= reg-size 4)
-                                                                #b11111111111111111111111111111111
-                                                                #b1111111111111111111111111111111111111111111111111111111111111111)))
-
+                                        (clear-mask
+                                         (logxor shifted-set-mask
+                                                 (if (= reg-size 4) #xffffffff
+                                                     #xffffffffffffffff)))
                                         (info (append-text info (wrap-as (as info 'swap-r0-r1))))
                                         (info (allocate-register info))
                                         (info (append-text info (wrap-as (as info 'r2->r0))))
