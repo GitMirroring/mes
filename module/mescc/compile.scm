@@ -2958,7 +2958,7 @@
             (constants (enum-def-list->constants (.constants info) fields info)))
        (clone info
               #:types (cons type-entry (.types info))
-              #:constants (append constants (.constants info)))))
+              #:constants constants)))
 
     ((enum-def (enum-def-list . ,fields))
      (mescc:trace name " <t>")
@@ -2966,7 +2966,7 @@
             (constants (enum-def-list->constants (.constants info) fields info)))
        (clone info
               #:types (cons type-entry (.types info))
-              #:constants (append constants (.constants info)))))
+              #:constants constants)))
 
     ((struct-def (field-list . ,fields))
      (mescc:trace name " <t>")
