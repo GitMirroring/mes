@@ -249,6 +249,7 @@ lib/tests/scaffold/87-init-struct6.c
 lib/tests/scaffold/87-init-struct7.c
 lib/tests/scaffold/87-init-struct8.c
 lib/tests/scaffold/87-sizeof-enum.c
+lib/tests/scaffold/87-nested-struct.c
 "
 
 gnu_tests="
