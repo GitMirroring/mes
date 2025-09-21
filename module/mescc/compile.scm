@@ -107,7 +107,9 @@
         ((bit-field? o) ((compose (cut ->size <> info) bit-field:type) o))
         ((and (pair? o) (pair? (car o)) (bit-field? (cdar o))) ((compose (cut ->size <> info) cdar) o))
         ((string? o) (->size (get-type o info) info))
-        (else (error "->size>: not a <type>:" o))))
+        (else (pmatch o
+                ((tag ,name) (->size (get-type o info) info))
+                (_ (error "->size>: not a <type>:" o))))))
 
 (define (ast->type o info)
   (define (type-helper o info)
