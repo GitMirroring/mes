@@ -253,7 +253,7 @@
          (make-type 'struct (apply + (map (cut field:size <> info) fields)) fields)))
       ((union-def (field-list . ,fields))
        (let ((fields (append-map (struct-field info) fields)))
-         (make-type 'union (apply + (map (cut field:size <> info) fields)) fields)))
+         (make-type 'union (apply max (map (cut field:size <> info) fields)) fields)))
       ((enum-def (enum-def-list . ,fields))
        (get-type "default" info))
 
@@ -1824,7 +1824,7 @@
          (list (cons 'struct (make-type 'struct (apply + (map (cut field:size <> info) fields)) fields)))))
       ((comp-decl (decl-spec-list (type-spec (union-def (field-list . ,fields)))))
        (let ((fields (append-map (struct-field info) fields)))
-         (list (cons 'union (make-type 'union (apply + (map (cut field:size <> info) fields)) fields)))))
+         (list (cons 'union (make-type 'union (apply max (map (cut field:size <> info) fields)) fields)))))
       ((comp-decl (decl-spec-list (type-spec ,type)) (comp-declr-list (comp-declr (bit-field (ident ,name) (p-expr (fixed ,bits)))) . ,fields))
        (let ((type (ast->type type info)))
          (list (cons 'bits (let loop ((o `((comp-declr (bit-field (ident ,name) (p-expr (fixed ,bits)))) . ,fields)) (bit 0))
