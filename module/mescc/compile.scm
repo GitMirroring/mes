@@ -313,6 +313,9 @@
       ((cast (type-name ,type (abs-ptr-declr ,pointer)) ,expr)
        (let ((rank (pointer->rank pointer)))
          (rank+= (ast->type type info) rank)))
+      ((cast (type-name ,type (ftn-declr (abs-ptr-declr ,pointer) ,param-list)) ,expr)
+       (let* ((rank (pointer->rank pointer)))
+         (rank+= (ast->type type info) rank)))
 
       ;; Nyacc < 1.02.0
       ((cast (type-name ,type (abs-declr ,pointer)) ,expr)
