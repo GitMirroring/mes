@@ -1553,13 +1553,13 @@
                (format (current-error-port) "WARNING assign: ~a" (with-output-to-string (lambda () (pretty-print-c99 o))))
                (format (current-error-port) "   size[~a]:~a != size[~a]:~a\n"  rank size rank-b size-b)))
            (pmatch a
-             ((p-expr (ident ,name))
-              (if (or (<= size r-size)
-                      (<= size-b r-size)) (append-text info ((r->ident info) name))
-                      (let* ((info (expr->register* a info))
-                             (info (n/r0->r1-mem info (max size size-b))))
-                        (free-register info))))
+             (_ (guard (structured-type? type))
+                (let* ((info (expr->register* a info))
+                       (info (r0-mem->r1-mem*n info (min size size-b))))
+                  (free-register info)))
 
+             ((p-expr (ident ,name))
+              (append-text info ((r->ident info) name)))
              (_ (let* ((info (expr->register* a info))
                        (reg-size (->size "*" info))
                        (info (if (not (bit-field? type)) info
