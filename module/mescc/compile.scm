@@ -807,6 +807,9 @@
             (info (expr->register* struct info)))
        (append-text info (wrap-as (as info 'r+value offset)))))
 
+    ((i-sel ,ident (ref-to ,p-expr))
+     (expr->register* `(d-sel ,ident ,p-expr) info))
+
     ((i-sel (ident ,field) (fctn-call (p-expr (ident ,function)) . ,rest))
      (let* ((type (ast->basic-type `(fctn-call (p-expr (ident ,function)) ,@rest) info))
             (offset (field-offset info type field))
