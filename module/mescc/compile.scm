@@ -256,6 +256,8 @@
          (make-type 'union (apply max (map (cut field:size <> info) fields)) fields)))
       ((enum-def (enum-def-list . ,fields))
        (get-type "default" info))
+      ((enum-def (ident ,name) (enum-def-list . ,fields))
+       (get-type "default" info))
 
       ((d-sel (ident ,field) ,struct)
        (let ((type0 (ast->type struct info)))
