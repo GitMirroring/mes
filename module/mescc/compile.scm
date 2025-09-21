@@ -1165,7 +1165,7 @@
         ((cond-expr ,test ,then ,else)
          (let* ((info (append-text info (ast->comment `(cond-expr ,test (ellipsis) (ellipsis)))))
                 (here (number->string (length text)))
-                (label (string-append "_" (.function info) "_" here "_"))
+                (label (string-append "_" (.function info) "_" here "_cond_"))
                 (else-label (string-append label "else"))
                 (break-label (string-append label "break"))
                 (info ((test-jump-label->info info else-label) test))
