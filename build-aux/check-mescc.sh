@@ -221,6 +221,7 @@ lib/tests/scaffold/84-struct-field-list.c
 lib/tests/scaffold/85-sizeof.c
 lib/tests/scaffold/86-comma-operator-types.c
 lib/tests/scaffold/87-cond-expression-argument.c
+lib/tests/scaffold/87-nested-cond-expression.c
 "
 
 gnu_tests="
