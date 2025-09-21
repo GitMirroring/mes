@@ -233,6 +233,7 @@ lib/tests/scaffold/87-lookup-tag.c
 lib/tests/scaffold/87-call-function-pointer-cast.c
 lib/tests/scaffold/87-cond-expression-expression.c
 lib/tests/scaffold/87-small-struct.c
+lib/tests/scaffold/87-indirect-bitfield.c
 "
 
 gnu_tests="
@@ -276,6 +277,7 @@ lib/tests/scaffold/91-goto-array.c
 
     if test $mes_cpu = x86; then
         xfail_tests="$xfail_tests
+lib/tests/scaffold/87-indirect-bitfield.c
 "
     fi
 
@@ -286,6 +288,7 @@ lib/tests/scaffold/91-goto-array.c
 
     if test $mes_cpu = arm; then
         xfail_tests="$xfail_tests
+lib/tests/scaffold/87-indirect-bitfield.c
 lib/tests/signal/90-signal.c
 "
     fi
