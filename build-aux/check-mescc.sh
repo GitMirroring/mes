@@ -244,6 +244,7 @@ lib/tests/scaffold/87-init-struct2.c
 lib/tests/scaffold/87-init-struct3.c
 lib/tests/scaffold/87-init-struct4.c
 lib/tests/scaffold/87-init-struct5.c
+lib/tests/scaffold/87-sizeof-initialized-array.c
 "
 
 gnu_tests="
