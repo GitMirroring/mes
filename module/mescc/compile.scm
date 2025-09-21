@@ -117,7 +117,11 @@
         (format (current-error-port) "type-helper: ~s\n" o))
     (pmatch o
       (,t (guard (type? t)) t)
-      (,p (guard (pointer? p)) p)
+      (,p (guard (pointer? p))
+          (pmatch (pointer:type p)
+            ((tag ,name)
+             (make-pointer (get-type (pointer:type p) info) (pointer:rank p)))
+            (_ p)))
       (,a (guard (c-array? a)) a)
       (,b (guard (bit-field? b)) b)
 
