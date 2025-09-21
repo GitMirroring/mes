@@ -1145,6 +1145,12 @@
                 (info (fold (lambda (x info) (free-register info)) info (.allocated info)))
                 (n (length expr-list))
                 (function (pmatch function
+                            ((cast ,type (de-ref (p-expr (ident ,name))))
+                             (guard (assoc-ref (.functions info) name))
+                             `(cast ,type (p-expr (ident ,name))))
+                            ((cast ,type (de-ref ,expr))
+                             (guard (= (expr->rank info expr) 1))
+                             `(cast ,type ,expr))
                             ((de-ref ,function) function)
                             (_ function)))
                 (info (expr->register function info))
