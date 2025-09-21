@@ -80,7 +80,7 @@
     (core:waitpid pid options)))
 
 (define (status:exit-val status)
-  (ash status -8))
+  (logand (ash status -8) 255))
 
 (define (stat:dev st)        (vector-ref st  0))
 (define (stat:ino st)        (vector-ref st  1))
