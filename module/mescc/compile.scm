@@ -430,8 +430,8 @@
        (append-map struct->fields (type:description o)))
     (_ (guard (and (type? o) (eq? (type:type o) 'union)))
        (append-map struct->fields (type:description o)))
-    ((struct . ,type) (list (car (type:description type))))
-    ((union . ,type) (list (car (type:description type))))
+    ((struct . ,type) (struct->fields type))
+    ((union . ,type) (struct->fields type))
     ((bits . ,bits) bits)
     (_ (list o))))
 
