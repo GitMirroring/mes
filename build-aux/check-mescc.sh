@@ -5,6 +5,7 @@
 # Copyright © 2023, 2024 Andrius Štikonas <andrius@stikonas.eu>
 # Copyright © 2023, 2024 Ekaitz Zarraga <ekaitz@elenq.tech>
 # Copyright © 2024 Michael Forney <mforney@mforney.org>
+# Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
 #
 # This file is part of GNU Mes.
 #
@@ -219,6 +220,7 @@ lib/tests/scaffold/83-heterogenoous-init.c
 lib/tests/scaffold/84-struct-field-list.c
 lib/tests/scaffold/85-sizeof.c
 lib/tests/scaffold/86-comma-operator-types.c
+lib/tests/scaffold/87-cond-expression-argument.c
 "
 
 gnu_tests="
