@@ -3004,24 +3004,12 @@
 
 (define (field->info o info)
   (pmatch o
-    ((comp-decl (decl-spec-list (type-spec (struct-def (ident ,name) (field-list . ,fields)))) . _)
-     (let* ((fields (append-map (struct-field info) fields))
-            (struct (make-type 'struct (apply + (map (cut field:size <> info) fields)) fields)))
-       (clone info #:types (acons `(tag ,name) struct (.types info)))))
-    ((comp-decl (decl-spec-list (type-spec (union-def (ident ,name) (field-list . ,fields)))) . _)
-     (let* ((fields (append-map (struct-field info) fields))
-            (union (make-type 'union (apply + (map (cut field:size <> info) fields)) fields)))
-       (clone info #:types (acons `(tag ,name) union (.types info))) ))
-    ((comp-decl (decl-spec-list (type-spec (enum-def (enum-def-list . ,fields)))) . _)
-     (let ((constants (enum-def-list->constants (.constants info) fields)))
-       (clone info
-              #:constants (append constants (.constants info)))))
-    ((comp-decl (decl-spec-list (type-spec (enum-def (ident ,name) (enum-def-list . ,fields)))) . _)
-     (let ((constants (enum-def-list->constants (.constants info) fields))
-           (type-entry (enum->type-entry name fields)))
-       (clone info
-              #:types (cons type-entry (.types info))
-              #:constants (append constants (.constants info)))))
+    ((comp-decl (decl-spec-list (type-spec (struct-def . _))) . _)
+     (type->info (cadar (cdadr o)) #f info))
+    ((comp-decl (decl-spec-list (type-spec (union-def . _))) . _)
+     (type->info (cadar (cdadr o)) #f info))
+    ((comp-decl (decl-spec-list (type-spec (enum-def . _))) . _)
+     (type->info (cadar (cdadr o)) #f info))
     (_ info)))
 
 ;;; fctn-defn
