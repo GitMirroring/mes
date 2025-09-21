@@ -1110,14 +1110,20 @@
                 (else-label (string-append label "else"))
                 (break-label (string-append label "break"))
                 (info ((test-jump-label->info info else-label) test))
+                ;; We can't simply change the info sequentially, as either the
+                ;; then or the else branch is executed, but never both.  The
+                ;; else branch has to run with the same info as the then branch.
+                (else-info info)
                 (info (expr->register then info))
-                (info (free-register info))
                 (info (append-text info (wrap-as (as info 'jump break-label))))
+                ;; Revert the info, as if the then condition never happened.
+                (info (clone info
+                             #:allocated (.allocated else-info)
+                             #:pushed (.pushed else-info)
+                             #:registers (.registers else-info)))
                 (info (append-text info (wrap-as `((#:label ,else-label)))))
                 (info (expr->register else info))
-                (info (free-register info))
-                (info (append-text info (wrap-as `((#:label ,break-label)))))
-                (info (allocate-register info)))
+                (info (append-text info (wrap-as `((#:label ,break-label))))))
            info))
 
         ((post-inc ,expr)
