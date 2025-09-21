@@ -227,6 +227,7 @@ lib/tests/scaffold/87-struct-tag-pointer.c
 lib/tests/scaffold/87-string-element-type.c
 lib/tests/scaffold/87-sizeof-union.c
 lib/tests/scaffold/87-typedef-enum.c
+lib/tests/scaffold/87-cast-function-pointer.c
 "
 
 gnu_tests="
