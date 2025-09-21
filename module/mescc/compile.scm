@@ -544,7 +544,7 @@
   (lambda (o)
     (let ((string `(#:string ,o)))
       (if (assoc-ref globals string) globals
-          (append globals (list (string->global-entry o)))))))
+          (cons (string->global-entry o) globals)))))
 
 (define (ident->r info)
   (lambda (o)
