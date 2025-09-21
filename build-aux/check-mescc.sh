@@ -248,6 +248,7 @@ lib/tests/scaffold/87-sizeof-initialized-array.c
 lib/tests/scaffold/87-init-struct6.c
 lib/tests/scaffold/87-init-struct7.c
 lib/tests/scaffold/87-init-struct8.c
+lib/tests/scaffold/87-sizeof-enum.c
 "
 
 gnu_tests="
