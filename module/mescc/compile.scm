@@ -772,6 +772,34 @@
 (define (pop-register r info)
   (append-text info (wrap-as (as info 'pop-register r))))
 
+(define (r0-mem->r1-mem*n info n)
+  (append-text info
+               (wrap-as
+                (let ((reg-size (->size "*" info)))
+                  (let loop ((n n))
+                    (cond ((>= n reg-size)
+                           (append (as info 'r0-mem->r1-mem)
+                                   (as info 'r+value reg-size)
+                                   (as info 'r0+value reg-size)
+                                   (loop (- n reg-size))))
+                          ((> n 4)
+                           (append (as info 'long-r0-mem->r1-mem)
+                                   (as info 'r+value 4)
+                                   (as info 'r0+value 4)
+                                   (loop (- n 4))))
+                          (else (case n
+                                  ((4) (append (as info 'long-r0-mem->r1-mem)
+                                               (as info 'r+value 4)))
+                                  ((3) (append (as info 'word-r0-mem->r1-mem)
+                                               (as info 'r+value 2)
+                                               (as info 'r0+value 2)
+                                               (loop (- n 2))))
+                                  ((2) (append (as info 'word-r0-mem->r1-mem)
+                                               (as info 'r+value 2)))
+                                  ((1) (append (as info 'byte-r0-mem->r1-mem)
+                                               (as info 'r+value 1)))
+                                  ((0) '())))))))))
+
 (define (n/r0->r1-mem info n)
   (append-text info
                (wrap-as
