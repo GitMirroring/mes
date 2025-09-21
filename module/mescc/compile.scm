@@ -1605,9 +1605,10 @@
       (let* ((info (expr->register o info))
              (info (append-text info (make-comment "jmp test LABEL")))
              (jump-text (wrap-as (as info type label)))
-             (info (append-text info (append (if (null? test) '() ((car test) info))
-                                             jump-text)))
-             (info (free-register info)))
+             (info (append-text info (append (if (null? test) '()
+                                                 ((car test) info)))))
+             (info (free-register info))
+             (info (append-text info jump-text)))
         info)))
   (lambda (o)
     (pmatch o

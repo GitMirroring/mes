@@ -254,7 +254,6 @@ lib/tests/stdio/90-sprintf.c
 
 if test $compiler = mescc; then
     xfail_tests="$xfail_tests
-lib/tests/scaffold/70-ternary-arithmetic-argument.c
 lib/tests/mes/90-abtod.c
 lib/tests/mes/90-dtoab.c
 lib/tests/scaffold/90-goto-var.c
