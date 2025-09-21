@@ -234,6 +234,7 @@ lib/tests/scaffold/87-call-function-pointer-cast.c
 lib/tests/scaffold/87-cond-expression-expression.c
 lib/tests/scaffold/87-small-struct.c
 lib/tests/scaffold/87-indirect-bitfield.c
+lib/tests/scaffold/87-case-expression.c
 "
 
 gnu_tests="
