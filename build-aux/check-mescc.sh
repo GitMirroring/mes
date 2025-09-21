@@ -238,6 +238,7 @@ lib/tests/scaffold/87-case-expression.c
 lib/tests/scaffold/87-char-case.c
 lib/tests/scaffold/87-complex-struct-field.c
 lib/tests/scaffold/87-switch-with-label.c
+lib/tests/scaffold/87-init-struct0.c
 "
 
 gnu_tests="
@@ -282,6 +283,7 @@ lib/tests/scaffold/91-goto-array.c
     if test $mes_cpu = x86; then
         xfail_tests="$xfail_tests
 lib/tests/scaffold/87-indirect-bitfield.c
+lib/tests/scaffold/87-init-struct0.c
 "
     fi
 
@@ -293,6 +295,7 @@ lib/tests/scaffold/87-indirect-bitfield.c
     if test $mes_cpu = arm; then
         xfail_tests="$xfail_tests
 lib/tests/scaffold/87-indirect-bitfield.c
+lib/tests/scaffold/87-init-struct0.c
 lib/tests/signal/90-signal.c
 "
     fi
