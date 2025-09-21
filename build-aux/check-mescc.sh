@@ -242,6 +242,7 @@ lib/tests/scaffold/87-init-struct0.c
 lib/tests/scaffold/87-init-struct1.c
 lib/tests/scaffold/87-init-struct2.c
 lib/tests/scaffold/87-init-struct3.c
+lib/tests/scaffold/87-init-struct4.c
 "
 
 gnu_tests="
