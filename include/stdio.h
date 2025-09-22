@@ -32,6 +32,8 @@
 
 #else // ! SYSTEM_LIBC
 
+#include <stdarg.h>
+
 #ifndef _IOFBF
 #define _IOFBF 0                /* Fully buffered.  */
 #define _IOLBF 1                /* Line buffered.  */
@@ -98,6 +100,13 @@ int printf (char const *format, ...);
 int snprintf (char *str, size_t size, char const *format, ...);
 int sprintf (char *str, char const *format, ...);
 int sscanf (char const *str, char const *format, ...);
+
+int vfprintf (FILE * stream, char const *template, va_list ap);
+int vfscanf (FILE * stream, char const *template, va_list ap);
+int vprintf (char const *format, va_list ap);
+int vsnprintf (char *str, size_t size, char const *format, va_list ap);
+int vsprintf (char *str, char const *format, va_list ap);
+int vsscanf (char const *s, char const *template, va_list ap);
 #endif // !__M2__
 
 #endif // ! SYSTEM_LIBC
