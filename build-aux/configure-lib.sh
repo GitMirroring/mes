@@ -325,8 +325,10 @@ lib/stdlib/strtoull.c
 lib/string/memmem.c
 lib/string/strcat.c
 lib/string/strchr.c
+lib/string/strerror.c
 lib/string/strlwr.c
 lib/string/strncpy.c
+lib/string/strpbrk.c
 lib/string/strrchr.c
 lib/string/strstr.c
 lib/string/strupr.c
@@ -384,9 +386,7 @@ lib/string/index.c
 lib/string/rindex.c
 lib/string/strcspn.c
 lib/string/strdup.c
-lib/string/strerror.c
 lib/string/strncat.c
-lib/string/strpbrk.c
 lib/string/strspn.c
 lib/stub/__cleanup.c
 lib/stub/atan2.c
