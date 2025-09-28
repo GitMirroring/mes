@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2019,2020,2021,2023,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2019,2020,2021,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 # Copyright © 2023 Timothy Sample <samplet@ngyro.com>
 # Copyright © 2024 Andrius Štikonas <andrius@stikonas.eu>
 #
@@ -342,6 +342,23 @@ lib/stub/sigemptyset.c
 lib/$mes_cpu-mes-$compiler/setjmp.c
 "
 
+# These are needed to link 90-*, a0-* tests, but are not needed by
+# TinyCC
+libc_gnu_test_SOURCES="
+lib/posix/execl.c
+lib/posix/execlp.c
+lib/stdio/fgets.c
+lib/string/strncat.c
+lib/string/strspn.c
+lib/posix/unsetenv.c
+"
+
+if test $mes_kernel = linux; then
+    libc_gnu_test_SOURCES="$libc_gnu_test_SOURCES
+lib/linux/signal.c
+"
+fi
+
 libc_gnu_SOURCES="
 $libc_tcc_SOURCES
 lib/ctype/isalnum.c
@@ -356,16 +373,12 @@ lib/math/fabs.c
 lib/math/floor.c
 lib/mes/fdgets.c
 lib/posix/alarm.c
-lib/posix/execl.c
-lib/posix/execlp.c
 lib/posix/mktemp.c
 lib/posix/pathconf.c
 lib/posix/sbrk.c
 lib/posix/sleep.c
-lib/posix/unsetenv.c
 lib/stdio/clearerr.c
 lib/stdio/feof.c
-lib/stdio/fgets.c
 lib/stdio/fileno.c
 lib/stdio/freopen.c
 lib/stdio/fscanf.c
@@ -386,8 +399,6 @@ lib/string/index.c
 lib/string/rindex.c
 lib/string/strcspn.c
 lib/string/strdup.c
-lib/string/strncat.c
-lib/string/strspn.c
 lib/stub/__cleanup.c
 lib/stub/atan2.c
 lib/stub/bsearch.c
@@ -446,9 +457,21 @@ lib/linux/readlink.c
 lib/linux/setgid.c
 lib/linux/settimer.c
 lib/linux/setuid.c
-lib/linux/signal.c
 lib/linux/sigprogmask.c
 "
+fi
+
+if test $compilation_unit = single; then
+    # For compilation-unit single build, we build libc+gnu.a too, which
+    # is not needed for TinyCC, so we can add the libc_gnu_test_SOURCES
+    # to libc_gnu_SOURCES
+    libc_gnu_SOURCES="$libc_gnu_SOURCES
+$libc_gnu_test_SOURCES"
+else
+    # For the fast unity build, we only build libc+tcc.a, which now
+    # needs to include libc_gnu_test_SOURCES to link 90-* and a0* tests.
+    libc_gnu_SOURCES="$libc_tcc_SOURCES
+$libc_gnu_test_SOURCES"
 fi
 
 mes_SOURCES="

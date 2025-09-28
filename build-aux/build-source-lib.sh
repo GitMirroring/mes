@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2019 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2019,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
@@ -26,6 +26,7 @@ fi
 
 set -u
 srcdest=${srcdest-}
+compilation_unit=single
 . ${srcdest}build-aux/configure-lib.sh
 
 mkdir -p $mes_cpu-mes
@@ -62,14 +63,14 @@ cat > $mes_cpu-mes/libc+gnu.c <<EOF
 
 EOF
 for c in $libc_gnu_SOURCES; do
-    echo "// $c" >> libc+gnu.c
-    cat ${srcdest}$c >> libc+gnu.c
-    echo >> libc+gnu.c
+    echo "// $c" >> $mes_cpu-mes/libc+gnu.c
+    cat ${srcdest}$c >> $mes_cpu-mes/libc+gnu.c
+    echo >> $mes_cpu-mes/libc+gnu.c
 done
-cp libc+gnu.c $mes_cpu-mes
 
-rm -f libtcc1.c
-cat > libtcc1.c <<EOF
+echo "  GEN        $mes_cpu-mes/libtcc1.c"
+rm -f $mes_cpu-mes/libtcc1.c
+cat > $mes_cpu-mes/libtcc1.c <<EOF
 // Generated from Mes -- do not edit
 // compiler: $compiler
 // cpu:      $mes_cpu
@@ -80,10 +81,9 @@ cat > libtcc1.c <<EOF
 
 EOF
 for c in $libtcc1_SOURCES; do
-    echo "// $c" >> libtcc1.c
-    cat ${srcdest}$c >> libtcc1.c
-    echo >> libtcc1.c
+    echo "// $c" >> $mes_cpu-mes/libtcc1.c
+    cat ${srcdest}$c >> $mes_cpu-mes/libtcc1.c
+    echo >> $mes_cpu-mes/libtcc1.c
 done
-cp libtcc1.c $mes_cpu-mes
 
 cp ${srcdest}lib/posix/getopt.c $mes_cpu-mes/libgetopt.c

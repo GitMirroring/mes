@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2019,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2019,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
@@ -33,10 +33,9 @@ if test -e crt1.s; then
     cp crt1.s $mes_cpu-mes
 fi
 
-archive libc-mini.a $libc_mini_SOURCES
-cp libc-mini.a $mes_cpu-mes
-if test -e libc-mini.s; then
-    cp libc-mini.s $mes_cpu-mes
+if test $compilation_unit = single; then
+    archive libc-mini.a $libc_mini_SOURCES
+    cp libc-mini.a $mes_cpu-mes
 fi
 
 archive libmes.a $libmes_SOURCES
@@ -56,6 +55,15 @@ if test $mes_libc = mes; then
     cp libc.a $mes_cpu-mes
     if test -e libc.s; then
         cp libc.s $mes_cpu-mes
+        if test $compilation_unit = unity; then
+            cp libc.s libc-mini.s
+            cp libc-mini.s $mes_cpu-mes
+        fi
+    fi
+
+    if test $compilation_unit = unity; then
+        cp libc.a libc-mini.a
+        cp libc-mini.a $mes_cpu-mes/libc-mini.a
     fi
 fi
 
@@ -71,18 +79,31 @@ if test -e libtcc1.s; then
     cp libtcc1.s $mes_cpu-mes
 fi
 
-archive libgetopt.a lib/posix/getopt.c
-cp libgetopt.a $mes_cpu-mes
-if test -e libgetopt.s; then
-    cp libgetopt.s $mes_cpu-mes
+if test $compilation_unit = single; then
+    archive libgetopt.a lib/posix/getopt.c
+    cp libgetopt.a $mes_cpu-mes
+    if test -e libgetopt.s; then
+        cp libgetopt.s $mes_cpu-mes
+    fi
 fi
 
 if $courageous; then
     exit 0
 fi
 
-archive libc+gnu.a $libc_gnu_SOURCES
-cp libc+gnu.a $mes_cpu-mes
-if test -e libc+gnu.s; then
-    cp libc+gnu.s $mes_cpu-mes
+if test $compilation_unit = single; then
+    archive libc+gnu.a $libc_gnu_SOURCES
+    cp libc+gnu.a $mes_cpu-mes
+    if test -e libc+gnu.s; then
+        cp libc+gnu.s $mes_cpu-mes
+    fi
+fi
+
+if test $compilation_unit = unity; then
+    cp libc+tcc.a libc+gnu.a
+    cp libc+gnu.a $mes_cpu-mes
+    if test -e libc+tcc.s; then
+        cp libc+tcc.s libc+gnu.s
+        cp libc+gnu.s $mes_cpu-mes
+    fi
 fi

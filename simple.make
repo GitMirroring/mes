@@ -43,6 +43,7 @@ CFLAGS:=					\
  -D SYSTEM_LIBC=1				\
  -D 'MES_VERSION="git"'				\
  -D 'MES_PKGDATADIR="/usr/local/share/mes"'	\
+ -I .						\
  -I include					\
  -fno-builtin
 

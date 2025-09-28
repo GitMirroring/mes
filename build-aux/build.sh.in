@@ -63,6 +63,7 @@ fi
 "
         AM_CPPFLAGS="
 -D HAVE_CONFIG_H=1
+-I ${srcdir}
 -I ${srcdest}lib
 -I ${srcdest}include
 -I ../include
@@ -89,6 +90,7 @@ fi
 
     AM_CPPFLAGS="
 -D HAVE_CONFIG_H=1
+-I ${srcdir}
 -I ${srcdest}lib
 -I ${srcdest}include
 -I ../include
@@ -139,6 +141,7 @@ fi
     ln -sf ${srcdest}src .
     AM_CPPFLAGS="
 -D HAVE_CONFIG_H=1
+-I ${srcdir}
 -I ${srcdest}lib
 -I ${srcdest}include
 -I ../include

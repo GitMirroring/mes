@@ -333,7 +333,7 @@ mes_builtins (struct scm *a)            /*:((internal)) */
      build of Mes, as M2-Planet will ignore the preprocessor directive.
      Other builds of Mes will include it.  The code in the file relies
      on system interfaces supported by MesCC but not M2-Planet. */
-#include "mescc-builtins.c"
+#include "src/mescc-builtins.c"
 
   return a;
 }

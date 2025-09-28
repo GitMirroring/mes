@@ -556,4 +556,4 @@ uname_ ()        /*:((name . "uname")) */
    of Mes, as M2-Planet will ignore the preprocessor directive.  Other
    builds of Mes will include it.  The code in the file relies on system
    interfaces supported by MesCC but not M2-Planet. */
-#include "mescc-posix.c"
+#include "src/mescc-posix.c"

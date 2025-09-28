@@ -1,5 +1,5 @@
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2018,2019,2022,2023 Janneke Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2018,2019,2022,2023,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
@@ -17,6 +17,10 @@
 # along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
 
 objects=
+if test $compiler != mescc; then
+    compilation_unit=single
+fi
+
 compile () {
     b=$(echo $1 | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
     if test $(dirname $1) = "."; then
@@ -37,11 +41,23 @@ archive () {
     shift
     sources="$@"
     objects=
-    for c in $sources; do
-        b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
-        o=$b.o
+    if test $compilation_unit = single; then
+        for c in $sources; do
+            b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
+            o=$b.o
+            compile $c
+        done
+    else
+        c=$(basename $archive .a).c
+        (cd $srcdest && cat $sources) > $c-
+        if test -f $c && cmp $c- $c >/dev/null; then
+            rm -f $c-
+        else
+            mv $c- $c
+        fi
         compile $c
-    done
+        sources=$c
+    fi
     trace "AR         $archive" $AR crD $archive $objects
     objects=
 }

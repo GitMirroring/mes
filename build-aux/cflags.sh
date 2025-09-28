@@ -41,6 +41,7 @@ esac
 
 AM_CPPFLAGS="
 -D HAVE_CONFIG_H=1
+-I ${srcdir}
 -I ${srcdest}include
 -I ${srcdest}include/$mes_kernel/$mes_cpu
 "

@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2019,2021 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2019,2021,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 #
 # This file is part of GNU Mes.
 #
@@ -34,9 +34,15 @@ fi
 
 trap 'test -f .log && cat .log' EXIT
 
-for c in $mes_SOURCES; do
-    compile $c
-done
+if test $compilation_unit = single -o $compiler != mescc; then
+    for c in $mes_SOURCES; do
+        compile $c
+    done
+else
+    cat $mes_SOURCES > mes.c
+    compile mes.c
+    objects=mes.o
+fi
 if test $mes_libc = system; then
     LIBS=-lmes
 fi

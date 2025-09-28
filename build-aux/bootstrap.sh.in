@@ -1,7 +1,7 @@
 #! @SHELL@
 
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2019,2020,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2019,2020,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 # Copyright © 2023 Ekaitz Zarraga <ekaitz@elenq.tech>
 # Copyright © 2023 Timothy Sample <samplet@ngyro.com>
 #
@@ -45,92 +45,43 @@ fi
 CPPFLAGS="-D HAVE_CONFIG_H=1 -I include"
 libdir=$PWD/lib
 export libdir
-mkdir -p mescc-lib
-cp config.sh mescc-lib/config.sh
-cd mescc-lib
+
+mkdir -p $compiler-lib
+cp config.sh $compiler-lib/config.sh
+cd $compiler-lib
+
 srcdest=../${srcdest}
 ln -sf ${srcdest}mes .
 ln -sf ${srcdest}module .
 ln -sf ${srcdest}src .
-AM_CPPFLAGS="-D HAVE_CONFIG_H=1 -I ${srcdest}include -I ../include -I include"
-AM_CFLAGS="-L ${srcdest}lib"
+AM_CPPFLAGS="-D HAVE_CONFIG_H=1 -I ${srcdir} -I ${srcdest}include -I ../include -I include"
+AM_CFLAGS="-L ${srcdest}lib -L $mes_cpu-mes"
+
+if test $compiler = gcc; then
+    AM_CFLAGS="-fno-builtin -nostartfiles -nostdlib $AM_CFLAGS"
+fi
 
 mkdir -p $mes_cpu-mes
 cp ${srcdest}lib/$mes_kernel/$mes_cpu-mes-$compiler/crt1.c .
 $CC -c $AM_CPPFLAGS $CPPFLAGS $AM_CFLAGS $CFLAGS crt1.c
 cp crt1.o $mes_cpu-mes
-cp crt1.s $mes_cpu-mes
+if test -e crt1.s; then
+    cp crt1.s $mes_cpu-mes
+fi
 
-objects=
-for c in $libc_mini_SOURCES; do
-    b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
-    o=$b.o
-    if test ! -e $o -o ${srcdest}$c -nt $o; then
-        echo "  CC       $c"
-        $CC -c $AM_CPPFLAGS $CPPFLAGS $AM_CFLAGS $CFLAGS -o $o ${srcdest}$c
-    fi
-    objects="$objects $o"
-done
-echo "  AR       $mes_cpu-mes/libc-mini.a"
-$AR crD $mes_cpu-mes/libc-mini.a $objects
+if test $compilation_unit = unity; then
+    . ${srcdest}build-aux/bootstrap-lib-unity.sh
+else
+    . ${srcdest}build-aux/bootstrap-lib.sh
+fi
 
-objects=
-for c in $libmescc_SOURCES; do
-    b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
-    o=$b.o
-    if test ! -e $o -o ${srcdest}$c -nt $o; then
-        echo "  CC       $c"
-        $CC -c $AM_CPPFLAGS $CPPFLAGS $AM_CFLAGS $CFLAGS -o $o ${srcdest}$c
-    fi
-    objects="$objects $o"
-done
-echo "  AR       $mes_cpu-mes/libmescc.a"
-$AR crD $mes_cpu-mes/libmescc.a $objects
-
-objects=
-for c in $libc_SOURCES; do
-    b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
-    o=$b.o
-    if test ! -e $o -o ${srcdest}$c -nt $o; then
-        echo "  CC       $c"
-        $CC -c $AM_CPPFLAGS $CPPFLAGS $AM_CFLAGS $CFLAGS -o $o ${srcdest}$c
-    fi
-    objects="$objects $o"
-done
-echo "  AR       $mes_cpu-mes/libc.a"
-$AR crD $mes_cpu-mes/libc.a $objects
-
-objects=
-for c in $libc_tcc_SOURCES; do
-    b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
-    o=$b.o
-    if test ! -e $o -o ${srcdest}$c -nt $o; then
-        echo "  CC       $c"
-        $CC -c $AM_CPPFLAGS $CPPFLAGS $AM_CFLAGS $CFLAGS -o $o ${srcdest}$c
-    fi
-    objects="$objects $o"
-done
-echo "  AR       $mes_cpu-mes/libc+tcc.a"
-$AR crD $mes_cpu-mes/libc+tcc.a $objects
+echo "  CCLD       bin/mes-mescc"
+mkdir -p ../bin
+$CC $AM_CFLAGS -o ../bin/mes-mescc -L . crt1.o $objects -lc -lmescc
 
 cd ..
 srcdest=
-AM_CPPFLAGS="-D HAVE_CONFIG_H=1 -I ${srcdest}include -I ../include -I include"
-AM_CFLAGS="-L ${srcdest}lib"
 
-objects=
-for c in $mes_SOURCES; do
-    b=$(echo $c | sed -re s,^[.]+/,, -e s,/,-,g -e s,[.]c$,,)
-    o=$b.o
-    if test ! -e $o -o ${srcdest}$c -nt $o; then
-        echo "  CC       $c"
-        $CC -c $AM_CPPFLAGS $CPPFLAGS $AM_CFLAGS $CFLAGS -o $o ${srcdest}$c
-    fi
-    objects="$objects $o"
-done
-echo "  CCLD     bin/mes-mescc"
-mkdir -p bin
-$CC $AM_CFLAGS -nostdlib -o bin/mes-mescc -L mescc-lib mescc-lib/crt1.o $objects -lc -lmescc
 cp bin/mes-mescc bin/mes
 
 (

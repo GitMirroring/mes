@@ -310,7 +310,7 @@ MES_ARENA=100000000 exec ${SCHEME-guile} -L . --no-auto-compile -e '(configure)'
             (help (single-char #\h))
             (verbose (single-char #\v))
             (with-bootstrap)
-            (with-compilation-unit (value #t)) ; [single] {single|unity}
+            (with-compilation-unit (value #t)) ; [unity] {single|unity}
             (with-cheating)
             (with-courage)
             (infodir (value #t))
