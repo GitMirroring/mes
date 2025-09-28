@@ -30,6 +30,7 @@ fi
 . ${srcdest}build-aux/trace.sh
 
 help_p=false
+compilation_unit=${compilation_unit-unity}
 courageous=${courageous-false}
 prefix=${prefix-/usr/local}
 mes_libc=${mes_libc-mes}
@@ -39,9 +40,11 @@ while [ $# -gt 0 ]; do
     case $1 in
         (--help)
             help_p=true
-            ;;
         (--with-courage)
             courageous=true
+            ;;
+        (--with-compilation-unit=*)
+            compilation_unit=${1#--with-compilation-unit=}
             ;;
         (--with-system-libc)
             mes_libc=system
@@ -79,13 +82,16 @@ Options:
       --build=BUILD    configure for building on BUILD [guessed]
       --host=HOST      cross-compile to build programs to run on HOST [BUILD]
   --with-bootstrap     After building mes with CC, build mes with MesCC
+  --with-compilation-unit=UNIT
+                       Build libraries and mes using compilation unit=UNIT
+                         [$compilation_unit] {single,unity}
   --with-courage       Assert that even if this platform is unsupported,
                        you will be courageous and port GNU Mes to it
                        (see \"Porting GNU Mes\" in the manual.)
   --with-system-libc   use system libc
 
 Installation directories:
-  --prefix=DIR         install in prefix DIR [~a]
+  --prefix=DIR         install in prefix DIR [$prefix]
 
 Some influential environment variables:
   CC                C compiler command
@@ -165,6 +171,7 @@ subst () {
     -e s,"@host@,$host,"\
     -e s,"@compiler@,$compiler,"\
     -e s,"@courageous@,$courageous,"\
+    -e s,"@compilation_unit@,$compilation_unit,"\
     -e s,"@mes_bits@,$mes_bits,"\
     -e s,"@mes_kernel@,$mes_kernel,"\
     -e s,"@mes_cpu@,$mes_cpu,"\
@@ -314,18 +321,19 @@ cp -f -v ${srcdest}include/${mes_kernel}/${mes_cpu}/syscall.h include/arch
 
 cat <<EOF
 GNU Mes is configured for
-   compiler:   $compiler
-   cpu:        $mes_cpu
-   bits:       $mes_bits
-   libc:       $mes_libc
-   kernel:     $mes_kernel
-   system:     $mes_system
-   tools:      $mes_tools arch
-   courageous: $courageous
-   bootstrap:  yes
+   compiler:         $compiler
+   cpu:              $mes_cpu
+   bits:             $mes_bits
+   libc:             $mes_libc
+   kernel:           $mes_kernel
+   system:           $mes_system
+   tools:            $mes_tools arch
+   bootstrap:        yes
+   compilation-unit: $compilation_unit
+   courageous:       $courageous
 
 Run:
-  sh bootstrap.sh  to bootstrap build mes
-  sh check.sh      to check mes
-  sh install.sh    to install mes
+  sh bootstrap.sh    to bootstrap build mes
+  sh check.sh        to check mes
+  sh install.sh      to install mes
 EOF

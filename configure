@@ -39,28 +39,29 @@ MES_ARENA=100000000 exec ${SCHEME-guile} -L . --no-auto-compile -e '(configure)'
 (define PACKAGE-NAME "GNU Mes")
 (define PACKAGE-BUGREPORT "bug-mes@gnu.org")
 (define VERSION "0.27.1")
+(define %compilation-unit "unity")
 
 (cond-expand
  (guile)
  (mes ;;(mes-use-module (mes guile))
-      ;;(mes-use-module (mes misc))
+  ;;(mes-use-module (mes misc))
   (use-modules (mes guile))
   (use-modules (mes misc))
   (define %host-type "x86_64-unknown-linux-gnu")
-      (define OPEN_READ "r")
-      (define (canonicalize-path o)
-        (if (string-prefix? "/" o) o
-            (string-append (getcwd) "/" o)))
-      (define (sort lst less)
-        lst)
-      (define (close-pipe o) 0)
-      (define (open-pipe* OPEN_READ . commands)
-        (let ((fake-pipe ".pipe"))
-          (with-output-to-file fake-pipe
-            (lambda _
-              (let ((status (apply system* (append commands))))
-                (set! close-pipe (lambda _ status)))))
-          (open-input-file fake-pipe)))))
+  (define OPEN_READ "r")
+  (define (canonicalize-path o)
+    (if (string-prefix? "/" o) o
+        (string-append (getcwd) "/" o)))
+  (define (sort lst less)
+    lst)
+  (define (close-pipe o) 0)
+  (define (open-pipe* OPEN_READ . commands)
+    (let ((fake-pipe ".pipe"))
+      (with-output-to-file fake-pipe
+        (lambda _
+          (let ((status (apply system* (append commands))))
+            (set! close-pipe (lambda _ status)))))
+      (open-input-file fake-pipe)))))
 
 (define* (PATH-search-path name #:key (default name) warn?)
   (or (search-path (string-split (getenv "PATH") #\:) name)
@@ -309,6 +310,7 @@ MES_ARENA=100000000 exec ${SCHEME-guile} -L . --no-auto-compile -e '(configure)'
             (help (single-char #\h))
             (verbose (single-char #\v))
             (with-bootstrap)
+            (with-compilation-unit (value #t)) ; [single] {single|unity}
             (with-cheating)
             (with-courage)
             (infodir (value #t))
@@ -350,6 +352,9 @@ Options:
       --host=HOST      cross-compile to build programs to run on HOST [BUILD]
   -v, --verbose        be verbose
   --with-bootstrap     After building mes with CC, build mes with MesCC
+  --with-compilation-unit=UNIT
+                       Build libraries and mes using compilation unit=UNIT
+                         [~a] {single,unity}
   --with-courage       Assert that even if this platform is unsupported,
                        you will be courageous and port GNU Mes to it
                        (see \"Porting GNU Mes\" in the manual.)
@@ -389,7 +394,7 @@ Some influential environment variables:
   GUILD_OPTIMIZE    guild compile optimization
   GUILE_LOAD_PATH   guile load path; where to find Nyacc
   MES_FOR_BUILD     build system MES [can be mes or guile]
-" PACKAGE VERSION (getenv "prefix")))
+" PACKAGE VERSION %compilation-unit (getenv "prefix")))
 
 (define (main args)
   (let* ((options (parse-opts args))
@@ -427,6 +432,7 @@ Some influential environment variables:
                            abs-top-builddir))
 
          (with-bootstrap? (option-ref options 'with-bootstrap #f))
+         (compilation-unit (option-ref options 'with-compilation-unit %compilation-unit))
          (with-cheating? (option-ref options 'with-cheating #f))
          (with-courage? (option-ref options 'with-courage #f))
          (disable-colors? (option-ref options 'disable-colors #f))
@@ -589,6 +595,7 @@ See \"Porting GNU Mes\" in the manual, or try --with-courage\n" mes-system)
                      ("@host@" . ,host-type)
 
                      ("@bootstrap@" . ,(if with-bootstrap? "true" "false"))
+                     ("@compilation_unit@" . ,compilation-unit)
                      ("@courageous@" . ,(if with-courage? "true" "false"))
                      ("@compiler@" . ,mes-compiler)
                      ("@mes_bits@" . ,mes-bits)
@@ -710,14 +717,15 @@ See \"Porting GNU Mes\" in the manual, or try --with-courage\n" mes-system)
       (let ((make (and=> (file-name "make" deps) basename)))
         (display (string-append "
 GNU Mes is configured for
-   compiler:   " mes-compiler "
-   cpu:        " mes-cpu "
-   bits:       " mes-bits "
-   libc:       " mes-libc "
-   kernel:     " mes-kernel "
-   system:     " mes-system "
-   bootstrap:  " (if with-bootstrap? "yes" "no") "
-   courageous: " (if with-courage? "yes" "no") "
+   compiler:         " mes-compiler "
+   cpu:              " mes-cpu "
+   bits:             " mes-bits "
+   libc:             " mes-libc "
+   kernel:           " mes-kernel "
+   system:           " mes-system "
+   bootstrap:        " (if with-bootstrap? "yes" "no") "
+   compilation-unit: " compilation-unit "
+   courageous:       " (if with-courage? "yes" "no") "
 
 Run:
   " (or make "./build.sh") "           to build mes
