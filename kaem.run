@@ -72,6 +72,7 @@ M2-Planet                                               \
     -f ${srcdest}include/sys/utsname.h                  \
     -f ${srcdest}include/mes/constants.h                \
     -f ${srcdest}include/mes/mes.h                      \
+    -f ${srcdest}include/mes/globals.h                  \
     -f ${srcdest}include/mes/builtins.h                 \
     -f ${srcdest}include/mes/symbols.h                  \
                                                         \

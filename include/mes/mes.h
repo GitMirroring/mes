@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2016,2017,2018,2019,2020,2021,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2016,2017,2018,2019,2020,2021,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2022 Timothy Sample <samplet@ngyro.com>
  * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
@@ -67,67 +67,7 @@ struct scm
 #define M2_CELL_SIZE 1
 #endif
 
-/* mes */
-extern char *g_datadir;
-extern int g_debug;
-extern char *g_buf;
-extern int g_continuations;
-extern struct scm *g_symbols;
-extern struct scm *g_symbol_max;
-extern int g_mini;
-
-/* a/env */
-extern struct scm *R0;
-/* param 1 */
-extern struct scm *R1;
-/* save 2 */
-extern struct scm *R2;
-/* continuation */
-extern struct scm *R3;
-/* initial module obarray */
-extern struct scm *M0;
-/* current module */
-extern struct scm *M1;
-/* macro */
-extern struct scm *g_macros;
-extern struct scm *g_ports;
-
-/* gc */
-extern size_t ARENA_SIZE;
-extern size_t MAX_ARENA_SIZE;
-extern size_t STACK_SIZE;
-extern size_t JAM_SIZE;
-extern size_t GC_SAFETY;
-extern size_t MAX_STRING;
-extern char *g_arena;
-extern struct scm *cell_arena;
-extern struct scm *cell_zero;
-
-extern struct scm *g_free;
-extern struct scm *g_symbol;
-
-extern struct scm **g_stack_array;
-extern struct scm *g_cells;
-extern struct scm *g_news;
-extern long g_stack;
-extern size_t gc_count;
-extern struct timespec *gc_start_time;
-extern struct timespec *gc_end_time;
-extern size_t gc_time;
-
-extern char **__execl_c_argv;
-extern char **__execle_c_env;
-extern char *__open_boot_buf;
-extern char *__open_boot_file_name;
-extern char *__setenv_buf;
-extern char *__reader_read_char_buf;
-extern struct timespec *g_start_time;
-extern struct timeval *__gettimeofday_time;
-extern struct timespec *__get_internal_run_time_ts;
-extern struct utsname *__uts;
-
-extern struct scm *scm_hash_table_type;
-extern struct scm *scm_variable_type;
+#include "mes/globals.h"
 
 struct scm *cast_charp_to_scmp (char const *i);
 struct scm **cast_charp_to_scmpp (char const *i);

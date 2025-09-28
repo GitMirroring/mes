@@ -1,6 +1,6 @@
 /*
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2021 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2021,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  *
  * This file is part of GNU Mes.
  *
@@ -21,5 +21,9 @@
 #include <mes/lib-mini.h>
 
 #define extern
+#undef __MES_SYMBOLS_H
 #include <mes/symbols.h>
 #include <mes/mes.h>
+#undef __MES_GLOBALS_H
+#include <mes/globals.h>
+#undef extern
