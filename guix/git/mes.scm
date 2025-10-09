@@ -475,6 +475,25 @@ $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
 $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
     (inputs (list guile-3.0))))
 
+(define-public nyacc-3.00.0
+  (package
+    (inherit nyacc-0.99)
+    (version "3.00.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "mirror://savannah/nyacc/nyacc-"
+                                  version ".tar.gz"))
+              (sha256
+               (base32
+                "17ymkgxxzhdn64h01jp964svzx6hdqr2a1p0csinsnyvb6qhghnv"))
+              (modules '((guix build utils)))
+              (snippet
+               '(substitute* "configure"
+                  (("GUILE_GLOBAL_SITE=\\$prefix.*")
+                   "GUILE_GLOBAL_SITE=\
+$prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
+    (inputs (list guile-3.0))))
+
 (define-public mes
   (package
     (name "mes")
@@ -514,15 +533,15 @@ $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
      `(#:strip-binaries? #f)) ; binutil's strip b0rkes MesCC/M1/hex2 binaries
     (native-search-paths
      (list (search-path-specification
-             (variable "C_INCLUDE_PATH")
-             (files '("include")))
+            (variable "C_INCLUDE_PATH")
+            (files '("include")))
            (search-path-specification
-             (variable "LIBRARY_PATH")
-             (files '("lib")))
+            (variable "LIBRARY_PATH")
+            (files '("lib")))
            (search-path-specification
-             (variable "MES_PREFIX")
-             (separator #f)
-             (files '("")))))
+            (variable "MES_PREFIX")
+            (separator #f)
+            (files '("")))))
     (synopsis "Scheme interpreter and C compiler for full source bootstrapping")
     (description
      "GNU Mes--Maxwell Equations of Software--brings the Reduced Binary Seed
