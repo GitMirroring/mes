@@ -52,7 +52,7 @@
 (define %reduced-register-count 2)      ; use reduced instruction set
 (define (max-registers info)
   (if %reduced-register-count %reduced-register-count
-   (length (append (.registers info) (.allocated info)))))
+      (length (append (.registers info) (.allocated info)))))
 
 (define* (c99-input->info info #:key (prefix "") (defines '()) (includes '()) (arch "") verbose?)
   (let ((ast (c99-input->ast #:prefix prefix #:defines defines #:includes includes #:arch arch #:verbose? verbose?)))
@@ -91,7 +91,7 @@
           (else #f))))
 
 (define (unsigned? o)
-    (let ((type (->type o)))
+  (let ((type (->type o)))
     (cond ((type? type) (eq? (type:type type) 'unsigned))
           (else #t))))
 
@@ -446,7 +446,7 @@
 
 (define (string->global-entry string)
   (let ((value (append (string->list string) (list #\nul))))
-   (make-global-entry `(#:string ,string) '() "char" value)))
+    (make-global-entry `(#:string ,string) '() "char" value)))
 
 (define (make-local-entry name type id)
   (cons name (make-local name type id)))
@@ -989,7 +989,7 @@
                 (info (allocate-register info)))
            (append-text info (wrap-as (as info 'value->r (+ base offset))))))
 
-      ;; Nyacc < 1.02.0
+        ;; Nyacc < 1.02.0
         ((ref-to
           (i-sel (ident ,field) (cast (type-name (decl-spec-list ,struct)
                                                  (abs-declr (pointer)))
@@ -1253,14 +1253,14 @@
          (let* ((type-a (ast->type a info))
                 (default (get-type "default" info))
                 (type (if (> (->size type-a info) (->size default info)) type-a
-                             default))
+                          default))
                 (info ((binop->r info) a b 'r0<<r1)))
            (append-text info (convert-r0 info type))))
         ((rshift ,a ,b)
          (let* ((type-a (ast->type a info))
                 (default (get-type "default" info))
                 (type (if (> (->size type-a info) (->size default info)) type-a
-                             default))
+                          default))
                 (info ((binop->r info) a b (if (signed? type) 'r0>>r1-signed 'r0>>r1))))
            (append-text info (convert-r0 info type))))
         ((div ,a ,b)
@@ -2047,7 +2047,7 @@
        (let* ((info (if clause? (append-text info (wrap-as `((#:label ,clause-label))))
                         info))
               (info (if last? info
-                         (append-text info (jump next-clause-label))))
+                        (append-text info (jump next-clause-label))))
               (info (append-text info (wrap-as `((#:label ,default-label)))))
               (info (append-text info (jump body-label)))
               (info (append-text info (wrap-as `((#:label ,body-label))))))
@@ -2355,10 +2355,10 @@
                    (inits (append inits
                                   (map (const '(fixed "0")) (iota missing)))))
               (map (cut array-init-element->data (c-array:type type) <> info) inits)))
-         (else
-          (format (current-error-port) "array-init-element->data: oops:~s\n" o)
-          (format (current-error-port) "type:~s\n" type)
-          (error "array-init-element->data: not supported: " o))))
+           (else
+            (format (current-error-port) "array-init-element->data: oops:~s\n" o)
+            (format (current-error-port) "type:~s\n" type)
+            (error "array-init-element->data: not supported: " o))))
     (_ (init->data type o info))
     (_ (error "array-init-element->data: not supported: " o))))
 
@@ -2378,9 +2378,9 @@
                                 (loop (cdr inits))))
                        (_
                         (let* ((count (min (length inits) (length init-fields)))
-                                 (field-inits (list-head inits count)))
+                               (field-inits (list-head inits count)))
                           (append (array-init-element->data type `(initzer-list ,@field-inits) info)
-                           (loop (list-tail inits count))))))))))
+                                  (loop (list-tail inits count))))))))))
            (map (cut array-init-element->data type <> info) inits))))
 
     (((initzer (initzer-list . ,inits)))
