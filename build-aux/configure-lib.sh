@@ -293,6 +293,7 @@ lib/ctype/toupper.c
 lib/math/ldexpl.c
 lib/mes/abtod.c
 lib/mes/dtoab.c
+lib/mes/fdgets.c
 lib/mes/search-path.c
 lib/posix/execvp.c
 lib/stdio/fclose.c
@@ -315,6 +316,7 @@ lib/stdio/vprintf.c
 lib/stdio/vsnprintf.c
 lib/stdio/vsprintf.c
 lib/stdio/vsscanf.c
+lib/stdlib/abort.c
 lib/stdlib/qsort.c
 lib/stdlib/strtod.c
 lib/stdlib/strtof.c
@@ -372,7 +374,6 @@ lib/ctype/ispunct.c
 lib/math/ceil.c
 lib/math/fabs.c
 lib/math/floor.c
-lib/mes/fdgets.c
 lib/posix/alarm.c
 lib/posix/mktemp.c
 lib/posix/pathconf.c
@@ -386,7 +387,6 @@ lib/stdio/fscanf.c
 lib/stdio/perror.c
 lib/stdio/vfscanf.c
 lib/stdlib/__exit.c
-lib/stdlib/abort.c
 lib/stdlib/abs.c
 lib/stdlib/alloca.c
 lib/stdlib/atexit.c
