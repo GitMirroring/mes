@@ -29,9 +29,17 @@ if test "$srcdir" != "."; then
 fi
 . ${srcdest}build-aux/trace.sh
 
+help_p=false
+courageous=${courageous-false}
+prefix=${prefix-/usr/local}
+mes_libc=${mes_libc-mes}
+
 # parse arguments
 while [ $# -gt 0 ]; do
     case $1 in
+        (--help)
+            help_p=true
+            ;;
         (--with-courage)
             courageous=true
             ;;
@@ -55,9 +63,43 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-prefix=${prefix-/usr/local}
-mes_libc=${mes_libc-mes}
-courageous=${courageous-false}
+if $help_p; then
+    cat <<EOF
+'configure.sh' configures Mes $VERSION to adapt to many kinds of systems.
+
+Usage: [VAR=VALUE] sh ./configure.sh [OPTION]...
+
+To assign environment variables (e.g., CC, CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+Defaults for the options are specified in brackets.
+
+Options:
+  -h, --help           display this help
+      --build=BUILD    configure for building on BUILD [guessed]
+      --host=HOST      cross-compile to build programs to run on HOST [BUILD]
+  --with-bootstrap     After building mes with CC, build mes with MesCC
+  --with-courage       Assert that even if this platform is unsupported,
+                       you will be courageous and port GNU Mes to it
+                       (see \"Porting GNU Mes\" in the manual.)
+  --with-system-libc   use system libc
+
+Installation directories:
+  --prefix=DIR         install in prefix DIR [~a]
+
+Some influential environment variables:
+  CC                C compiler command
+  CFLAGS            C compiler flags
+  CPPFLAGS          C preprocessor flags
+  LDFLAGS           C linker flags
+  GUILE             guile command
+  GUILD             guild command
+  GUILD_OPTIMIZE    guild compile optimization
+  GUILE_LOAD_PATH   guile load path; where to find Nyacc
+  MES_FOR_BUILD     build system MES [can be mes or guile]
+EOF
+    exit 0
+fi
 
 BASH=${BASH-$(command -v bash || command -v sh)}
 BLOOD_ELF=${BLOOD_ELF-$(command -v blood-elf)}
