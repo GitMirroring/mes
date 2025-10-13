@@ -10,6 +10,44 @@ Copyright © 2016,2017,2018,2019,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen 
 
 Please send Mes bug reports to bug-mes@gnu.org.
 
+* Changes in 0.28 since 0.27.1
+** Build
+*** A configure flag: --with-compilation-unit=UNIT has been added.
+*** The build now uses unity compilation units by default, for speed.
+** Mes
+*** 1 new procedure
+take.
+** MesCC
+*** The x86_64-linux platform is now fully supported for bootstrapping.
+*** Using NYACC-3.00.1 is now supported.
+*** The Mes C Library now supports building upstream TinyCC [2025-10-03]
+   * 1 new function:
+ldexpl.
+**** 2 new stubs
+ftruncate, tmpfile.
+   * 9 new dirent defines
+DT_UNKNOWN, DT_FIFO, DT_CHR, DT_DIR, DT_BLK, DT_REG, DT_LNK, DT_SOCK,
+DT_WHT.
+   * 16 new errno defines
+EPERM, ESRCH, EFAULT, ENOTBLK EBUSY, ENODEV, ENFILE, ENOTTY, ETXTBSY,
+EFBIG, EROFS, EMLINK, EDOM, EDEADLK, ENOLCK, ENOTSUP.
+   * 27 new open defines
+O_RDONLY, O_WRONLY, O_RDWR, O_CREAT, O_EXCL, O_NOCTTY, O_TRUNC,
+O_APPEND, O_NONBLOCK, O_DSYNC, O_ASYNC, O_DIRECT, O_LARGEFILE,
+O_DIRECTORY, O_NOFOLLOW, O_NOATIME, O_CLOEXEC, O_SYNC, O_PATH,
+O_TMPFILE, O_ACCMODE, O_EXEC, O_NDELAY, O_READ, O_WRITE, O_RSYNC,
+O_SEARCH.
+   * 6 new flock defines
+F_RDLCK, F_WRLCK, F_UNLCK, F_GETLK, F_SETLK, F_SETLKW.
+** Noteworthy bug fixes
+*** An s-expression comment at the end of a list is now supported.
+*** A stack-overflow was fixed reading large block-comments.
+*** Running the test suite using guile-2 is supported again.
+*** The return value of wait4 on Linux was fixed for M2-Planet.
+And other compilers that use 64bit integers.
+*** The test suite can now be run using Gash.
+*** Several Mes C Library prototypes were fixed and added.
+
 * Changes in 0.27.1 since 0.27
 ** Core
 *** The pmatch-car/pmatch-cdr hack was removed.
