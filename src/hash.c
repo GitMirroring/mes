@@ -2,6 +2,7 @@
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2018,2019,2020,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2022,2023 Timothy Sample <samplet@ngyro.com>
+ * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -307,4 +308,26 @@ hash_clear_x (struct scm *table)
   struct scm *buckets = make_vector_ (size, cell_unspecified);
   struct_set_x_ (table, 4, buckets);
   return cell_unspecified;
+}
+
+struct scm *
+hash_table_to_alist (struct scm *table)
+{
+  struct scm *out = cell_nil;
+  struct scm *buckets = struct_ref_ (table, 4);
+  int i;
+  struct scm *e;
+  for (i = 0; i < buckets->length; i = i + 1)
+    {
+      e = vector_ref_ (buckets, i);
+      if (e != cell_unspecified)
+        {
+          while (e->type == TPAIR)
+            {
+              out = cons (e->car, out);
+              e = e->cdr;
+            }
+        }
+    }
+  return out;
 }

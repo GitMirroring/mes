@@ -196,6 +196,7 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "make-hash-table", -1, &make_hash_table, a);
   a = init_builtin (builtin_type, "hash-buckets", 1, &hash_buckets, a);
   a = init_builtin (builtin_type, "hash-clear!", 1, &hash_clear_x, a);
+  a = init_builtin (builtin_type, "core:hash-table->alist", 1, &hash_table_to_alist, a);
   /* src/lib.c */
   a = init_builtin (builtin_type, "core:type", 1, &type_, a);
   a = init_builtin (builtin_type, "core:car", 1, &car_, a);

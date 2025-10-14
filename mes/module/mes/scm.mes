@@ -209,17 +209,7 @@
   (core:hash-ref table key (and (pair? rest) (car rest))))
 
 (define (hash-map->list proc table)
-  (let ((buckets (hash-buckets table)))
-    (let loop ((i 0) (acc '()))
-      (if (>= i (vector-length buckets)) (reverse! acc)
-          (let ((alist (vector-ref buckets i)))
-            (loop (+ i 1)
-                  (if (eq? alist *unspecified*) acc
-                      (append-reverse (map (lambda (handle)
-                                             (proc (car handle)
-                                                   (cdr handle)))
-                                           alist)
-                                      acc))))))))
+  (map (lambda (x) (proc (car x) (cdr x))) (core:hash-table->alist table)))
 
 (define (hash-fold proc init table)
   (let loop ((handles (hash-map->list cons table)) (acc init))
