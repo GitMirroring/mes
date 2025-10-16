@@ -62,10 +62,6 @@
 
 (define map map1)
 
-(define (cons* . rest)
-  (if (null? (cdr rest)) (car rest)
-      (cons (car rest) (core:apply cons* (cdr rest) (current-environment)))))
-
 (define (apply f h . t)
   (if (null? t) (core:apply f h (current-environment))
       (apply f (apply cons* (cons h t)))))

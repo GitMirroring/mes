@@ -55,6 +55,15 @@ cdr_ (struct scm *x)
 }
 
 struct scm *
+cons_star (struct scm *x)                       /* For speed in core. */
+{
+  if (x->cdr == cell_nil)
+    return x->car;
+  else if (x->type == TPAIR)
+    return cons (x->car, cons_star (x->cdr));
+}
+
+struct scm *
 xassq (struct scm *x, struct scm *a)            /* For speed in core. */
 {
   while (a != cell_nil)

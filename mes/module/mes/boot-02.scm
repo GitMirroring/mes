@@ -71,13 +71,6 @@
   (if (null? lst) (list)
       (cons (f (car lst)) (map f (cdr lst)))))
 
-(define (cons* . rest)
-  (define (loop lst acc)
-    (if (null? (cdr lst))
-        (core:reverse! acc (car lst))
-        (loop (cdr lst) (cons (car lst) acc))))
-  (loop rest (list)))
-
 (define (apply f h . t)
   (if (null? t) (core:apply f h (current-environment))
       (apply f (apply cons* (cons h t)))))

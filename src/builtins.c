@@ -160,6 +160,7 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "core:reverse!", 2, &reverse_x_, a);
   a = init_builtin (builtin_type, "assq", 2, &assq, a);
   a = init_builtin (builtin_type, "assoc", 2, &assoc, a);
+  a = init_builtin (builtin_type, "cons*", -1, &cons_star, a);
   /* src/display.c */
   a = init_builtin (builtin_type, "core:display", 1, &display_, a);
   a = init_builtin (builtin_type, "core:display-error", 1, &display_error_, a);

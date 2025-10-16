@@ -44,6 +44,7 @@ struct scm *append_reverse (struct scm *x, struct scm *y);
 struct scm *reverse_x_ (struct scm *x, struct scm *t);
 struct scm *assq (struct scm *x, struct scm *a);
 struct scm *assoc (struct scm *x, struct scm *a);
+struct scm *cons_star (struct scm *x);
 /* src/display.c */
 struct scm *display_ (struct scm *x);
 struct scm *display_error_ (struct scm *x);
