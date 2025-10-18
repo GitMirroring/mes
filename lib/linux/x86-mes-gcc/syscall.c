@@ -1,7 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
- * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -65,12 +64,7 @@ __sys_call2 (long sys_call, long one, long two)
        "int    $0x80\n\t"
        "mov    %%eax,%0\n\t"
        : "=r" (r)
-       : "rm" (sys_call), "rm" (one)
-#if __TINYC__
-         , "m" (two)
-#else
-         , "rm" (two)
-#endif
+       : "rm" (sys_call), "rm" (one), "rm" (two)
        : "eax", "ebx", "ecx"
        );
   return r;
@@ -88,12 +82,7 @@ __sys_call3 (long sys_call, long one, long two, long three)
        "int    $0x80\n\t"
        "mov    %%eax,%0\n\t"
        : "=r" (r)
-       : "rm" (sys_call), "rm" (one)
-#if __TINYC__
-         , "m" (two) , "m" (three)
-#else
-         , "rm" (two) , "rm" (three)
-#endif
+       : "rm" (sys_call), "rm" (one), "rm" (two), "rm" (three)
        : "eax", "ebx", "ecx", "edx"
        );
   return r;
@@ -112,12 +101,7 @@ __sys_call4 (long sys_call, long one, long two, long three, long four)
        "int    $0x80\n\t"
        "mov    %%eax,%0\n\t"
        : "=r" (r)
-       : "rm" (sys_call), "rm" (one)
-#if __TINYC__
-         , "m" (two) , "m" (three) , "m" (four)
-#else
-         , "rm" (two) , "rm" (three) , "rm" (four)
-#endif
+       : "rm" (sys_call), "rm" (one), "rm" (two), "rm" (three), "rm" (four)
        : "eax", "ebx", "ecx", "edx", "esi"
        );
   return r;

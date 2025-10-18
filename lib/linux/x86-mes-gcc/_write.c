@@ -1,7 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2019,2020 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
- * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -36,12 +35,7 @@ _write (int filedes, void const *buffer, size_t size)
        "int    $0x80\n\t"
        "mov    %%eax,%0\n\t"
        : "=r" (r)
-       : "rm" (filedes), "rm" (buffer)
-#if __TINYC__
-         , "m" (size)
-#else
-         , "rm" (size)
-#endif
+       : "rm" (filedes), "rm" (buffer), "rm" (size)
        : "eax", "ebx", "ecx", "edx"
        );
   return r;
