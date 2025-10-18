@@ -4,6 +4,7 @@ MES_ARENA=20000
 MES_MAX_ARENA=$MES_ARENA
 export MES_ARENA
 export MES_MAX_ARENA
+export MES_BOOT
 if [ "$MES" != guile ]; then
     MES_BOOT=$0 exec ${MES-bin/mes}
 fi
@@ -11,7 +12,7 @@ exec ${MES-bin/mes} --no-auto-compile -L ${0%/*} -L module -C module -s "$0" "$@
 !#
 
 ;;; GNU Mes --- Maxwell Equations of Software
-;;; Copyright © 2018,2019,2020 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2018,2019,2020,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
