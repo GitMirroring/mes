@@ -1251,28 +1251,14 @@
         ((bitwise-or ,a ,b) ((binop->r info) a b 'r0-or-r1))
         ((bitwise-xor ,a ,b) ((binop->r info) a b 'r0-xor-r1))
         ((lshift ,a ,b)
-         (let* ((type-a (ast->type a info))
-                (default (get-type "default" info))
-                ;; In helper of expr->register in the matches for lshift and
-                ;; rshift the usual arithmetic conversion is wrong.  A quick and
-                ;; dirty fix is to use the type of the operand 'a' if it has a
-                ;; greater or equal size than the default type.
-                ;; TODO: The type of the result is that of lhs.
-                (type (if (>= (->size type-a info) (->size default info)) type-a
-                          default))
+         (let* ((type (promote a info))
                 (info ((binop->r info) a b 'r0<<r1)))
            (append-text info (convert-r0 info type))))
         ((rshift ,a ,b)
-         (let* ((type-a (ast->type a info))
-                (default (get-type "default" info))
-                ;; In helper of expr->register in the matches for lshift and
-                ;; rshift the usual arithmetic conversion is wrong.  A quick and
-                ;; dirty fix is to use the type of the operand 'a' if it has a
-                ;; greater or equal size than the default type.
-                ;; TODO: The type of the result is that of lhs.
-                (type (if (>= (->size type-a info) (->size default info)) type-a
-                          default))
-                (info ((binop->r info) a b (if (signed? type) 'r0>>r1-signed 'r0>>r1))))
+         (let* ((type (promote a info))
+                (info ((binop->r info) a b
+                       (if (signed? type) 'r0>>r1-signed
+                           'r0>>r1))))
            (append-text info (convert-r0 info type))))
         ((div ,a ,b)
          ((binop->r info) a b 'r0/r1
