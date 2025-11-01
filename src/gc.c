@@ -3,6 +3,7 @@
  * Copyright © 2016,2017,2018,2019,2020,2021,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2022 Gabriel Wicki <gabriel@erlikon.ch>
  * Copyright © 2023 Timothy Sample <samplet@ngyro.com>
+ * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -36,7 +37,7 @@ char *
 cell_bytes (struct scm *x)
 {
   char *p = cast_voidp_to_charp (x);
-  return p + (2 * sizeof (long));
+  return p + sizeof (struct scm);
 }
 
 #if __M2__
@@ -236,7 +237,12 @@ cons (struct scm *x, struct scm *y)
 size_t
 bytes_cells (size_t length)
 {
-  return (sizeof (long) + sizeof (long) + length - 1 + sizeof (struct scm *)) / sizeof (struct scm *);
+  int remainder_p = length % sizeof (struct scm);
+  if (remainder_p > 0)
+    remainder_p = 1;
+  else
+    remainder_p = 0;
+  return 1 + (length / sizeof (struct scm)) + remainder_p;
 }
 
 struct scm *
