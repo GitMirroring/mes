@@ -2,6 +2,7 @@
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2020,2022,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © Timothy Sample 2022 <samplet@ngyro.com>
+ * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -399,16 +400,21 @@ apply_builtin (struct scm *fn, struct scm *x)   /*:((internal)) */
           x = cons (a, cons (d->car->cdr->car, d));
     }
 
-  if (arity == 0)
-    return apply_builtin0 (fn);
-  if (arity == 1)
-    return apply_builtin1 (fn, x->car);
-  else if (arity == 2)
-    return apply_builtin2 (fn, x->car, x->cdr->car);
-  else if (arity == 3)
-    return apply_builtin3 (fn, x->car, x->cdr->car, x->cdr->cdr->car);
-  else if (arity == -1)
-    return apply_builtin1 (fn, x);
+  switch (arity)
+    {
+    case 0:
+      return apply_builtin0 (fn);
+    case 1:
+      return apply_builtin1 (fn, x->car);
+    case 2:
+      return apply_builtin2 (fn, x->car, x->cdr->car);
+    case 3:
+      return apply_builtin3 (fn, x->car, x->cdr->car, x->cdr->cdr->car);
+    case -1:
+      return apply_builtin1 (fn, x);
+    default:
+      assert_msg(0, "apply_builtin: unreachable arity");
+    }
 
   return cell_unspecified;
 }
@@ -439,7 +445,7 @@ eval_apply ()
   int t;
   long i;
 
-eval_apply:
+ eval_apply:
   if (R3 == cell_vm_evlis2)
     goto evlis2;
   else if (R3 == cell_vm_evlis3)
@@ -503,21 +509,21 @@ eval_apply:
   else
     assert_msg (0, "eval/apply unknown continuation");
 
-evlis:
+ evlis:
   if (R1 == cell_nil)
     goto vm_return;
   if (R1->type != TPAIR)
     goto eval;
   push_cc (R1->car, R1, R0, cell_vm_evlis2);
   goto eval;
-evlis2:
+ evlis2:
   push_cc (R2->cdr, R1, R0, cell_vm_evlis3);
   goto evlis;
-evlis3:
+ evlis3:
   R1 = cons (R2, R1);
   goto vm_return;
 
-apply:
+ apply:
   g_stack_array[g_stack + GC_FRAME_PROCEDURE] = R1->car;
   a = R1->car;
   t = a->type;
@@ -608,12 +614,12 @@ apply:
     }
   push_cc (R1->car, R1, R0, cell_vm_apply2);
   goto eval;
-apply2:
+ apply2:
   check_apply (R1, R2->car);
   R1 = cons (R1, R2->cdr);
   goto apply;
 
-eval:
+ eval:
   t = R1->type;
   if (t == TPAIR)
     {
@@ -801,7 +807,7 @@ eval:
   else
     goto vm_return;
 
-macro_expand:
+ macro_expand:
   if (R1->type != TPAIR || R1->car == cell_symbol_quote)
     goto vm_return;
 
@@ -876,7 +882,7 @@ macro_expand:
   push_cc (R1->car, R1, R0, cell_vm_macro_expand_car);
   goto macro_expand;
 
-macro_expand_car:
+ macro_expand_car:
   R2->car = R1;
   R1 = R2;
   if (R1->cdr == cell_nil)
@@ -885,13 +891,13 @@ macro_expand_car:
   push_cc (R1->cdr, R1, R0, cell_vm_macro_expand_cdr);
   goto macro_expand;
 
-macro_expand_cdr:
+ macro_expand_cdr:
   R2->cdr = R1;
   R1 = R2;
 
   goto vm_return;
 
-begin:
+ begin:
   x = cell_unspecified;
   while (R1 != cell_nil)
     {
@@ -920,7 +926,7 @@ begin:
   goto vm_return;
 
 
-begin_expand:
+ begin_expand:
   x = cell_unspecified;
   while (R1 != cell_nil)
     {
@@ -974,10 +980,10 @@ begin_expand:
   R1 = x;
   goto vm_return;
 
-vm_if:
+ vm_if:
   push_cc (R1->car, R1, R0, cell_vm_if_expr);
   goto eval;
-if_expr:
+ if_expr:
   x = R1;
   R1 = R2;
   if (x != cell_f)
@@ -993,7 +999,7 @@ if_expr:
   R1 = cell_unspecified;
   goto vm_return;
 
-call_with_current_continuation:
+ call_with_current_continuation:
   x = make_continuation (g_continuations);
   g_continuations = g_continuations + 1;
   v = make_vector_ (STACK_SIZE - g_stack, cell_unspecified);
@@ -1002,17 +1008,17 @@ call_with_current_continuation:
   x->continuation = v;
   push_cc (cons (R1->car, cons (x, cell_nil)), x, R0, cell_vm_call_with_current_continuation2);
   goto apply;
-call_with_current_continuation2:
+ call_with_current_continuation2:
   v = make_vector_ (STACK_SIZE - g_stack, cell_unspecified);
   for (i = g_stack; i < STACK_SIZE; i = i + 1)
     vector_set_x_ (v, i - g_stack, g_stack_array[i]);
   R2->continuation = v;
   goto vm_return;
 
-call_with_values:
+ call_with_values:
   push_cc (cons (R1->car, cell_nil), R1, R0, cell_vm_call_with_values2);
   goto apply;
-call_with_values2:
+ call_with_values2:
   if (R1->type == TVALUES)
     R1 = R1->cdr;
   else
@@ -1020,7 +1026,7 @@ call_with_values2:
   R1 = cons (R2->cdr->car, R1);
   goto apply;
 
-vm_return:
+ vm_return:
   x = R1;
   gc_pop_frame ();
   R1 = x;
