@@ -400,6 +400,7 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
         case TBYTES:
         case TCLOSURE:
         case TCONTINUATION:
+        case TBUILTIN:
         case TKEYWORD:
         case TPORT:
         case TSPECIAL:
@@ -582,6 +583,7 @@ gc_loop (struct scm *scan)
             break;
           case TCLOSURE:
           case TCONTINUATION:
+          case TBUILTIN:
           case TKEYWORD:
           case TPORT:
           case TSPECIAL:
@@ -836,6 +838,7 @@ gc_dump_arena (struct scm *cells, long size)
                 {
                   if (t == TCLOSURE
                       || t == TCONTINUATION
+                      || t == TBUILTIN
                       || t == TKEYWORD
                       || t == TMACRO
                       || t == TPAIR

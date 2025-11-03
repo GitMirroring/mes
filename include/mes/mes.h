@@ -48,6 +48,7 @@ struct scm
     struct scm *closure;
     struct scm *continuation;
     char *name;
+    struct scm *builtin;
     struct scm *string;
     struct scm *structure;
     long value;
