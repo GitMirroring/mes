@@ -109,9 +109,10 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
     return cell_unspecified;
   g_depth = g_depth - 1;
 
-  int t = x->type;
-  if (t == TCHAR)
+  enum cell_type t = x->type;
+  switch (t)
     {
+    case TCHAR:
       if (write_p == 0)
         fdputc (x->value, fd);
       else
@@ -119,9 +120,8 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
           fdputs ("#", fd);
           fdwrite_char (x->value, fd);
         }
-    }
-  else if (t == TCLOSURE)
-    {
+      break;
+    case TCLOSURE:
       fdputs ("#<closure ", fd);
       struct scm *circ = x->cdr->car;
       struct scm *name = circ->cdr->car;
@@ -130,25 +130,16 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
       fdputc (' ', fd);
       display_helper (args, 0, "", fd, 0);
       fdputs (">", fd);
-    }
-  else if (t == TMACRO)
-    {
-      fdputs ("#<macro ", fd);
-      display_helper (x->cdr, cont, "", fd, 0);
-      fdputs (">", fd);
-    }
-  else if (t == TBINDING)
-    {
+      break;
+    case TBINDING:
       fdputs ("#<binding ", fd);
       display_helper (x->binding->car, cont, "", fd, 0);
       fdputs (">", fd);
-    }
-  else if (t == TNUMBER)
-    {
+      break;
+    case TNUMBER:
       fdputs (ltoa (x->value), fd);
-    }
-  else if (t == TPAIR)
-    {
+      break;
+    case TPAIR:
       if (cont == 0)
         fdputs ("(", fd);
       if (x->car == cell_circular && x->cdr->car != cell_closure)
@@ -180,9 +171,8 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
         }
       if (cont == 0)
         fdputs (")", fd);
-    }
-  else if (t == TPORT)
-    {
+      break;
+    case TPORT:
       fdputs ("#<port ", fd);
       fdputs (ltoa (x->port), fd);
       fdputs (" ", fd);
@@ -191,14 +181,12 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
       fdwrite_string (cell_bytes (x->string), x->length, fd);
       fdputc ('"', fd);
       fdputs (">", fd);
-    }
-  else if (t == TKEYWORD)
-    {
+      break;
+    case TKEYWORD:
       fdputs ("#:", fd);
       fdwrite_string (cell_bytes (x->string), x->length, fd);
-    }
-  else if (t == TSTRING)
-    {
+      break;
+    case TSTRING:
       if (write_p == 1)
         {
           fdputc ('"', fd);
@@ -207,17 +195,19 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
         }
       else
         fdputs (cell_bytes (x->string), fd);
-    }
-  else if (t == TSPECIAL || t == TSYMBOL)
-    fdwrite_string (cell_bytes (x->string), x->length, fd);
-  else if (t == TREF)
-    fdisplay_ (x->ref, fd, write_p);
-  else if (t == TSTRUCT)
-    {
+      break;
+    case TSPECIAL:
+    case TSYMBOL:
+      fdwrite_string (cell_bytes (x->string), x->length, fd);
+      break;
+    case TREF:
+      fdisplay_ (x->ref, fd, write_p);
+      break;
+    case TSTRUCT:
       struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);
       if (printer->type == TREF)
         printer = printer->ref;
-      if (printer->type == TCLOSURE || printer->type == TBUILTIN)
+      if (printer->type == TCLOSURE || printer->type == TBUILTIN )
         apply (printer, cons (x, cell_nil), R0);
       else
         {
@@ -233,27 +223,33 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
             }
           fdputc ('>', fd);
         }
-    }
-  else if (t == TVECTOR)
-    {
-      fdputs ("#(", fd);
-      struct scm *t = x->car;
-      long i;
-      for (i = 0; i < x->length; i = i + 1)
-        {
-          if (i != 0)
-            fdputc (' ', fd);
-          fdisplay_ (cell_ref (x->vector, i), fd, write_p);
-        }
-      fdputc (')', fd);
-    }
-  else
-    {
+      break;
+    case TVECTOR:
+      {
+        fdputs ("#(", fd);
+        struct scm *t = x->car;
+        long i;
+        for (i = 0; i < x->length; i = i + 1)
+          {
+            if (i != 0)
+              fdputc (' ', fd);
+            fdisplay_ (cell_ref (x->vector, i), fd, write_p);
+          }
+        fdputc (')', fd);
+      }
+      break;
+    case TMACRO:
+      fdputs ("#<macro", fd);
+      display_helper (x->cdr, cont, "", fd, 0);
+      fdputc ('>', fd);
+      break;
+    default:
       fdputs ("<", fd);
       fdputs (ltoa (t), fd);
       fdputs (":", fd);
       fdputs (ltoa (cast_voidp_to_long (x)), fd);
       fdputs (">", fd);
+      break;
     }
   return cell_unspecified;
 }
