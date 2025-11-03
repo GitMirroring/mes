@@ -2,7 +2,7 @@
 
 ;;; GNU Mes --- Maxwell Equations of Software
 ;;; Copyright © 2016,2017,2018,2019,2022 Janneke Nieuwenhuizen <janneke@gnu.org>
-;;; Copyright © 2023 Ekaitz Zarraga <ekaitz@elenq.tech>
+;;; Copyright © 2023,2025 Ekaitz Zarraga <ekaitz@elenq.tech>
 ;;; Copyright © 2022,2023 Timothy Sample <samplet@ngyro.com>
 ;;;
 ;;; This file is part of GNU Mes.
@@ -246,7 +246,10 @@
 (define (vector . rest) (list->vector rest))
 
 (define (vector-copy x)
-  (list->vector (vector->list x)))
+  (let* ((l (vector-length x))
+         (o (make-vector l)))
+    (vector-copy! o 0 x 0 l)
+    o))
 
 
 ;;; Bytevectors
