@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -23,25 +24,27 @@
 
 /* Cell types */
 
-#define TCHAR              0
-
-#define TBYTES             1
-#define TCLOSURE           2
-#define TCONTINUATION      3
-#define TKEYWORD           4
-#define TMACRO             5
-#define TNUMBER            6
-#define TPAIR              7
-#define TPORT              8
-#define TREF               9
-#define TSPECIAL          10
-#define TSTRING           11
-#define TSTRUCT           12
-#define TSYMBOL           13
-#define TVALUES           14
-#define TBINDING          15
-#define TVECTOR           16
-#define TBROKEN_HEART     17
+enum cell_type
+  {
+    TCHAR,
+    TBYTES,
+    TCLOSURE,
+    TCONTINUATION,
+    TKEYWORD,
+    TMACRO,
+    TNUMBER,
+    TPAIR,
+    TPORT,
+    TREF,
+    TSPECIAL,
+    TSTRING,
+    TSTRUCT,
+    TSYMBOL,
+    TVALUES,
+    TBINDING,
+    TVECTOR,
+    TBROKEN_HEART,
+  };
 
 /* Struct types */
 
