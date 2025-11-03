@@ -75,7 +75,7 @@ check_apply (struct scm *f, struct scm *e)      /*:((internal)) */
     type = "number";
   if (f->type == TSTRING)
     type = "string";
-  if (f->type == TSTRUCT && builtin_p (f) == cell_f)
+  if (f->type == TSTRUCT)
     type = "#<...>";
   if (f->type == TBROKEN_HEART)
     type = "<3";
@@ -525,9 +525,8 @@ eval_apply ()
 
  apply:
   g_stack_array[g_stack + GC_FRAME_PROCEDURE] = R1->car;
-  a = R1->car;
-  t = a->type;
-  if (t == TSTRUCT && builtin_p (R1->car) == cell_t)
+  t = R1->car->type;
+  if (t == TBUILTIN)
     {
       check_formals (R1->car, builtin_arity (R1->car), R1->cdr);
       R1 = apply_builtin (R1->car, R1->cdr);
