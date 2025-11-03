@@ -1,6 +1,6 @@
 ;;; GNU Mes --- Maxwell Equations of Software
 ;;; Copyright © 2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
-;;; Copyright © 2023 Ekaitz Zarraga <ekaitz@elenq.tech>
+;;; Copyright © 2023,2025 Ekaitz Zarraga <ekaitz@elenq.tech>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
@@ -481,8 +481,9 @@ $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
     (version "3.00.0")
     (source (origin
               (method url-fetch)
-              (uri (string-append "mirror://savannah/nyacc/nyacc-"
-                                  version ".tar.gz"))
+              (uri (string-append
+                     "https://github.com/mwette/nyacc/archive/refs/tags/V"
+                     version ".tar.gz"))
               (sha256
                (base32
                 "17ymkgxxzhdn64h01jp964svzx6hdqr2a1p0csinsnyvb6qhghnv"))
