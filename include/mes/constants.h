@@ -25,26 +25,26 @@
 /* Cell types */
 
 enum cell_type
-  {
-    TCHAR,
-    TBYTES,
-    TCLOSURE,
-    TCONTINUATION,
-    TBUILTIN,
-    TKEYWORD,
-    TMACRO,
-    TNUMBER,
-    TPAIR,
-    TPORT,
-    TREF,
-    TSPECIAL,
-    TSTRING,
-    TSTRUCT,
-    TSYMBOL,
-    TVALUES,
-    TBINDING,
-    TVECTOR,
-    TBROKEN_HEART,
+{
+  TCHAR,
+  TBYTES,
+  TCLOSURE,
+  TCONTINUATION,
+  TBUILTIN,
+  TKEYWORD,
+  TMACRO,
+  TNUMBER,
+  TPAIR,
+  TPORT,
+  TREF,
+  TSPECIAL,
+  TSTRING,
+  TSTRUCT,
+  TSYMBOL,
+  TVALUES,
+  TBINDING,
+  TVECTOR,
+  TBROKEN_HEART,
 };
 
 /* Struct types */
