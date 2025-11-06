@@ -176,6 +176,65 @@ integer_to_char (struct scm *x)
 }
 
 struct scm *
+make_bytevector_uninit_ (long size)
+{
+  return make_bytes (size);
+}
+
+struct scm *
+make_bytevector_ (long size, long value)
+{
+  struct scm *bv = make_bytes (size);
+  bytevector_fill_x_ (bv, value, 0, size);
+  return bv;
+}
+
+
+struct scm *
+bytevector_fill_x_ (struct scm *bv, long value, long start, long end)
+{
+  assert_msg (start <= end, "start < end");
+  assert_msg (bv->length >= end, "bv->length >= end");
+  long i;
+  char *p = cell_bytes (bv);
+  for (i = start; i < end; i = i + 1)
+    bytevector_u8_set_x_ (bv, i, value);
+  return cell_unspecified;
+}
+
+struct scm *
+bytevector_fill_x (struct scm *x)               /*:((arity . n)) */
+{
+  /* Arguments */
+  struct scm *vec;
+  struct scm *fill;
+  struct scm *start; /* optional */
+  struct scm *end;   /* optional */
+
+  vec = x->car;
+  assert_msg (vec->type == TBYTES, "vec->type == TBYTES");
+  x = x->cdr;
+
+  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  fill = x->car;
+  x = x->cdr;
+
+  if (x->type != TPAIR)
+    return bytevector_fill_x_ (vec, fill->value, 0, vec->length);
+  start = x->car;
+  assert_number("bytevector_fill_x: start", start);
+  x = x->cdr;
+
+  if (x->type != TPAIR)
+    return bytevector_fill_x_ (vec, fill->value, start->value, vec->length);
+  end = x->car;
+  assert_number("bytevector_fill_x: end", end);
+
+  return bytevector_fill_x_ (vec, fill->value, start->value, end->value);
+}
+
+
+struct scm *
 make_bytevector (struct scm *args)
 {
   struct scm *size;
@@ -212,22 +271,29 @@ make_bytevector (struct scm *args)
     error (cell_symbol_wrong_number_of_args,
            cstring_to_symbol ("make-bytevector"));
 
-  struct scm *result = make_bytes (size->value);
-  char *p = cell_bytes (result);
-  long i;
-  if (size->value == 0)
-    p[0] = 0;
-  else if (init_p)
-    for (i = 0; i < size->value; i = i + 1)
-      p[i] = init->value;
+  if (init_p)
+    return make_bytevector_ (size->value, init->value);
+  else
+    return make_bytevector_uninit_ (size->value);
+}
 
-  return result;
+long
+bytevector_u8_ref_ (struct scm *bv, long pos)
+{
+  /* Try to be portable across signed and unsigned char (while
+     respecting the limitions of M2 and MesCC, which precludes using
+     'unsigned char' or 'uint8_t'). */
+  char *p = cell_bytes (bv);
+  long i = p[pos];
+  if (i < 0)
+    return 256 + i;
+  else
+    return i;
 }
 
 struct scm *
 bytevector_u8_ref (struct scm *bv, struct scm *k)
 {
-  char *p;
   if (bv->type != TBYTES)
     error (cell_symbol_wrong_type_arg,
            cons (bv, cstring_to_symbol ("bytevector-u8-ref")));
@@ -237,22 +303,26 @@ bytevector_u8_ref (struct scm *bv, struct scm *k)
   if (k->value < 0 || bv->length <= k->value)
     error (cell_symbol_system_error,
            cons (make_string0 ("bytevector-u8-ref: index out of range"), k));
-  p = cell_bytes (bv);
+  return make_number (bytevector_u8_ref_ (bv, k->value));
+}
 
+void
+bytevector_u8_set_x_ (struct scm *bv, long pos, long val)
+{
   /* Try to be portable across signed and unsigned char (while
      respecting the limitions of M2 and MesCC, which precludes using
      'unsigned char' or 'uint8_t'). */
-  long i = p[k->value];
-  if (i < 0)
-    return make_number (256 + i);
+  char *p = cell_bytes (bv);
+  char c = -1;
+  if (c < 255 && val >= 128)
+    p[pos] = val - 256;
   else
-    return make_number (i);
+    p[pos] = val;
 }
 
 struct scm *
 bytevector_u8_set_x (struct scm *bv, struct scm *k, struct scm *value)
 {
-  char *p;
   if (bv->type != TBYTES)
     error (cell_symbol_wrong_type_arg,
            cons (bv, cstring_to_symbol ("bytevector-u8-set!")));
@@ -268,17 +338,7 @@ bytevector_u8_set_x (struct scm *bv, struct scm *k, struct scm *value)
   if (value->value < 0 || 256 <= value->value)
     error (cell_symbol_system_error,
            cons (make_string0 ("bytevector-u8-set!: value out of range"), value));
-  p = cell_bytes (bv);
-
-  /* Try to be portable across signed and unsigned char (while
-     respecting the limitions of M2 and MesCC, which precludes using
-     'unsigned char' or 'uint8_t'). */
-  char c = -1;
-  if (c < 255 && value->value >= 128)
-    p[k->value] = value->value - 256;
-  else
-    p[k->value] = value->value;
-
+  bytevector_u8_set_x_ (bv, k->value, value->value);
   return cell_unspecified;
 }
 

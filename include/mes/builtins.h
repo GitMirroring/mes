@@ -91,6 +91,7 @@ struct scm *pair_p (struct scm *x);
 struct scm *char_to_integer (struct scm *x);
 struct scm *integer_to_char (struct scm *x);
 struct scm *make_bytevector (struct scm *args);
+struct scm *bytevector_fill_x (struct scm *x);
 struct scm *bytevector_u8_ref (struct scm *bv, struct scm *k);
 struct scm *bytevector_u8_set_x (struct scm *bv, struct scm *k, struct scm *value);
 /* src/math.c */
