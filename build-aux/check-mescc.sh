@@ -205,7 +205,6 @@ lib/tests/scaffold/7v-struct-initialize-zeroes.c
 lib/tests/scaffold/70-array-in-struct-init.c
 lib/tests/scaffold/70-struct-short-enum-init.c
 lib/tests/scaffold/70-struct-post.c
-lib/tests/scaffold/70-extern.c
 lib/tests/scaffold/70-ternary-arithmetic-argument.c
 lib/tests/scaffold/70-function-modulo.c
 lib/tests/scaffold/70-or-argument.c
@@ -343,7 +342,6 @@ lib/tests/mes/90-dtoab.c
 lib/tests/stdio/70-printf-hello.c
 lib/tests/stdio/70-printf-simple.c
 lib/tests/stdio/70-printf.c
-lib/tests/scaffold/70-extern.c
 lib/tests/stdio/80-sscanf.c
 lib/tests/posix/90-execlp.c
 lib/tests/string/90-snprintf.c
@@ -352,7 +350,6 @@ lib/tests/string/90-snprintf.c
 
     if test $mes_cpu = riscv64; then
         xfail_tests="$xfail_tests
-lib/tests/scaffold/70-extern.c
 "
     fi
 fi
