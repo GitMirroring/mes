@@ -2623,7 +2623,7 @@
                       (let ((data (init->data type init info)))
                         (append data (string->list (make-string (max 0 (- size (length data))) #\nul)))))))
          (global (make-global-entry name storage type data)))
-    (clone info #:globals (append (.globals info) (list global)))))
+    (clone info #:globals (cons global (.globals info)))))
 
 (define (array-init-element->data type o info)
   (pmatch o
