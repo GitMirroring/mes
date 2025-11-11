@@ -495,6 +495,25 @@ $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
 $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
     (inputs (list guile-3.0))))
 
+(define-public nyacc-3.00.1
+  (package
+    (inherit nyacc-0.99)
+    (version "3.00.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "mirror://savannah/nyacc/nyacc-"
+                                  version ".tar.gz"))
+              (sha256
+               (base32
+                "13kx1pppai9rp0adxyd36rcfsyfplqxwlj25fdzglmy0xr8s9kl5"))
+              (modules '((guix build utils)))
+              (snippet
+               '(substitute* "configure"
+                  (("GUILE_GLOBAL_SITE=\\$prefix.*")
+                   "GUILE_GLOBAL_SITE=\
+$prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
+    (inputs (list guile-3.0))))
+
 (define-public mes
   (package
     (name "mes")
