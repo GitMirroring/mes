@@ -43,7 +43,7 @@ fdwrite_char (char v, int fd)
     fdputs ("\\vtab", fd);
   else if (v == '\f')
     fdputs ("\\page", fd);
-  /* Nyacc bug
+  /* NYACC bug
      else if (v == '\r') fdputs ("return", fd);
   */
   else if (v == 13)
@@ -75,7 +75,7 @@ fdwrite_string_char (char v, int fd)
     fdputs ("\\n", fd);
   else if (v == '\f')
     fdputs ("\\f", fd);
-  /* Nyacc bug
+  /* NYACC bug
      else if (v == '\r') fdputs ("\\r", fd);
      else if (v == '\e') fdputs ("\\e", fd);
   */

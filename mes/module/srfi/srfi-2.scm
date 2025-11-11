@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 
-;;; srfi-2.scm is included but not used by Nyacc
+;;; srfi-2.scm is included but not used by NYACC
 
 ;;; Code:
 

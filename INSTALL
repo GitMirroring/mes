@@ -28,7 +28,7 @@ similar way.
 *** Other GNU/Linux
   - [[https://savannah.gnu.org/projects/mescc-tools/][mescc-tools]], 1.5.0 or later, 1.7.0 is known to work.
   - [[https://github.com/oriansj/m2-planet][M2-Planet]] (optional), 1.12.1 or later, 1.13.0 is known to work.
-  - [[https://savannah.gnu.org/projects/nyacc][Nyacc]], 1.00.2 or later, 2.02.2 is known to work.
+  - [[https://savannah.gnu.org/projects/nyacc][NYACC]], 1.00.2 or later, 2.02.2 is known to work.
   - GNU Gcc, 7.5.0 or later, 14.3.0 is known to work.
   - GNU Guile, version 2.0.13 or later, 3.0.9 is known to work.
   - SH, /bin/sh, GNU Bash 5.0.16 is known to work.
@@ -81,7 +81,7 @@ https://git.savannah.gnu.org/cgit/guix.git/tree/gnu/packages/commencement.scm
 ** Prerequisites
   - [[https://savannah.gnu.org/projects/mescc-tools/][mescc-tools]], 1.4.0 is known to work.
   - [[https://github.com/oriansj/m2-planet][M2-Planet]], 1.9.0 is known to work.
-  - [[https://savannah.gnu.org/projects/nyacc][Nyacc]], 1.00.2 is known to work.
+  - [[https://savannah.gnu.org/projects/nyacc][NYACC]], 1.00.2 is known to work.
 
 ** Build it
 

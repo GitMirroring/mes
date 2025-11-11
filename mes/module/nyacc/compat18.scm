@@ -18,9 +18,9 @@
 
 ;;; Commentary:
 ;;;
-;;; Nyacc loads this module from the 'else' clause of some 'cond-expand'
+;;; NYACC loads this module from the 'else' clause of some 'cond-expand'
 ;;; forms.  It is for Guile 1.8 compatibility.  We already provide
-;;; everything that Nyacc needs, so we stub this module out.
+;;; everything that NYACC needs, so we stub this module out.
 ;;;
 ;;; Code:
 

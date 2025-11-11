@@ -127,7 +127,7 @@ be source.
     https://www.gnu.org/software/mes
 
 *** mes.c: a Scheme interpreter in ~5,000LOC of simple C
-*** mescc: a C compiler written in Scheme (uses Nyacc C99 parser in Scheme)
+*** mescc: a C compiler written in Scheme (uses NYACC C99 parser in Scheme)
 *** mes.M2: this Scheme interpreter in bootstrappable M2
 
 ** TinyCC
@@ -140,7 +140,7 @@ be source.
 ** remove or upstream patches from tcc-boot
 ** prepare src/mes.c for M2-Planet transpiler.
 ** ARM, the Hurd
-** fix bootstrap-loops: (Nyacc?, mes.M2, psyntax.pp?)
+** fix bootstrap-loops: (NYACC?, mes.M2, psyntax.pp?)
 ** make GNU gcc (8.0?) bootstrappable again, remove [need for] tcc stage
 * DONE
 ** reduced binary seed bootstrap into Guix.

@@ -107,7 +107,7 @@
 
 (define (ast-strip-comment o)
   (pmatch o
-    ((@ (comment . ,comment)) #f) ; Nyacc 0.90.2/0.93.0?
+    ((@ (comment . ,comment)) #f) ; NYACC 0.90.2/0.93.0?
     ((comment . ,comment) #f)
     (((comment . ,comment) . ,t) (filter-map ast-strip-comment t))
     (((comment . ,comment) . ,tail) tail)
@@ -117,8 +117,8 @@
     (_  o)))
 
 (define (qual-const? qual)
-  (or (equal? qual "const")             ;Nyacc <  1.04.0
-      (equal? qual '(const))))          ;Nyacc >= 1.04.0
+  (or (equal? qual "const")             ;NYACC <  1.04.0
+      (equal? qual '(const))))          ;NYACC >= 1.04.0
 
 
 (define (ast-strip-attributes o)

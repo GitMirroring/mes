@@ -189,13 +189,13 @@
              (let ((type (get-type name info)))
                (ast->type type info)))
 
-      ;; Nyacc >= 1.02.0
+      ;; NYACC >= 1.02.0
       ((type-name (decl-spec-list ,type) (abs-ptr-declr (pointer . ,pointer)))
        (let ((rank (pointer->rank `(pointer ,@pointer)))
              (type (ast->type type info)))
          (rank+= type rank)))
 
-      ;; Nyacc < 1.02.0
+      ;; NYACC < 1.02.0
       ((type-name (decl-spec-list ,type) (abs-declr (pointer . ,pointer)))
        (let ((rank (pointer->rank `(pointer ,@pointer)))
              (type (ast->type type info)))
@@ -309,7 +309,7 @@
 
       ((cast (type-name ,type) ,expr) (ast->type type info))
 
-      ;; Nyacc >= 1.02.0
+      ;; NYACC >= 1.02.0
       ((cast (type-name ,type (abs-ptr-declr ,pointer)) ,expr)
        (let ((rank (pointer->rank pointer)))
          (rank+= (ast->type type info) rank)))
@@ -317,7 +317,7 @@
        (let* ((rank (pointer->rank pointer)))
          (rank+= (ast->type type info) rank)))
 
-      ;; Nyacc < 1.02.0
+      ;; NYACC < 1.02.0
       ((cast (type-name ,type (abs-declr ,pointer)) ,expr)
        (let ((rank (pointer->rank pointer)))
          (rank+= (ast->type type info) rank)))
@@ -673,7 +673,7 @@
 (define (ast->comment o)
   (if mes-or-reproducible? '()
       (let* ((source (with-output-to-string (lambda () (pretty-print-c99 o))))
-             ;; Nyacc fixups
+             ;; NYACC fixups
              (source (string-substitute source "\\" "\\\\"))
              (source (string-substitute source "'\\'" "'\\\\'"))
              (source (string-substitute source "'\"'" "'\\\"'"))
@@ -1078,7 +1078,7 @@
 
         ;; offsetoff
 
-        ;; Nyacc >= 1.02.0
+        ;; NYACC >= 1.02.0
         ((ref-to (i-sel (ident ,field) (cast (type-name
                                               (decl-spec-list ,struct)
                                               (abs-ptr-declr (pointer)))
@@ -1089,7 +1089,7 @@
                 (info (allocate-register info)))
            (append-text info (wrap-as (as info 'value->r (+ base offset))))))
 
-        ;; Nyacc < 1.02.0
+        ;; NYACC < 1.02.0
         ((ref-to
           (i-sel (ident ,field) (cast (type-name (decl-spec-list ,struct)
                                                  (abs-declr (pointer)))
@@ -1647,7 +1647,7 @@
                        (info (free-register info)))
                   info)))))
 
-        ;; Nyacc 1.08.1
+        ;; NYACC 1.08.1
         ((asm-expr ,gnuc (string ,arg0))
          (append-text info (wrap-as (asm->m1 arg0))))
 
@@ -1894,7 +1894,7 @@
        (let ((rank (pointer->rank pointer)))
          (list (cons name (rank+= (ast->type type info) rank)))))
 
-      ;; Nyacc => 1.02.0
+      ;; NYACC => 1.02.0
       ((comp-decl (decl-spec-list (type-spec ,type)) (comp-declr-list (comp-declr (ftn-declr (ptr-declr ,pointer (ident ,name)) _))))
        (let ((rank (pointer->rank pointer)))
          (list (cons name (rank+= (ast->type type info) rank)))))
@@ -1906,7 +1906,7 @@
        (let ((count (expr->number info count)))
          (list (cons name (make-c-array (ast->type type info) count)))))
 
-      ;; Nyacc < 1.02.0
+      ;; NYACC < 1.02.0
       ((comp-decl (decl-spec-list (type-spec ,type)) (comp-declr-list (comp-declr (ftn-declr (scope (ptr-declr ,pointer (ident ,name))) _))))
        (let ((rank (pointer->rank pointer)))
          (list (cons name (rank+= (ast->type type info) rank)))))
@@ -1989,7 +1989,7 @@
       ((asm-expr ,gnuc (,null ,arg0 . string))
        (append-text info (wrap-as (asm->m1 arg0))))
 
-      ;; Nyacc 0.90.2
+      ;; NYACC 0.90.2
       ((asm-expr ,gnuc (string ,arg0))
        (append-text info (wrap-as (asm->m1 arg0))))
 
@@ -2305,14 +2305,14 @@
        (clone info #:types (acons name type (.types info)))))
 
     ;; FIXME: recursive types, pointer, array
-    ;;Nyacc >= 1.02.0
+    ;;NYACC >= 1.02.0
     (((decl-spec-list (stor-spec (typedef)) (type-spec ,type)) (init-declr-list (init-declr (ary-declr (ident ,name) ,count))))
      (let* ((info (type->info type name info))
             (type (ast->type type info))
             (count (expr->number info count))
             (type (make-c-array type count)))
        (clone info #:types (acons name type (.types info)))))
-    ;;Nyacc < 1.02.0
+    ;;NYACC < 1.02.0
     (((decl-spec-list (stor-spec (typedef)) (type-spec ,type)) (init-declr-list (init-declr (array-of (ident ,name) ,count))))
      (let* ((info (type->info type name info))
             (type (ast->type type info))
@@ -2362,10 +2362,10 @@
 (define (ast->name o)
   (pmatch o
     ((ident ,name) name)
-    ;;Nyacc >= 1.02.0
+    ;;NYACC >= 1.02.0
     ((ary-declr ,array . ,_) (ast->name array))
     ((ftn-declr (ptr-declr ,pointer (ident ,name)) . _) name)
-    ;;Nyacc < 1.02.0
+    ;;NYACC < 1.02.0
     ((array-of ,array . ,_) (ast->name array))
     ((ftn-declr (scope (ptr-declr ,pointer (ident ,name))) . _) name)
     ((ptr-declr ,pointer ,decl . ,_) (ast->name decl))
@@ -2374,9 +2374,9 @@
 
 (define (init-declr->count info o)
   (pmatch o
-    ;;Nyacc >= 1.02.0
+    ;;NYACC >= 1.02.0
     ((ary-declr (ident ,name) ,count) (expr->number info count))
-    ;;Nyacc < 1.02.0
+    ;;NYACC < 1.02.0
     ((array-of (ident ,name) ,count) (expr->number info count))
     (_ #f)))
 
@@ -2736,7 +2736,7 @@
            (let ((function (make-function name type #f)))
              (clone info #:functions (cons (cons name function) functions))))))
 
-    ;; Nyacc >= 1.02.0
+    ;; NYACC >= 1.02.0
     (((ftn-declr (ptr-declr ,pointer (ident ,name)) ,param-list) ,init)
      (let* ((rank (pointer->rank pointer))
             (type (rank+= type rank)))
@@ -2748,7 +2748,7 @@
        (if (.function info) (local->info type name o '() info)
            (global->info storage type name o '() info))))
 
-    ;; Nyacc < 1.02.0
+    ;; NYACC < 1.02.0
     (((ftn-declr (scope (ptr-declr ,pointer (ident ,name))) ,param-list) ,init)
      (let* ((rank (pointer->rank pointer))
             (type (rank+= type rank)))
@@ -2765,7 +2765,7 @@
             (type (rank+= type rank)))
        (init-declr->info type storage (append _ init) info)))
 
-    ;;Nyacc >= 1.02.0
+    ;;NYACC >= 1.02.0
     (((ary-declr (ident ,name) ,count) . ,init)
      (let* ((strings (init->strings init info))
             (info (if (null? strings) info
@@ -2813,7 +2813,7 @@
        (if (.function info) (local->info type name o init info)
            (global->info storage type name o init info))))
 
-    ;;Nyacc < 1.02.0
+    ;;NYACC < 1.02.0
     (((array-of (ident ,name) ,count) . ,init)
      (let* ((strings (init->strings init info))
             (info (if (null? strings) info
@@ -2896,7 +2896,7 @@
        `((#:address ,var)
          ,@(if (= reg-size 8) '((#:address 0))
                '()))))
-    ;; Nyacc >= 1.02.0
+    ;; NYACC >= 1.02.0
     ((ref-to (i-sel (ident ,field) (cast (type-name (decl-spec-list ,struct) (abs-ptr-declr (pointer))) (p-expr (fixed ,base)))))
      (let* ((type (ast->type struct info))
             (offset (field-offset info type field))
@@ -3016,9 +3016,9 @@
 (define (param-decl:get-name o)
   (pmatch o
     ((ellipsis) #f)
-    ;; Nyacc >= 1.02.0
+    ;; NYACC >= 1.02.0
     ((param-decl (decl-spec-list (type-spec (void))) (param-declr)) #f)
-    ;; Nyacc < 1.02.0
+    ;; NYACC < 1.02.0
     ((param-decl (decl-spec-list (type-spec (void)))) #f)
     ((param-decl _ (param-declr ,ast)) (ast->name ast))
     (_ (error "param-decl:get-name not supported:" o))))
@@ -3042,11 +3042,11 @@
        (rank+= (ast->type type info) (1+ rank))))
     ((param-decl (decl-spec-list ,type) (param-declr (ary-declr _)))
      (make-pointer (ast->type type info) 1))
-    ;;Nyacc >= 1.02.0
+    ;;NYACC >= 1.02.0
     ((param-decl (decl-spec-list ,type) (param-declr (ptr-declr ,pointer (ary-declr _))))
      (let ((rank (pointer->rank pointer)))
        (rank+= (ast->type type info) (1+ rank))))
-    ;;Nyacc < 1.02.0
+    ;;NYACC < 1.02.0
     ((param-decl (decl-spec-list ,type) (param-declr (ptr-declr ,pointer (array-of _))))
      (let ((rank (pointer->rank pointer)))
        (rank+= (ast->type type info) (1+ rank))))

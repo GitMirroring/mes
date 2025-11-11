@@ -101,7 +101,7 @@ Some influential environment variables:
   GUILE             guile command
   GUILD             guild command
   GUILD_OPTIMIZE    guild compile optimization
-  GUILE_LOAD_PATH   guile load path; where to find Nyacc
+  GUILE_LOAD_PATH   guile load path; where to find NYACC
   MES_FOR_BUILD     build system MES [can be mes or guile]
 EOF
     exit 0

@@ -136,7 +136,7 @@ Equations of Software.} is to help create a computer operating system
 that we can trust.
 
 Mes consists of a mutual self-hosting Scheme interpreter written in C
-and a Nyacc-based (see @pxref{NYACC User's Guide,,, nyacc-ug, NYACC
+and a NYACC-based (see @pxref{NYACC User's Guide,,, nyacc-ug, NYACC
 User's Guide}) C compiler written in Scheme.  The Scheme interpreter
 @file{mes.c} is about 5,000LOC of restricted C, to be compiled with
 M2-Planet@footnote{See @url{https://github.com/oriansj/m2-planet}}, a
@@ -1051,7 +1051,7 @@ assume that the input sources are for STANDARD
 display version and exit
 
 @item -w,--write=TYPE
-dump Nyacc AST using TYPE @{pretty-print,write@}
+dump NYACC AST using TYPE @{pretty-print,write@}
 
 @item -x LANGUAGE
 specify LANGUAGE of the following input files

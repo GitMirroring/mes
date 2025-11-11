@@ -61,7 +61,7 @@ if ! command -v M1; then
     fi
 fi
 
-echo checking for Nyacc
+echo checking for NYACC
 if ! guile -c '(use-modules (nyacc lalr)) (display *nyacc-version*) (newline)'; then
     if sudo apt-get install --no-install-recommends nyacc; then
         echo yay

@@ -63,7 +63,7 @@
   (let ((handler (fluid-ref %eh)))
     (apply handler (cons key args))))
 
-(define with-throw-handler catch) ; FIXME: hack for Nyacc 0.75
+(define with-throw-handler catch) ; FIXME: hack for NYACC 0.75
 
 (define (frame-procedure frame)
   (let ((f (struct-ref frame 3)))

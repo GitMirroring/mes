@@ -169,7 +169,7 @@
 
 
 ;;;
-;;; Nyacc 1.04.0, 1.08.0
+;;; NYACC 1.04.0, 1.08.0
 ;;;
 (define (close-port port)
   #t)
@@ -183,7 +183,7 @@
 
 
 ;;;
-;;; Source-property stubs for Nyacc-1.08.1
+;;; Source-property stubs for NYACC-1.08.1
 ;;;
 (define (supports-source-properties? o)
   #f)

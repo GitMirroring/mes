@@ -30,7 +30,7 @@
   #:export (define-record-type))
 
 ;; Macros have their own namespace, so this one cannot be simply be
-;; re-exported.  Nyacc specifically imports this symbol, so we need to
+;; re-exported.  NYACC specifically imports this symbol, so we need to
 ;; provide it.  Because macros have their own namespace, it doesn't
 ;; matter what we bind it to.
 (define define-record-type #f)

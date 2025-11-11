@@ -123,7 +123,7 @@ Options:
   -S                  preprocess and compile only; do not assemble or link
   --std=STANDARD      assume that the input sources are for STANDARD
   -V,--version        display version and exit
-  -w,--write=TYPE     dump Nyacc AST using TYPE {pretty-print,write}
+  -w,--write=TYPE     dump NYACC AST using TYPE {pretty-print,write}
   -x LANGUAGE         specify LANGUAGE of the following input files
 
 Ignored for GCC compatibility
@@ -137,7 +137,7 @@ Environment variables:
 
   MES=BINARY          run on mes-executable BINARY {mes,guile}
   MES_DEBUG=LEVEL     show debug output with verbosity LEVEL {0..5}
-  NYACC_TRACE=1       show Nyacc progress
+  NYACC_TRACE=1       show NYACC progress
 
 Report bugs to: bug-mes@gnu.org
 GNU Mes home page: <http://gnu.org/software/mes/>

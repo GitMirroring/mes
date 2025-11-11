@@ -16,7 +16,7 @@ now be bootstrapped from [[https://github.com/oriansj/m2-planet][M2-Planet]] and
 
 Mes has a Garbage Collector, a library of loadable Scheme modules--
 notably Dominique Boucher's [[https://github.com/schemeway/lalr-scm][LALR]], Pre-R6RS [[https://www.cs.indiana.edu/chezscheme/syntax-case/old-psyntax.html][portable syntax-case]] with
-R7RS ellipsis, Matt Wette's [[https://www.nongnu.org/nyacc][Nyacc]] --and test suite, just enough to
+R7RS ellipsis, Matt Wette's [[https://www.nongnu.org/nyacc][NYACC]] --and test suite, just enough to
 support a REPL and a C99 compiler: mescc.
 
 Mes + MesCC + Mes C Library can build a [[https://gitlab.com/janneke/tinycc][bootstrappable TinyCC]] that is

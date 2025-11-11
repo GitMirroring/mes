@@ -338,14 +338,14 @@ reader_read_character ()
       else if (strcmp (buf, "page") == 0)
         c = '\f';
       else if (strcmp (buf, "return") == 0)
-        /* Nyacc bug
+        /* NYACC bug
            c = '\r'; */
         c = 13;
       else if (strcmp (buf, "esc") == 0)
         c = 27;
       else if (strcmp (buf, "space") == 0)
         c = ' ';
-      /* Nyacc uses old abbrevs */
+      /* NYACC uses old abbrevs */
       else if (strcmp (buf, "bel") == 0)
         c = '\a';
       else if (strcmp (buf, "bs") == 0)
@@ -359,7 +359,7 @@ reader_read_character ()
       else if (strcmp (buf, "np") == 0)
         c = '\f';
       else if (strcmp (buf, "cr") == 0)
-        /* Nyacc bug
+        /* NYACC bug
            c = '\r'; */
         c = 13;
       /* Other control characters */
