@@ -3135,4 +3135,4 @@
              #:function #f
              #:globals (append (.statics info) (.globals info))
              #:statics '()
-             #:functions (append (.functions info) (list (cons name (make-function name type (assert-return (.text info))))))))))
+             #:functions (cons (cons name (make-function name type (assert-return (.text info)))) (.functions info))))))
