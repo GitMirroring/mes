@@ -501,11 +501,12 @@ $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
     (version "3.00.1")
     (source (origin
               (method url-fetch)
-              (uri (string-append "mirror://savannah/nyacc/nyacc-"
-                                  version ".tar.gz"))
+              (uri (string-append
+                     "https://github.com/mwette/nyacc/archive/refs/tags/V"
+                     version ".tar.gz"))
               (sha256
                (base32
-                "13kx1pppai9rp0adxyd36rcfsyfplqxwlj25fdzglmy0xr8s9kl5"))
+                "1lm3s9p0h5mwrpfaq6061z0kcyc0n2k19p9ldfwh26rh1q5kh526"))
               (modules '((guix build utils)))
               (snippet
                '(substitute* "configure"
