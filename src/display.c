@@ -204,26 +204,28 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
       fdisplay_ (x->ref, fd, write_p);
       break;
     case TSTRUCT:
-      struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);
-      if (printer->type == TREF)
-        printer = printer->ref;
-      if (printer->type == TCLOSURE || printer->type == TBUILTIN )
-        apply (printer, cons (x, cell_nil), R0);
-      else
-        {
-          fdputs ("#<", fd);
-          fdisplay_ (x->structure, fd, write_p);
-          struct scm *t = x->car;
-          long size = x->length;
-          long i;
-          for (i = 2; i < size; i = i + 1)
-            {
-              fdputc (' ', fd);
-              fdisplay_ (cell_ref (x->structure, i), fd, write_p);
-            }
-          fdputc ('>', fd);
-        }
-      break;
+      {
+        struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);
+        if (printer->type == TREF)
+          printer = printer->ref;
+        if (printer->type == TCLOSURE || printer->type == TBUILTIN )
+          apply (printer, cons (x, cell_nil), R0);
+        else
+          {
+            fdputs ("#<", fd);
+            fdisplay_ (x->structure, fd, write_p);
+            struct scm *t = x->car;
+            long size = x->length;
+            long i;
+            for (i = 2; i < size; i = i + 1)
+              {
+                fdputc (' ', fd);
+                fdisplay_ (cell_ref (x->structure, i), fd, write_p);
+              }
+            fdputc ('>', fd);
+          }
+        break;
+      }
     case TVECTOR:
       {
         fdputs ("#(", fd);
