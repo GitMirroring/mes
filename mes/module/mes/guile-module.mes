@@ -3,7 +3,7 @@
 ;;; GNU Mes --- Maxwell Equations of Software
 ;;; Copyright (C) 1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007
 ;;; Free Software Foundation, Inc.
-;;; Copyright (C) 2019,2020,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright (C) 2019,2020,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;; Copyright (C) 2022 Timothy Smaple <samplet@ngyro.com>
 ;;;
 ;;; This file is part of GNU Mes.
@@ -215,7 +215,8 @@
 
 (define (%search-load-path file-name)
   (when (> %debug 2)
-    (format (current-error-port) "%search-load-path ~s\n" file-name))
+    (format (current-error-port) "%search-load-path ~s\n" file-name)
+    (format (current-error-port) "%load-path: ~s\n" %load-path))
   (let ((file (search-path %load-path (string-append file-name ".scm"))))
     (when (> %debug 1)
       (format (current-error-port) " *file-name => ~s\n" file))

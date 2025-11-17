@@ -1,5 +1,5 @@
 ;;; GNU Mes --- Maxwell Equations of Software
-;;; Copyright © 2016,2017,2018,2019,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2016,2017,2018,2019,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;; Copyright © 2022 Timothy Sample <samplet@ngyro.com>
 ;;;
 ;;; This file is part of GNU Mes.
@@ -87,7 +87,7 @@ General help using GNU software: <http://gnu.org/gethelp/>
        options)
       (and=> (option-ref options 'load-path #f)
              (lambda (dir)
-               (setenv "GUILE_LOAD_PATH" (string-append dir ":" (getenv "GUILE_LOAD_PATH")))))
+               (set! %load-path (cons dir %load-path))))
       (when command
         (let* ((prev (set-current-input-port (open-input-string command)))
                (expr (cons 'begin (read-input-file-env (current-module))))
