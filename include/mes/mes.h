@@ -110,8 +110,6 @@ extern size_t STACK_SIZE;
 extern size_t GC_SAFETY;
 extern size_t MAX_STRING;
 extern char *g_arena;
-extern struct scm *cell_arena;
-extern struct scm *cell_zero;
 
 extern struct scm *g_free;
 extern struct scm *g_symbol;

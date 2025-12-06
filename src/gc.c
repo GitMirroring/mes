@@ -89,23 +89,8 @@ gc_init ()
 
   g_arena = malloc (alloc_bytes);
   g_cells = (struct scm *) g_arena;
+  g_free = g_cells;
   g_stack_array = (struct scm **)(g_arena + arena_bytes);
-
-  /* The vector that holds the arena. */
-  cell_arena = g_cells;
-
-  cell_zero = cell_arena + M2_CELL_SIZE;
-
-  g_cells = g_cells + M2_CELL_SIZE; /* Hmm? */
-
-  cell_arena->type = TVECTOR;
-  cell_arena->length = 1000;
-  cell_arena->vector = cell_zero;
-
-  cell_zero->type = TCHAR;
-  cell_zero->value = 'c';
-
-  g_free = g_cells + M2_CELL_SIZE;
 
   /* FIXME: remove MES_MAX_STRING, grow dynamically. */
   g_buf = malloc (MAX_STRING);
@@ -299,23 +284,6 @@ make_string_port (struct scm *x)        /*:((internal)) */
   return make_pointer_cell (TPORT, -length__ (g_ports) - 2, x);
 }
 
-void
-gc_init_news ()
-{
-  g_news = g_free;
-  struct scm *ncell_arena = g_news;
-  struct scm *ncell_zero = ncell_arena + M2_CELL_SIZE;
-
-  g_news = g_news + M2_CELL_SIZE;
-
-  ncell_arena->type = TVECTOR;
-  ncell_arena->length = cell_arena->length;
-  ncell_arena->vector = g_news;
-
-  ncell_zero->type = TCHAR;
-  ncell_zero->value = 'n';
-}
-
 /* A pointer relocating memcpy for pointer cells to avoid using only
    half of the allocated cells.
 
@@ -417,7 +385,6 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
 void
 gc_flip ()
 {
-  cell_arena = g_cells - M2_CELL_SIZE; /* For debugging. */
   gc_cellcpy (g_cells, g_news, (g_free - g_news) / M2_CELL_SIZE);
 
   long dist = g_news - g_cells;
@@ -566,7 +533,9 @@ gc_check ()
 void
 gc_ ()
 {
-  gc_init_news ();
+  /* The new semispace starts in the free space */
+  g_news = g_free;
+
   if (g_debug == 2)
     eputs (".");
   if (g_debug > 2)
@@ -576,7 +545,6 @@ gc_ ()
       eputs (ltoa (ARENA_SIZE - gc_used ()));
       eputs ("]...");
     }
-  g_free = g_news + M2_CELL_SIZE;
 
   struct scm *new_cell_nil = g_free;
   struct scm *s;
@@ -702,7 +670,6 @@ gc_dump_state ()
   gc_dump_register ("g_symbols", g_symbols);
   gc_dump_register ("g_symbol_max", g_symbol_max);
   gc_dump_register ("g_ports", g_ports);
-  gc_dump_register ("cell_zero", cell_zero);
   gc_dump_register ("cell_nil", cell_nil);
 }
 

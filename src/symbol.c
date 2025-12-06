@@ -142,8 +142,6 @@ init_symbols_ ()                  /*:((internal)) */
 struct scm *
 init_symbols ()                  /*:((internal)) */
 {
-  g_free = g_cells + M2_CELL_SIZE;
-
   g_symbols = 0;
   cell_nil = g_free;
   init_symbols_ ();
