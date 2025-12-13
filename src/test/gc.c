@@ -60,28 +60,28 @@ void
 test_gc (char const *name)
 {
   eputs ("TEST: "); eputs (name); eputs ("\n");
-  print_arena (gc_free () - 1);
+  print_arena (gc_used () - 1);
   gc_stats_ ("0");
   gc_ ();
-  print_arena (gc_free () - 1);
+  print_arena (gc_used () - 1);
   gc_stats_ ("1");
   eputs ("\n");
 
   gc_ ();
   cell_zero->value = 'd';
-  print_arena (gc_free () - 1);
+  print_arena (gc_used () - 1);
   gc_stats_ ("2");
   eputs ("\n");
 
   gc_ ();
   cell_zero->value = 'e';
-  print_arena (gc_free () - 1);
+  print_arena (gc_used () - 1);
   gc_stats_ ("3");
   eputs ("\n");
 
   gc_ ();
   cell_zero->value = 'f';
-  print_arena (gc_free () - 1);
+  print_arena (gc_used () - 1);
   gc_stats_ ("3");
   eputs ("\n");
 }

@@ -204,7 +204,7 @@ char *cell_bytes (struct scm *x);
 int peekchar ();
 int readchar ();
 int unreadchar ();
-long gc_free ();
+long gc_used ();
 long length__ (struct scm *x);
 size_t bytes_cells (size_t length);
 void assert_max_string (size_t i, char const *msg, char const *string);

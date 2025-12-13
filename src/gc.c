@@ -3,7 +3,7 @@
  * Copyright © 2016,2017,2018,2019,2020,2021,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2022 Gabriel Wicki <gabriel@erlikon.ch>
  * Copyright © 2023 Timothy Sample <samplet@ngyro.com>
- * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
+ * Copyright © 2025,2026 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -48,6 +48,12 @@ cell_bytes (struct scm *x)
 #define U100 100U
 #endif
 
+size_t
+arena_bytes_ ()
+{
+  return (ARENA_SIZE + JAM_SIZE) * sizeof (struct scm);
+}
+
 void
 gc_init ()
 {
@@ -87,7 +93,7 @@ gc_init ()
   if (p != 0)
     MAX_STRING = atoi (p);
 
-  long arena_bytes = (ARENA_SIZE + JAM_SIZE) * sizeof (struct scm);
+  long arena_bytes = arena_bytes_ ();
   long alloc_bytes = arena_bytes + (STACK_SIZE * sizeof (struct scm));
 
   g_arena = malloc (alloc_bytes);
@@ -115,7 +121,7 @@ gc_init ()
 }
 
 long
-gc_free ()
+gc_used ()
 {
   return (g_free - g_cells) / M2_CELL_SIZE;
 }
@@ -123,15 +129,13 @@ gc_free ()
 void
 gc_stats_ (char const* where)
 {
-  size_t i = g_free - g_cells;
-  i = i / M2_CELL_SIZE;
   if (where)
     {
       eputs (where);
       eputs (": ");
     }
   eputs ("[");
-  eputs (ltoa (i));
+  eputs (ltoa (gc_used ()));
   eputs ("]\n");
 }
 
@@ -324,7 +328,7 @@ gc_init_news ()
 void
 gc_up_arena ()
 {
-  long old_arena_bytes = (ARENA_SIZE + JAM_SIZE) * sizeof (struct scm);
+  long old_arena_bytes = arena_bytes_ ();
   if (ARENA_SIZE / 2 < MAX_ARENA_SIZE / 4)
     {
       ARENA_SIZE = ARENA_SIZE * 2;
@@ -333,7 +337,7 @@ gc_up_arena ()
     }
   else
     ARENA_SIZE = MAX_ARENA_SIZE - JAM_SIZE;
-  long arena_bytes = (ARENA_SIZE + JAM_SIZE) * sizeof (struct scm);
+  long arena_bytes = arena_bytes_ ();
   long stack_offset = (arena_bytes * 2);
   long realloc_bytes = (arena_bytes * 2) + (STACK_SIZE * sizeof (struct scm));
   void *p = realloc (g_cells - M2_CELL_SIZE, realloc_bytes);
@@ -617,7 +621,7 @@ gc_ ()
     {
       gc_stats_ (";;; gc");
       eputs (";;; free: [");
-      eputs (ltoa (ARENA_SIZE - gc_free ()));
+      eputs (ltoa (ARENA_SIZE - gc_used ()));
       eputs ("]...");
     }
   g_free = g_news + M2_CELL_SIZE;
@@ -667,7 +671,7 @@ struct scm *
 gc ()
 {
   if (getenv ("MES_DUMP") != 0)
-    gc_dump_arena (g_cells, gc_free ());
+    gc_dump_arena (g_cells, gc_used ());
   if (g_debug > 5)
     {
       eputs ("symbols: ");
@@ -697,7 +701,7 @@ gc ()
       eputs ("\n");
     }
   if (getenv ("MES_DUMP") != 0)
-    gc_dump_arena (g_cells, gc_free ());
+    gc_dump_arena (g_cells, gc_used ());
   return cell_unspecified;
 }
 
