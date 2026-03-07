@@ -295,7 +295,8 @@
      (else s))))
 
 (define (string-every chr str)
-  (let loop ((k 0))
-    (or (>= k (string-length str))
-        (and (char=? (string-ref str k) chr)
-             (loop (1+ k))))))
+  (let ((l (string-length str)))
+    (let loop ((k 0))
+      (or (>= k l)
+          (and (char=? (string-ref str k) chr)
+               (loop (1+ k)))))))
