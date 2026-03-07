@@ -1573,8 +1573,8 @@
 ;; Dirk:FIXME:: This incorrect (according to R5RS) syntax needs to be changed
 ;; as soon as guile supports hygienic macros.
 
-;; Mes: FIXME: This causes a segmentation fault.
-;;(define define-private define)
+(defmacro define-private args
+  (cons 'define args))
 
 (defmacro define-public args
   (define (syntax)
