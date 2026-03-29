@@ -171,7 +171,6 @@ int
 main (int argc, char **argv, char **envp)
 {
   setenv ("MES_ARENA", "100", 1);
-  setenv ("MES_MAX_ARENA", "100", 1);
   gc_init ();
   cell_zero = g_cells;
   cell_nil = cell_zero + M2_CELL_SIZE;

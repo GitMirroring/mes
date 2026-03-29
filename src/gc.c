@@ -51,7 +51,7 @@ cell_bytes (struct scm *x)
 size_t
 arena_bytes_ ()
 {
-  return (ARENA_SIZE + JAM_SIZE) * sizeof (struct scm);
+  return ARENA_SIZE * sizeof (struct scm);
 }
 
 void
@@ -66,22 +66,13 @@ gc_init ()
 #endif
   STACK_SIZE = 20000;
 
-  JAM_SIZE = 10;
-  MAX_ARENA_SIZE = 10000000;
   GC_SAFETY = 2000;
   MAX_STRING = 524288;
 
   char *p;
-  p = getenv ("MES_MAX_ARENA");
-  if (p != 0)
-    MAX_ARENA_SIZE = atoi (p);
   p = getenv ("MES_ARENA");
   if (p != 0)
     ARENA_SIZE = atoi (p);
-  JAM_SIZE = ARENA_SIZE / U10;
-  p = getenv ("MES_JAM");
-  if (p != 0)
-    JAM_SIZE = atoi (p);
   GC_SAFETY = ARENA_SIZE / U100;
   p = getenv ("MES_SAFETY");
   if (p != 0)
@@ -325,39 +316,6 @@ gc_init_news ()
   ncell_zero->value = 'n';
 }
 
-void
-gc_up_arena ()
-{
-  long old_arena_bytes = arena_bytes_ ();
-  if (ARENA_SIZE / 2 < MAX_ARENA_SIZE / 4)
-    {
-      ARENA_SIZE = ARENA_SIZE * 2;
-      JAM_SIZE = JAM_SIZE * 2;
-      GC_SAFETY = GC_SAFETY * 2;
-    }
-  else
-    ARENA_SIZE = MAX_ARENA_SIZE - JAM_SIZE;
-  long arena_bytes = arena_bytes_ ();
-  long stack_offset = (arena_bytes * 2);
-  long realloc_bytes = (arena_bytes * 2) + (STACK_SIZE * sizeof (struct scm));
-  void *p = realloc (g_cells - M2_CELL_SIZE, realloc_bytes);
-  if (p == 0)
-    {
-      eputs ("realloc failed, g_free=");
-      eputs (ltoa ((long) g_free));
-      eputs (":");
-      long i = g_free - g_cells;
-      i = i / M2_CELL_SIZE;
-      eputs (ltoa (ARENA_SIZE - i));
-      eputs ("\n");
-      assert_msg (0, "0");
-      exit (1);
-    }
-  g_cells = p;
-  memcpy (p + stack_offset, p + old_arena_bytes, STACK_SIZE * sizeof (struct scm *));
-  g_cells = g_cells + M2_CELL_SIZE;
-}
-
 /* A pointer relocating memcpy for pointer cells to avoid using only
    half of the allocated cells.
 
@@ -459,9 +417,6 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
 void
 gc_flip ()
 {
-  if (g_free - g_news > JAM_SIZE)
-    JAM_SIZE = ((g_free - g_news) * 3) / 2;
-
   cell_arena = g_cells - M2_CELL_SIZE; /* For debugging. */
   gc_cellcpy (g_cells, g_news, (g_free - g_news) / M2_CELL_SIZE);
 
@@ -479,9 +434,6 @@ gc_flip ()
   long i;
   for (i = g_stack; i < STACK_SIZE; i = i + 1)
     g_stack_array[i] = g_stack_array[i] - dist;
-
-  if (g_debug > 2)
-    gc_stats_ (";;; => jam");
 }
 
 struct scm *
@@ -625,26 +577,6 @@ gc_ ()
       eputs ("]...");
     }
   g_free = g_news + M2_CELL_SIZE;
-
-  if (ARENA_SIZE < MAX_ARENA_SIZE
-      && (char *)(g_cells) == g_arena + M2_CELL_SIZE)
-    {
-      if (g_debug == 2)
-        eputs ("+");
-      if (g_debug > 2)
-        {
-          eputs (" up[");
-          eputs (ltoa ((long) g_cells));
-          eputs (",");
-          eputs (ltoa ((long) g_news));
-          eputs (":");
-          eputs (ltoa (ARENA_SIZE));
-          eputs (",");
-          eputs (ltoa (MAX_ARENA_SIZE));
-          eputs ("]...");
-        }
-      gc_up_arena ();
-    }
 
   struct scm *new_cell_nil = g_free;
   struct scm *s;

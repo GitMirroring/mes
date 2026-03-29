@@ -106,9 +106,7 @@ extern struct scm *g_ports;
 
 /* gc */
 extern size_t ARENA_SIZE;
-extern size_t MAX_ARENA_SIZE;
 extern size_t STACK_SIZE;
-extern size_t JAM_SIZE;
 extern size_t GC_SAFETY;
 extern size_t MAX_STRING;
 extern char *g_arena;
