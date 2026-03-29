@@ -22,15 +22,26 @@
 #include "mes/lib.h"
 #include "mes/mes.h"
 
+size_t
+vector_bytes (struct scm *v)
+{
+  return v->length * sizeof (struct scm*);
+}
+
+struct scm **
+vector_body (struct scm * v)
+{
+  return ((struct scm **)cell_bytes (v));
+}
+
 struct scm *
 make_vector_uninit_ (long k)
 {
-  struct scm *x = alloc (1);
-  struct scm *v = alloc (k);
-  x->type = TVECTOR;
-  x->length = k;
-  x->vector = v;
-  return x;
+  size_t size = bytes_cells (sizeof (struct scm *) * k);
+  struct scm *v = alloc (size);
+  v->type = TVECTOR;
+  v->length = k;
+  return v;
 }
 
 struct scm *
@@ -66,14 +77,8 @@ vector_ref_ (struct scm *x, long i)
 {
   assert_msg (x->type == TVECTOR, "x->type == TVECTOR");
   assert_msg (i < x->length, "i < x->length");
-  struct scm *e = cell_ref (x->vector, i);
-  if (e->type == TREF)
-    e = e->ref;
-  if (e->type == TCHAR)
-    e = make_char (e->value);
-  if (e->type == TNUMBER)
-    e = make_number (e->value);
-  return e;
+  struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
+  return *loc;
 }
 
 struct scm *
@@ -83,19 +88,12 @@ vector_ref (struct scm *x, struct scm *i)
 }
 
 struct scm *
-vector_entry (struct scm *x)
-{
-  if (x->type != TCHAR && x->type != TNUMBER)
-    x = make_ref (x);
-  return x;
-}
-
-struct scm *
 vector_set_x_ (struct scm *x, long i, struct scm *e)
 {
   assert_msg (x->type == TVECTOR, "x->type == TVECTOR");
   assert_msg (i < x->length, "i < x->length");
-  copy_cell (cell_ref (x->vector, i), vector_entry (e));
+  struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
+  *loc = e;
   return cell_unspecified;
 }
 
@@ -109,11 +107,11 @@ struct scm *
 list_to_vector (struct scm *x)
 {
   struct scm *v = make_vector_ (length__ (x), cell_unspecified);
-  struct scm *p = v->vector;
+  size_t i = 0;
   while (x != cell_nil)
     {
-      copy_cell (p, vector_entry (car (x)));
-      p = p + M2_CELL_SIZE;
+      vector_set_x_ (v, i, car (x));
+      i = i + 1;
       x = cdr (x);
     }
   return v;
@@ -124,14 +122,8 @@ vector_to_list (struct scm *v)
 {
   struct scm *x = cell_nil;
   long i;
-  struct scm *e;
   for (i = v->length; i; i = i - 1)
-    {
-      e = cell_ref (v->vector, i - 1);
-      if (e->type == TREF)
-        e = e->ref;
-      x = cons (e, x);
-    }
+    x = cons (vector_ref_ (v, i - 1), x);
   return x;
 }
 

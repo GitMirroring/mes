@@ -157,16 +157,8 @@ equal2:
       if (a->length != b->length)
         return cell_f;
       for (i = 0; i < a->length; i = i + 1)
-        {
-          ai = cell_ref (a->vector, i);
-          bi = cell_ref (b->vector, i);
-          if (ai->type == TREF)
-            ai = ai->ref;
-          if (bi->type == TREF)
-            bi = bi->ref;
-          if (equal2_p (ai, bi) == cell_f)
-            return cell_f;
-        }
+        if (cell_f == equal2_p (vector_ref_ (a, i), vector_ref_ (b, i)))
+          return cell_f;
       return cell_t;
     }
   return eq_p (a, b);

@@ -251,12 +251,6 @@ make_number (long n)
 }
 
 struct scm *
-make_ref (struct scm *x)                /*:((internal)) */
-{
-  return make_cell (TREF, x, 0);
-}
-
-struct scm *
 make_string (char const *s, size_t length)
 {
   if (length > MAX_STRING)
@@ -319,10 +313,6 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
         case TBROKEN_HEART:
           assert_msg (0, "gc_cellcpy: broken heart");
           break;
-        case TREF:
-          dest->car_value = a - dist;
-          dest->cdr_value = d;
-          break;
         case TBYTES:
         case TBUILTIN:
         case TKEYWORD:
@@ -376,6 +366,28 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
           dest = dest + c;
           src = src + c;
         }
+      else if (t == TVECTOR || t == TSTRUCT)
+        {
+          size_t i = 0;
+          struct scm **dest_b = vector_body (dest);
+          struct scm **src_b = vector_body (src);
+          for (i = 0; i < dest->length; i = i + 1)
+            {
+              struct scm **loc = src_b + i * M2_PTR_SIZE;
+              struct scm *value = *loc;
+              long later = (long)value;
+              later = later - dist;
+
+              loc = dest_b + i * M2_PTR_SIZE;
+              *loc = (struct scm *)(later);
+            }
+
+          i = bytes_cells (vector_bytes (dest));
+          n = n - i;
+          c = i * M2_CELL_SIZE;
+          dest = dest + c;
+          src = src + c;
+        }
       else
         {
           n = n - 1;
@@ -414,22 +426,19 @@ gc_copy (struct scm *old)               /*:((internal)) */
     return old->car;
   struct scm *new = alloc (1);
   copy_cell (new, old);
+  size_t length = 0;
   switch (new->type)
     {
     case TSTRUCT:
     case TVECTOR:
-      {
-        new->vector = alloc (old->length);
-        long i;
-        for (i = 0; i < old->length; i = i + 1)
-          copy_cell (cell_ref (new->vector, i), cell_ref (old->vector, i));
-        break;
-      }
+      length = vector_bytes (new);
+      /* fallthrough */
     case TBYTES:
       {
+        if (length == 0)
+          length = new->length;
         char const *src = cell_bytes (old);
         char *dest = cell_bytes (new);
-        size_t length = new->length;
         struct scm *new_bytes = alloc (bytes_cells (length) - 1);
         if ((char *) new_bytes != cell_bytes (new))
           assert_msg (0, "gc_copy: could not copy bytes");
@@ -497,10 +506,6 @@ gc_loop (struct scm *scan)
           cdr = gc_copy (scan->cdr);
           gc_relocate_cdr (scan, cdr);
           break;
-        case TREF:
-          car = gc_copy (scan->car);
-          gc_relocate_car (scan, car);
-          break;
         case TBUILTIN:
         case TKEYWORD:
         case TPORT:
@@ -510,10 +515,24 @@ gc_loop (struct scm *scan)
         case TVALUES:
         case TVARIABLE:
         case TFRAME:
-          /* TSTRUCT and TVECTOR are handled by gc_copy */
           cdr = gc_copy (scan->cdr);
           gc_relocate_cdr (scan, cdr);
           break;
+        case TVECTOR:
+        case TSTRUCT:
+            {
+              size_t i = 0;
+              size_t l = scan->length;
+              struct scm *v = scan;
+              struct scm **vb = vector_body (v);
+              for (i = 0; i < l; i = i + 1)
+                {
+                  struct scm **loc = vb + i * M2_PTR_SIZE;
+                  *loc = gc_copy (*loc);
+                }
+              scan = scan + ((bytes_cells (vector_bytes (v)) - 1) * M2_CELL_SIZE);
+              break;
+            }
         case TBYTES:
           scan = scan + ((bytes_cells (scan->length) - 1) * M2_CELL_SIZE);
           break;
@@ -670,7 +689,6 @@ gc_dump_arena (struct scm *cells, long size)
               dumps (ltoa (t));
               dumpc (' ');
               if (t == TPAIR
-                  || t == TREF
                   || t == TBINDING)
                 {
                   dumps (ltoa ((cells->car - dist) / M2_CELL_SIZE));
@@ -679,34 +697,14 @@ gc_dump_arena (struct scm *cells, long size)
               else
                 dumps (ltoa (a));
               dumpc (' ');
-              if (t != TBYTES)
+              if (t == TBYTES
+                  || t == TSTRUCT
+                  || t == TVECTOR)
                 {
-                  if (t == TCLOSURE
-                      || t == TFRAME
-                      || t == TCONTINUATION
-                      || t == TBUILTIN
-                      || t == TKEYWORD
-                      || t == TPAIR
-                      || t == TPORT
-                      || t == TSPECIAL
-                      || t == TSTRING
-                      || t == TSTRUCT
-                      || t == TSYMBOL
-                      || t == TVALUES
-                      || t == TVARIABLE
-                      || t == TVECTOR)
-                    {
-                      dumps (ltoa ((cells->cdr - dist) / M2_CELL_SIZE));
-                      /* dumps ("["); dumps (ltoa (d)); dumps ("]"); */
-                    }
-                  else if (t == TNUMBER && d > 1000)
-                    dumps (ltoa (1001));
+                  if (t == TBYTES)
+                    c = bytes_cells (a);
                   else
-                    dumps (ltoa (d));
-                }
-              if (t == TBYTES)
-                {
-                  c = bytes_cells (a);
+                    c = bytes_cells (vector_bytes (cells));
                   p = cell_bytes (cells);
                   size = size - c;
                   dumpc ('"');
@@ -720,6 +718,26 @@ gc_dump_arena (struct scm *cells, long size)
                   dumpc ('"');
                   cells = cells + c * M2_CELL_SIZE;
                   size = size - c;
+                }
+              else if (t == TCONTINUATION
+                       || t == TBUILTIN
+                       || t == TKEYWORD
+                       || t == TPAIR
+                       || t == TPORT
+                       || t == TSPECIAL
+                       || t == TSTRING
+                       || t == TSYMBOL
+                       || t == TVALUES)
+                {
+                  dumps (ltoa ((cells->cdr - dist) / M2_CELL_SIZE));
+                  /* dumps ("["); dumps (ltoa (d)); dumps ("]"); */
+                }
+              else if (t == TNUMBER)
+                {
+                  if ( d > 1000 )
+                    dumps (ltoa (1001));
+                  else
+                    dumps (ltoa (d));
                 }
               else
                 {

@@ -208,9 +208,6 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
     case TSYMBOL:
       fdwrite_string (cell_bytes (x->string), x->length, fd);
       break;
-    case TREF:
-      fdisplay_ (x->ref, fd, write_p);
-      break;
     case TCONTINUATION:
       fdputs ("#<continuation", fd);
       /* TODO: fix me */
@@ -225,27 +222,23 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
     case TSTRUCT:
       {
         struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);
-        if (printer->type == TREF)
-          printer = printer->ref;
-        if (printer->type == TCLOSURE || printer->type == TBUILTIN)
+        if (printer->type == TCLOSURE || printer->type == TBUILTIN )
           apply (printer, cons (x, cell_nil));
         else
           {
             fdputs ("#<", fd);
-            fdisplay_ (x->structure, fd, write_p);
-            struct scm *t = x->car;
             long size = x->length;
             long i;
             for (i = 2; i < size; i = i + 1)
               {
                 fdputc (' ', fd);
-                fdisplay_ (cell_ref (x->structure, i), fd, write_p);
+                fdisplay_ (struct_ref_ (x, i), fd, write_p);
               }
             fdputc ('>', fd);
           }
         break;
       }
-    case TVECTOR:
+  case TVECTOR:
       {
         fdputs ("#(", fd);
         struct scm *t = x->car;
@@ -254,11 +247,11 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
           {
             if (i != 0)
               fdputc (' ', fd);
-            fdisplay_ (cell_ref (x->vector, i), fd, write_p);
+            fdisplay_ (vector_ref_ (x, i), fd, write_p);
           }
         fdputc (')', fd);
+        break;
       }
-      break;
     default:
       fdputs ("<", fd);
       fdputs (ltoa (t), fd);

@@ -314,7 +314,6 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "make-vector", -1, &make_vector, a);
   a = init_builtin (builtin_type, "vector-length", 1, &vector_length, a);
   a = init_builtin (builtin_type, "vector-ref", 2, &vector_ref, a);
-  a = init_builtin (builtin_type, "vector-entry", 1, &vector_entry, a);
   a = init_builtin (builtin_type, "vector-set!", 3, &vector_set_x, a);
   a = init_builtin (builtin_type, "list->vector", 1, &list_to_vector, a);
   a = init_builtin (builtin_type, "vector->list", 1, &vector_to_list, a);

@@ -196,7 +196,6 @@ struct scm *variable_set_x (struct scm *var, struct scm *value);
 struct scm *make_vector (struct scm *x);
 struct scm *vector_length (struct scm *x);
 struct scm *vector_ref (struct scm *x, struct scm *i);
-struct scm *vector_entry (struct scm *x);
 struct scm *vector_set_x (struct scm *x, struct scm *i, struct scm *e);
 struct scm *list_to_vector (struct scm *x);
 struct scm *vector_to_list (struct scm *v);

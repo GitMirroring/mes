@@ -52,7 +52,6 @@ struct scm
     struct scm *car;
     long car_value;
     long length;
-    struct scm *ref;
     struct scm *name;       /* for TBINDING */
     long port;
     struct scm *env;        /* for TCLOSURE */
@@ -77,8 +76,6 @@ struct scm
     struct scm *closure;    /* for TFRAME */
 
     FUNCTION function;
-    struct scm *vector;
-    struct scm *structure;
   };
 };
 
@@ -173,11 +170,12 @@ struct scm *make_hash_table_type ();
 struct scm *make_initial_module (struct scm *a);
 struct scm *make_closure (struct scm *env, struct scm *template);
 struct scm *make_number (long n);
-struct scm *make_ref (struct scm *x);
 struct scm *make_string (char const *s, size_t length);
 struct scm *make_string0 (char const *s);
 struct scm *make_string_port (struct scm *x);
 struct scm *make_variable_type ();
+size_t vector_bytes (struct scm * v);
+struct scm **vector_body (struct scm * v);
 struct scm *make_vector_ (long k, struct scm *e);
 struct scm *make_vector_uninit_ (long k);
 struct scm *mes_builtins (struct scm *a);

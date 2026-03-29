@@ -24,17 +24,18 @@
 struct scm *
 make_struct (struct scm *type, struct scm *fields, struct scm *printer)
 {
-  long size = 2 + length__ (fields);
-  struct scm *x = alloc (1);
-  struct scm *v = alloc (size);
+  /* Structs are just a vector, with a different type */
+  size_t size = length__ (fields) + 2;
+  struct scm *x = make_vector_uninit_ (size);
   x->type = TSTRUCT;
-  x->length = size;
-  x->structure = v;
-  copy_cell (v, vector_entry (type));
-  copy_cell (cell_ref (v, 1), vector_entry (printer));
+
+  struct scm **vb= vector_body (x);
+  struct scm **loc;
+  loc = vb + 0 * M2_PTR_SIZE; *loc = type;    /* `0` is the type */
+  loc = vb + 1 * M2_PTR_SIZE; *loc = printer; /* `1` is the printer */
   long i;
   struct scm *e;
-  for (i = 2; i < size; i = i + 1)
+  for (i = 2; i < size; i = i + 1)            /* `i` are the actual values */
     {
       e = cell_unspecified;
       if (fields != cell_nil)
@@ -42,7 +43,7 @@ make_struct (struct scm *type, struct scm *fields, struct scm *printer)
           e = fields->car;
           fields = fields->cdr;
         }
-      copy_cell (cell_ref (v, i), vector_entry (e));
+      loc = vb + i * M2_PTR_SIZE; *loc = e;
     }
   return x;
 }
@@ -59,14 +60,8 @@ struct_ref_ (struct scm *x, long i)
 {
   assert_struct (1, x);
   assert_range (i < x->length, i);
-  struct scm *e = cell_ref (x->structure, i);
-  if (e->type == TREF)
-    e = e->ref;
-  if (e->type == TCHAR)
-    e = make_char (e->value);
-  if (e->type == TNUMBER)
-    e = make_number (e->value);
-  return e;
+  struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
+  return *loc;
 }
 
 struct scm *
@@ -74,7 +69,8 @@ struct_set_x_ (struct scm *x, long i, struct scm *e)
 {
   assert_msg (x->type == TSTRUCT, "x->type == TSTRUCT");
   assert_msg (i < x->length, "i < x->length");
-  copy_cell (cell_ref (x->structure, i), vector_entry (e));
+  struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
+  *loc = e;
   return cell_unspecified;
 }
 

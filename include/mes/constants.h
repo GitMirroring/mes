@@ -35,7 +35,6 @@ enum cell_type
   TNUMBER,
   TPAIR,
   TPORT,
-  TREF,
   TSPECIAL,
   TSTRING,
   TSTRUCT,

@@ -154,7 +154,6 @@ init_symbols ()                  /*:((internal)) */
   a = acons (cell_type_number, make_number (TNUMBER), a);
   a = acons (cell_type_pair, make_number (TPAIR), a);
   a = acons (cell_type_port, make_number (TPORT), a);
-  a = acons (cell_type_ref, make_number (TREF), a);
   a = acons (cell_type_special, make_number (TSPECIAL), a);
   a = acons (cell_type_string, make_number (TSTRING), a);
   a = acons (cell_type_struct, make_number (TSTRUCT), a);
