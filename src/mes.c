@@ -259,7 +259,7 @@ main (int argc, char **argv)
         gc_stats_ ("\ngc run");
       MAX_ARENA_SIZE = 0;
 
-      gc (g_stack);
+      gc ();
       if (g_debug < 3)
         gc_stats_ (" => ");
 
