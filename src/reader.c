@@ -1,6 +1,6 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
- * Copyright © 2016,2017,2018,2019,2020 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2016,2017,2018,2019,2020,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2018 Jeremiah Orians <jeremiah@pdp10.guru>
  *
  * This file is part of GNU Mes.
@@ -52,6 +52,7 @@ reader_read_line_comment (int c)
   error (cell_symbol_system_error, make_string0 ("reader_read_line_comment"));
 }
 
+int reader_eat_whitespace (int c);
 struct scm *reader_read_block_comment (int s, int c);
 struct scm *reader_read_hash (int c, struct scm *a);
 struct scm *reader_read_list (int c, struct scm *a);
@@ -169,6 +170,12 @@ reader_eat_whitespace (int c)
           reader_read_block_comment (c, readchar ());
           return reader_eat_whitespace (readchar ());
         }
+      if (p == ';')
+        {
+          readchar ();
+          reader_read_sexp_ (readchar (), cell_nil);
+          return reader_eat_whitespace (readchar ());
+        }
     }
   return c;
 }
@@ -259,7 +266,7 @@ reader_read_hash (int c, struct scm *a)
     return list_to_vector (reader_read_list (readchar (), a));
   if (c == ';')
     {
-      reader_read_sexp_ (readchar (), a);
+      reader_read_sexp_ (readchar (), cell_nil);
       return reader_read_sexp_ (readchar (), a);
     }
   return reader_read_sexp_ (readchar (), a);
