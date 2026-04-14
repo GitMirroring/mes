@@ -83,5 +83,6 @@ burp
 (begin #;(foo
       (bar))
   (display "baz\n"))
+(display (list 0 1 2 #;3))
 (newline)
 ;; TODO: syntax, unsyntax, unsyntax-splicing
