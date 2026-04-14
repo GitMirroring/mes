@@ -45,7 +45,10 @@ initial_module ()
 struct scm *
 current_module ()
 {
-  return M1;
+  if (M1 == cell_f)
+    return initial_module ();
+  else
+    return M1;
 }
 
 struct scm *
@@ -57,36 +60,31 @@ set_current_module (struct scm *module)
 }
 
 struct scm *
-current_module_variable (struct scm *name, struct scm *define_p)
+module_local_variable (struct scm *module, struct scm *name)
 {
-  struct scm *module = current_module ();
-
-  /* When '(current-module)' is false, that means the module system is
-     not yet booted.  In that case, we lookup variables in the initial
-     module hash table. */
-  if (module == cell_f)
-    {
-      module = initial_module ();
-      struct scm *variable = hashq_ref_ (module, name, cell_f);
-      if (variable == cell_f && define_p != cell_f)
-        return hashq_set_x (module, name, make_variable (cell_undefined));
-      else
-        return variable;
-    }
-
-  /* The module system is booted.  We take it on faith that whatever is
-     in 'M1' is a module. */
-  if (define_p != cell_f)
-    return module_make_local_var_x (M1, name);
-  return module_variable (M1, name);
+  struct scm *obarray = module;
+  if (module != initial_module ())
+    obarray = struct_ref_ (module, MODULE_OBARRAY);
+  /* TODO: call binders maybe or never support them :) */
+  return hashq_ref_ (obarray, name, cell_f);
 }
 
 struct scm *
-module_make_local_var_x (struct scm *module, struct scm *name)
+module_ensure_local_variable_x (struct scm *module, struct scm *name)
 {
-  struct scm *obarray = struct_ref_ (module, MODULE_OBARRAY);
-  struct scm *variable = make_variable (cell_undefined);
-  struct scm *handle = hashq_create_handle_x (obarray, name, variable);
+  /* Ensure that there is a local variable in MODULE for SYMBOL.  If
+   * there is no binding for SYMBOL, create a new uninitialized
+   * variable.  Return the local variable.
+   */
+  struct scm *var = module_local_variable (module, name);
+  if (var != cell_f)
+    return var;
+
+  struct scm *obarray = module;
+  if (module != initial_module ())
+    obarray = struct_ref_ (module, MODULE_OBARRAY);
+  var = make_variable (cell_undefined);
+  struct scm *handle = hashq_create_handle_x (obarray, name, var);
 
   /* TODO: Call 'module-modified' to invoke obervers, but only if there
      are observers, since we are trying to avoid Scheme code. */
@@ -104,13 +102,14 @@ module_variable (struct scm *module, struct scm *name)
   while (modules->type == TPAIR)
     {
       module = modules->car;
-      obarray = struct_ref_ (module, MODULE_OBARRAY);
-      variable = hashq_ref_ (obarray, name, cell_f);
+      variable = module_local_variable (module, name);
       if (variable != cell_f)
           return variable;
 
-      /* TODO: Call binders. */
+      if (module == initial_module ())
+        break;
 
+      /* TODO: Call binders. */
       uses = struct_ref_ (module, MODULE_USES);
       modules = append2 (uses, modules->cdr);
     }

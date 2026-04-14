@@ -197,7 +197,9 @@ lookup_binding (struct scm *name, struct scm *define_p)
   if (handle != cell_f)
     return make_binding_ (handle, 1);
 
-  struct scm *variable = current_module_variable (name, define_p);
+  struct scm *variable = module_variable (current_module (), name);
+  if (variable == cell_f && define_p == cell_t)
+    variable = module_ensure_local_variable_x (current_module (), name);
   if (variable != cell_f)
     return make_binding_ (cons (name, variable), 0);
 

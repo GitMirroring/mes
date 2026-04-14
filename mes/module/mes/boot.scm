@@ -69,10 +69,10 @@
 
 ;; The binder
 (define (name->binding name)
-  (define var (current-module-variable name #f))
+  (define var (module-variable (current-module) name))
   (if var
       (make-binding name var)
-      (make-binding name (current-module-variable name #t))))
+      (make-binding name (module-ensure-local-variable! (current-module) name))))
 
 (define (formals->alist formals)
   (if (null? formals)
