@@ -90,8 +90,6 @@ extern struct scm *cell_symbol_internal_time_units_per_second;
 extern struct scm *cell_symbol_compiler;
 extern struct scm *cell_symbol_arch;
 extern struct scm *cell_symbol_variable;
-extern struct scm *cell_symbol_standard_eval_closure;
-extern struct scm *cell_symbol_standard_interface_eval_closure;
 extern struct scm *cell_type_bytes;
 extern struct scm *cell_type_char;
 extern struct scm *cell_type_closure;

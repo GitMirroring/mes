@@ -74,44 +74,10 @@ current_module_variable (struct scm *name, struct scm *define_p)
         return variable;
     }
 
-  /* The module system is booted.  We can use the current module's
-     'eval-closure' procedure.  We take it on faith that whatever is in
-     'M1' is a module. */
-  struct scm *eval_closure = struct_ref_ (module, MODULE_EVAL_CLOSURE);
-
-  /* If the module's "eval-closure" is the standard one, we can save
-     time by performing the lookup without calling into Scheme code. */
-  if (eval_closure == cell_symbol_standard_eval_closure)
-    return standard_eval_closure (name, define_p);
-  else if (eval_closure == cell_symbol_standard_interface_eval_closure)
-    return standard_interface_eval_closure (name, define_p);
-
-  /* Otherwise, we assume it's a closure, and defer to it for the
-     lookup. */
-  struct scm *args = cell_nil;
-  args = cons (define_p, args);
-  args = cons (name, args);
-  /* XXX: Calling 'apply' does not restore the registers properly.  We
-     work around it here, but maybe it should be fixed in 'apply'. */
-  gc_push_frame ();
-  struct scm *result = apply (eval_closure, args, cell_nil);
-  gc_pop_frame ();
-  return result;
-}
-
-struct scm *
-standard_eval_closure (struct scm *name, struct scm *define_p)
-{
+  /* The module system is booted.  We take it on faith that whatever is
+     in 'M1' is a module. */
   if (define_p != cell_f)
     return module_make_local_var_x (M1, name);
-  return module_variable (M1, name);
-}
-
-struct scm *
-standard_interface_eval_closure (struct scm *name, struct scm *define_p)
-{
-  if (define_p != cell_f)
-    return cell_f;
   return module_variable (M1, name);
 }
 
