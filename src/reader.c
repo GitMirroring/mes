@@ -3,6 +3,7 @@
  * Copyright © 2016,2017,2018,2019,2020,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2018 Jeremiah Orians <jeremiah@pdp10.guru>
  * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
+ * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -462,6 +463,7 @@ reader_read_string ()
     {
       if (i > MAX_STRING)
         assert_max_string (i, "reader_read_string", g_buf);
+    next:
       c = readchar ();
       if (c == '"')
         break;
@@ -508,6 +510,8 @@ reader_read_string ()
               n = reader_read_hex ();
               c = n->value;
               break;
+            case '\n':
+              goto next;
             default:
               /* M2-Planet needs the default */
               break;
