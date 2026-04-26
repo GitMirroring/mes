@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2023 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -216,7 +217,7 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
       struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);
       if (printer->type == TREF)
         printer = printer->ref;
-      if (printer->type == TCLOSURE || builtin_p (printer) == cell_t)
+      if (printer->type == TCLOSURE || printer->type == TBUILTIN)
         apply (printer, cons (x, cell_nil), R0);
       else
         {

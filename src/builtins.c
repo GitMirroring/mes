@@ -48,33 +48,35 @@ make_builtin (struct scm *builtin_type, struct scm *name, struct scm *arity, str
   values = cons (arity, values);
   values = cons (name, values);
   values = cons (cell_symbol_builtin, values);
-  return make_struct (builtin_type, values, cstring_to_symbol ("builtin-printer"));
+  return make_cell (TBUILTIN, 0,
+                    make_struct (builtin_type,
+                                 values,
+                                 cstring_to_symbol ("builtin-printer")));
 }
 
 struct scm *
 builtin_name (struct scm *builtin)
 {
-  return struct_ref_ (builtin, 3);
+  return struct_ref_ (builtin->builtin, 3);
 }
 
 struct scm *
 builtin_arity (struct scm *builtin)
 {
-  return struct_ref_ (builtin, 4);
+  return struct_ref_ (builtin->builtin, 4);
 }
 
 FUNCTION
 builtin_function (struct scm *builtin)
 {
-  struct scm *x = struct_ref_ (builtin, 5);
+  struct scm *x = struct_ref_ (builtin->builtin, 5);
   return x->function;
 }
 
 struct scm *
 builtin_p (struct scm *x)
 {
-  if (x->type == TSTRUCT)
-    if (struct_ref_ (x, 2) == cell_symbol_builtin)
+  if (x->type == TBUILTIN)
       return cell_t;
   return cell_f;
 }

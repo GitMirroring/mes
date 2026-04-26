@@ -30,6 +30,7 @@ enum cell_type
     TBYTES,
     TCLOSURE,
     TCONTINUATION,
+    TBUILTIN,
     TKEYWORD,
     TMACRO,
     TNUMBER,
@@ -44,7 +45,7 @@ enum cell_type
     TBINDING,
     TVECTOR,
     TBROKEN_HEART,
-  };
+};
 
 /* Struct types */
 
