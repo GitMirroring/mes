@@ -582,8 +582,8 @@ The following dependencies are optional:
 
 @itemize
 Support for building the bootstrap @file{bin/mes-m2} depends on
-@item @url{https://github.com/oriansj/m2-planet/, M2-Planet}, version 1.11.0 or later;
-1.12.0 is known to work.
+@item @url{https://github.com/oriansj/m2-planet/, M2-Planet}, version 1.12.1 or later;
+1.13.0 is known to work.
 @end itemize
 
 @cindex Guile, compatibility
@@ -613,7 +613,8 @@ Bootstrapping Mes depends on the following packages:
 @itemize
 @item a POSIX-compatible shell
 @item @url{https://savannah.gnu.org/projects/mescc-tools/, mescc-tools}, version 1.5.0,
-@item @url{https://github.com/oriansj/m2-planet/, M2-Planet}, version 1.11.0.
+@item @url{https://github.com/oriansj/m2-planet/, M2-Planet}, version 1.12.1 or later;
+1.13.0 is known to work.
 @item @url{https://savannah.gnu.org/projects/nyacc/, NYACC}, version 1.00.2 or later;
 1.09.4 is known to work.
 @end itemize
