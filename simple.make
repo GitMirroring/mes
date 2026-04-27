@@ -38,6 +38,7 @@ M2_PLANET_FLAGS = --debug --architecture $(M2_PLANET_ARCH) -D __linux__=1 -D __$
 
 CFLAGS:=					\
   $(CFLAGS)					\
+ -std=c99					\
  -D _GNU_SOURCE					\
  -ggdb						\
  -D SYSTEM_LIBC=1				\
