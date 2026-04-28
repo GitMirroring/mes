@@ -313,7 +313,12 @@ make_string_init_ (long length, char c)
   struct scm *x = make_pointer_cell (TSTRING, length, 0);
   struct scm *v = make_bytes (length + 1);
   char *p = cell_bytes (v);
-  memset (p, c, length + 1);
+  if (length > 0)
+    {
+      memset (p, c, length);
+      p [length] = '\0';
+    }
+
   x->cdr = v;
   return x;
 }
