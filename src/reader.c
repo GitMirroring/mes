@@ -2,6 +2,7 @@
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2020,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2018 Jeremiah Orians <jeremiah@pdp10.guru>
+ * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  *
  * This file is part of GNU Mes.
  *
@@ -53,7 +54,7 @@ reader_read_line_comment (int c)
 }
 
 int reader_eat_whitespace (int c);
-struct scm *reader_read_block_comment (int s, int c);
+void reader_read_block_comment (int s, int c);
 struct scm *reader_read_hash (int c, struct scm *a);
 struct scm *reader_read_list (int c, struct scm *a);
 
@@ -203,16 +204,19 @@ read_env (struct scm *a)
   return reader_read_sexp_ (readchar (), a);
 }
 
-struct scm *
+void
 reader_read_block_comment (int s, int c)
 {
-  if (c == s)
-    if (peekchar () == '#')
-      {
-        readchar ();
-        return cell_unspecified;
-      }
-  return reader_read_block_comment (s, readchar ());
+  while (c != EOF)
+    {
+      if (c == s)
+        if (peekchar () == '#')
+          {
+            readchar ();
+            return;
+          }
+      c = readchar ();
+    }
 }
 
 struct scm *
