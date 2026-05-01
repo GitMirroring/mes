@@ -382,3 +382,23 @@ $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
                    "GUILE_GLOBAL_SITE=\
 $prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
     (inputs (list guile-3.0))))
+
+(define-public nyacc-3.00.0
+  (package
+    (inherit nyacc-0.99)
+    (version "3.00.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                     "https://github.com/mwette/nyacc/archive/refs/tags/V"
+                     version ".tar.gz"))
+              (sha256
+               (base32
+                "17ymkgxxzhdn64h01jp964svzx6hdqr2a1p0csinsnyvb6qhghnv"))
+              (modules '((guix build utils)))
+              (snippet
+               '(substitute* "configure"
+                  (("GUILE_GLOBAL_SITE=\\$prefix.*")
+                   "GUILE_GLOBAL_SITE=\
+$prefix/share/guile/site/$GUILE_EFFECTIVE_VERSION\n")))))
+    (inputs (list guile-3.0))))
