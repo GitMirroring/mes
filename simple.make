@@ -39,7 +39,6 @@ M2_PLANET_FLAGS = --debug --architecture $(M2_PLANET_ARCH) -D __linux__=1 -D __$
 CFLAGS:=					\
   $(CFLAGS)					\
  -D _GNU_SOURCE					\
- -D const=					\
  -ggdb						\
  -D SYSTEM_LIBC=1				\
  -D 'MES_VERSION="git"'				\
@@ -69,6 +68,10 @@ LIBMES_SOURCES =				\
 MES_SOURCES =					\
  $(LIBMES_SOURCES)				\
  src/mes.c
+
+MES_SOURCES_M2 =				\
+ $(MES_SOURCES)					\
+ src/m2.c
 
 TEST_GC_SOURCES =				\
  $(LIBMES_SOURCES)				\
@@ -211,8 +214,8 @@ M2_PLANET_SOURCES =				\
  $(M2_PLANET_INCLUDES:%.h=%.h)			\
  $(M2_SOURCES)
 
-m2/mes.M1: simple.make $(M2_PLANET_SOURCES) $(MES_SOURCES) $(M2_PLANET_INCLUDES) | m2
-	$(M2_PLANET) $(M2_PLANET_FLAGS) $(M2_PLANET_SOURCES:%=-f %)  $(MES_SOURCES:%.c=-f %.c) -o $@ || rm -f $@
+m2/mes.M1: simple.make $(M2_PLANET_SOURCES) $(MES_SOURCES_M2) $(M2_PLANET_INCLUDES) | m2
+	$(M2_PLANET) $(M2_PLANET_FLAGS) $(M2_PLANET_SOURCES:%=-f %)  $(MES_SOURCES_M2:%.c=-f %.c) -o $@ || rm -f $@
 
 m2/mes.blood-elf.M1: m2/mes.M1 | m2
 	blood-elf --little-endian -f $< -o $@
@@ -264,7 +267,7 @@ check-mescc: $(MES)
 	rm -f a.out
 # this already needs succesful GC
 #	LIBRARY_PATH=lib MES_DEBUG=1 MES_PREFIX=mes MES=$(MES) sh -x scripts/mescc -- -I include -nostdlib lib/mes/globals.c lib/string/strlen.c lib/mes/eputs.c scaffold/hello.c
-	LIBRARY_PATH=lib MES_DEBUG=1 MES_PREFIX=mes MES=$(MES) sh -x scripts/mescc -- -m 32 -I include -nostdlib lib/mes/globals.c lib/linux/$(MESCC_CPU)-mes-mescc/crt1.c scaffold/main.c
+	LIBRARY_PATH=lib MES_DEBUG=1 MES_PREFIX=mes MES=$(MES) sh -x scripts/mescc -- -m 32 -I include -nostdlib lib/mes/globals.c lib/mes/__init_io.c lib/linux/$(MESCC_CPU)-mes-mescc/crt1.c scaffold/main.c
 	./a.out; r=$$?; if [ $$r != 42 ]; then exit 1; fi
 
 
