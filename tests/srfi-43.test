@@ -56,4 +56,9 @@ exec ${MES-bin/mes} --no-auto-compile -L ${0%/*} -L module -C module -e '(tests 
                (vector-fold-right (lambda (index tail elt) (cons elt tail))
                                   '() '#(a b c d)))
 
+(pass-if-equal "vector-fold"
+               (list 'd 'c 'b 'a)
+               (vector-fold (lambda (index tail elt) (cons elt tail))
+                            '() '#(a b c d)))
+
 (result 'report)
