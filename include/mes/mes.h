@@ -44,6 +44,13 @@ typedef SCM (*functionn_t) (SCM);
 
 #include "mes/constants.h"
 
+struct builtin {
+  FUNCTION function;
+  const char *name;
+  signed char arity;
+  /* TODO: add inlining information and all */
+};
+
 struct scm
 {
   enum cell_type type;
@@ -66,16 +73,14 @@ struct scm
   {
     struct scm *cdr;
     long cdr_value;
-    struct scm *builtin;
     struct scm *binding;    /* for TBINDING */
     struct scm *stack;      /* for TCONTINUATION */
     struct scm *string;
     long value;
     struct scm *variable;   /* for TVARIABLE */
+    long builtin;           /* for TBUILTIN */
     struct scm *template;   /* for TCLOSURE */
     struct scm *closure;    /* for TFRAME */
-
-    FUNCTION function;
   };
 };
 
@@ -107,6 +112,8 @@ extern struct scm **STACK;
 extern jmp_buf JMP_BUF;
 #endif
 
+/* builtins */
+extern struct builtin BUILTINS [BUILTINS_SIZE];
 /* initial module obarray */
 extern struct scm *M0;
 /* current module */
@@ -150,19 +157,12 @@ extern struct scm *scm_template_type;
 #define vector_bytes(x) (((x)->length) * sizeof (struct scm*))
 
 struct scm *alloc (long n);
-struct scm *apply_builtin (struct scm *fn, struct scm *x);
-struct scm *apply_builtin0 (struct scm *fn);
-struct scm *apply_builtin1 (struct scm *fn, struct scm *x);
-struct scm *apply_builtin2 (struct scm *fn, struct scm *x, struct scm *y);
-struct scm *apply_builtin3 (struct scm *fn, struct scm *x, struct scm *y, struct scm *z);
-struct scm *builtin_name (struct scm *builtin);
 struct scm *cstring_to_list (char const *s);
 struct scm *cstring_to_symbol (char const *s);
 struct scm *cell_ref (struct scm *cell, long index);
 struct scm *fdisplay_ (struct scm *, int, int);
 struct scm *init_symbols ();
 struct scm *init_time (struct scm *a);
-struct scm *make_builtin_type ();
 struct scm *make_bytes (size_t length);
 struct scm *make_cell (long type, struct scm *car, struct scm *cdr);
 struct scm *make_pointer_cell (long type, long car, void *cdr);
@@ -213,6 +213,7 @@ struct scm *apply (struct scm *fn, struct scm *x);
 long bytevector_u8_ref_ (struct scm *bv, long k);
 void bytevector_u8_set_x_ (struct scm *bv, long k, long value);
 FUNCTION builtin_function (struct scm *builtin);
+signed char builtin_arity_ (struct scm *builtin);
 struct scm *list2 (struct scm *x, struct scm *y);
 struct scm *list3 (struct scm *x, struct scm *y, struct scm *z);
 #if 0

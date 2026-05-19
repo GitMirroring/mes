@@ -307,7 +307,6 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
           assert_msg (0, "gc_cellcpy: broken heart");
           break;
         case TBYTES:
-        case TBUILTIN:
         case TKEYWORD:
         case TPORT:
         case TSPECIAL:
@@ -499,7 +498,6 @@ gc_loop (struct scm *scan)
           cdr = gc_copy (scan->cdr);
           gc_relocate_cdr (scan, cdr);
           break;
-        case TBUILTIN:
         case TKEYWORD:
         case TPORT:
         case TSPECIAL:
@@ -713,7 +711,6 @@ gc_dump_arena (struct scm *cells, long size)
                   size = size - c;
                 }
               else if (t == TCONTINUATION
-                       || t == TBUILTIN
                        || t == TKEYWORD
                        || t == TPAIR
                        || t == TPORT

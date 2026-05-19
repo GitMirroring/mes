@@ -24,11 +24,9 @@
 #define __MES_BUILTINS_H
 
 /* src/builtins.c */
-struct scm *make_builtin (struct scm *builtin_type, struct scm *name, struct scm *arity, struct scm *function);
 struct scm *builtin_name (struct scm *builtin);
 struct scm *builtin_arity (struct scm *builtin);
 struct scm *builtin_p (struct scm *x);
-struct scm *builtin_printer (struct scm *builtin);
 /* src/core.c */
 struct scm *car (struct scm *x);
 struct scm *cdr (struct scm *x);

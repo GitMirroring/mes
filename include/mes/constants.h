@@ -77,6 +77,10 @@ enum opcode
   OP_UNREACHABLE = 0xAA, /* Value is easy to read */
 };
 
+/* Sizes */
+
+#define BUILTINS_SIZE 255
+
 /* Struct types */
 
 #define STRUCT_TYPE 0

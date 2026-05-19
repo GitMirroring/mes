@@ -134,7 +134,7 @@ apply (struct scm *fn, struct scm *x)
   /* No need to eval, just call the function */
   if (fn->type == TBUILTIN)
     {
-      switch (builtin_arity (fn)->value)
+      switch (builtin_arity_ (fn))
         {
         case 0:
           {
@@ -415,7 +415,7 @@ eval_compiled ()
           apply:
             fn = stack_pop ();
             if (fn->type == TBUILTIN)
-              if (builtin_arity (fn)->value == -1)
+              if (builtin_arity_ (fn) == -1)
                 /* Optimization: the args are ready in the stack in a list,
                  * don't unpack to pack them later
                  */
@@ -560,7 +560,7 @@ eval_compiled ()
                 }
 
               case TBUILTIN:
-                switch (builtin_arity (fn)->value)
+                switch (builtin_arity_ (fn))
                   {
                   case 0:
                     {
