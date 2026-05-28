@@ -43,6 +43,7 @@ enum cell_type
   TVALUES,
   TBINDING,
   TVECTOR,
+  TVARIABLE,
   TBROKEN_HEART,
 };
 

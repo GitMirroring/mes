@@ -67,6 +67,7 @@ struct scm
     struct scm *structure;
     long value;
     FUNCTION function;
+    struct scm *variable;   /* for TVARIABLE */
     struct scm *vector;
     long lexical_p; /* for bindings */
   };
@@ -135,7 +136,6 @@ extern struct timespec *__get_internal_run_time_ts;
 extern struct utsname *__uts;
 
 extern struct scm *scm_hash_table_type;
-extern struct scm *scm_variable_type;
 
 struct scm *alloc (long n);
 struct scm *apply (struct scm *f, struct scm *x, struct scm *a);

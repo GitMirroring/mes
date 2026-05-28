@@ -194,7 +194,6 @@ struct scm *make_variable (struct scm *var);
 struct scm *variable_p (struct scm *x);
 struct scm *variable_ref (struct scm *var);
 struct scm *variable_set_x (struct scm *var, struct scm *value);
-struct scm *variable_printer (struct scm *var);
 /* src/vector.c */
 struct scm *make_vector (struct scm *x);
 struct scm *vector_length (struct scm *x);

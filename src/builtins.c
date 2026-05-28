@@ -317,7 +317,6 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "variable?", 1, &variable_p, a);
   a = init_builtin (builtin_type, "variable-ref", 1, &variable_ref, a);
   a = init_builtin (builtin_type, "variable-set!", 2, &variable_set_x, a);
-  a = init_builtin (builtin_type, "variable-printer", 1, &variable_printer, a);
   /* src/vector.c */
   a = init_builtin (builtin_type, "make-vector", -1, &make_vector, a);
   a = init_builtin (builtin_type, "vector-length", 1, &vector_length, a);

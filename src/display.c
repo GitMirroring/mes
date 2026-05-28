@@ -203,6 +203,11 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
     case TREF:
       fdisplay_ (x->ref, fd, write_p);
       break;
+    case TVARIABLE:
+      fdputs ("#<variable", fd);
+      display_helper (x->variable, 0, " ", fd, write_p);
+      fdputc ('>', fd);
+      break;
     case TSTRUCT:
       {
         struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);

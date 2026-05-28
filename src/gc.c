@@ -332,6 +332,7 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
         case TSTRUCT:
         case TSYMBOL:
         case TVALUES:
+        case TVARIABLE:
         case TVECTOR:
           dest->car_value = a;
           dest->cdr_value = d - dist;
@@ -393,8 +394,6 @@ gc_flip ()
   g_ports = g_ports - dist;
   if (scm_hash_table_type)
     scm_hash_table_type = scm_hash_table_type - dist;
-  if (scm_variable_type)
-    scm_variable_type = scm_variable_type - dist;
   M0 = M0 - dist;
   M1 = M1 - dist;
 
@@ -506,6 +505,7 @@ gc_loop (struct scm *scan)
         case TSTRING:
         case TSYMBOL:
         case TVALUES:
+        case TVARIABLE:
           /* TSTRUCT and TVECTOR are handled by gc_copy */
           cdr = gc_copy (scan->cdr);
           gc_relocate_cdr (scan, cdr);
@@ -555,8 +555,6 @@ gc_ ()
   g_ports = gc_copy (g_ports);
   if (scm_hash_table_type)
     scm_hash_table_type = gc_copy (scm_hash_table_type);
-  if (scm_variable_type)
-    scm_variable_type = gc_copy (scm_variable_type);
   M0 = gc_copy (M0);
   M1 = gc_copy (M1);
 
@@ -742,6 +740,7 @@ gc_dump_arena (struct scm *cells, long size)
                       || t == TSTRUCT
                       || t == TSYMBOL
                       || t == TVALUES
+                      || t == TVARIABLE
                       || t == TVECTOR)
                     {
                       dumps (ltoa ((cells->cdr - dist) / M2_CELL_SIZE));
