@@ -380,6 +380,35 @@ expand_variable (struct scm *x, struct scm *formals)    /*:((internal)) */
 }
 
 struct scm *
+apply_builtin0 (struct scm *fn)
+{
+  function0_t fp = (function0_t) builtin_function (fn);
+  return fp ();
+}
+
+struct scm *
+apply_builtin1 (struct scm *fn, struct scm *x)
+{
+  function1_t fp = (function1_t) builtin_function (fn);
+  return fp (x);
+}
+
+struct scm *
+apply_builtin2 (struct scm *fn, struct scm *x, struct scm *y)
+{
+  function2_t fp = (function2_t) builtin_function (fn);
+  return fp (x, y);
+}
+
+struct scm *
+apply_builtin3 (struct scm *fn, struct scm *x, struct scm *y, struct scm *z)
+{
+  function3_t fp = (function3_t) builtin_function (fn);
+  return fp (x, y, z);
+}
+
+
+struct scm *
 apply_builtin (struct scm *fn, struct scm *x)   /*:((internal)) */
 {
   struct scm *a = builtin_arity (fn);

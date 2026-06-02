@@ -64,6 +64,7 @@ LIBMES_SOURCES =				\
  src/struct.c					\
  src/symbol.c					\
  src/variable.c					\
+ src/cc.c					\
  src/vector.c
 
 MES_SOURCES =					\
@@ -71,8 +72,7 @@ MES_SOURCES =					\
  src/mes.c
 
 MES_SOURCES_M2 =				\
- $(MES_SOURCES)					\
- src/m2.c
+ $(MES_SOURCES)
 
 TEST_GC_SOURCES =				\
  $(LIBMES_SOURCES)				\
@@ -172,7 +172,6 @@ GCC_SOURCES =					\
  lib/mes/itoa.c					\
  lib/mes/ltoa.c					\
  lib/mes/assert_msg.c				\
- src/cc.c					\
  src/globals.c
 
 mes-gcc: bin/mes-gcc

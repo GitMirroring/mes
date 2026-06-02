@@ -130,7 +130,7 @@ M2-Planet                                               \
     -f ${srcdest}src/gc.c                               \
     -f ${srcdest}src/hash.c                             \
     -f ${srcdest}src/lib.c                              \
-    -f ${srcdest}src/m2.c                               \
+    -f ${srcdest}src/cc.c                               \
     -f ${srcdest}src/math.c                             \
     -f ${srcdest}src/mes.c                              \
     -f ${srcdest}src/module.c                           \
