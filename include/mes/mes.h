@@ -24,7 +24,23 @@
 #define __MES_MES_H
 
 #include <sys/types.h>
-#include "mes/cc.h"
+
+typedef struct scm* SCM;
+#if __MESC__
+typedef long FUNCTION;
+typedef long function0_t;
+typedef long function1_t;
+typedef long function2_t;
+typedef long function3_t;
+typedef long functionn_t;
+#else // !__MESC__
+typedef SCM (*FUNCTION) (void);
+typedef SCM (*function0_t) (void);
+typedef SCM (*function1_t) (SCM);
+typedef SCM (*function2_t) (SCM, SCM);
+typedef SCM (*function3_t) (SCM, SCM, SCM);
+typedef SCM (*functionn_t) (SCM);
+#endif // !__MESC__
 
 #include "mes/constants.h"
 
@@ -133,7 +149,6 @@ struct scm *cast_charp_to_scmp (char const *i);
 struct scm **cast_charp_to_scmpp (char const *i);
 char *cast_voidp_to_charp (void const *i);
 long cast_scmp_to_long (struct scm *i);
-char *cast_scmp_to_charp (struct scm *i);
 
 struct scm *alloc (long n);
 struct scm *apply (struct scm *f, struct scm *x, struct scm *a);

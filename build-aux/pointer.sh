@@ -56,7 +56,6 @@ sed -ri                                                         \
     src/gc.c                                                    \
     src/hash.c                                                  \
     src/lib.c                                                   \
-    src/m2.c                                                    \
     src/math.c                                                  \
     src/mes.c                                                   \
     src/module.c                                                \
