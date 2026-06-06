@@ -174,7 +174,7 @@ open_boot ()
 struct scm *
 read_boot ()                    /*:((internal)) */
 {
-  struct scm *program = read_input_file_env (cell_nil);
+  struct scm *program = read_input_file ();
   __stdin = STDIN;
   return program;
 }

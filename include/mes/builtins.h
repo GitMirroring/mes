@@ -154,10 +154,10 @@ struct scm *dup2_ (struct scm *old, struct scm *new);
 struct scm *delete_file (struct scm *file_name);
 struct scm *uname_ ();
 /* src/reader.c */
-struct scm *read_input_file_env_ (struct scm *e, struct scm *a);
-struct scm *read_input_file_env (struct scm *a);
-struct scm *read_env (struct scm *a);
-struct scm *reader_read_sexp (struct scm *c, struct scm *s, struct scm *a);
+struct scm *read_input_file_ (struct scm *e);
+struct scm *read_input_file ();
+struct scm *reader_read ();
+struct scm *reader_read_sexp (struct scm *c, struct scm *s);
 struct scm *reader_read_character ();
 struct scm *reader_read_binary ();
 struct scm *reader_read_octal ();

@@ -277,9 +277,9 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = acons (cstring_to_symbol ("O_TRUNC"), make_number (O_TRUNC), a);
 
   /* src/reader.c */
-  a = init_builtin (builtin_type, "core:read-input-file-env", 2, &read_input_file_env_, a);
-  a = init_builtin (builtin_type, "read-input-file-env", 1, &read_input_file_env, a);
-  a = init_builtin (builtin_type, "read-env", 1, &read_env, a);
+  a = init_builtin (builtin_type, "core:read-input-file", 1, &read_input_file_, a);
+  a = init_builtin (builtin_type, "read-input-file", 0, &read_input_file, a);
+  a = init_builtin (builtin_type, "reader-read", 0, &reader_read, a);
   a = init_builtin (builtin_type, "reader-read-sexp", 3, &reader_read_sexp, a);
   a = init_builtin (builtin_type, "reader-read-character", 0, &reader_read_character, a);
   a = init_builtin (builtin_type, "reader-read-binary", 0, &reader_read_binary, a);

@@ -73,7 +73,7 @@
 (define call/cc call-with-current-continuation)
 
 (define (command-line) %argv)
-(define (read) (read-env (current-environment)))
+(define (read) (reader-read))
 
 (define-macro (and . x)
   (if (null? x) #t

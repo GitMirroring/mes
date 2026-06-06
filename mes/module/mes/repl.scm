@@ -130,7 +130,7 @@ along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
       (push! *input-ports* (current-input-port))
       (set-current-input-port
        (open-input-file file-name))
-      (let ((x (core:eval (append2 (cons 'begin (read-input-file-env a))
+      (let ((x (core:eval (append2 (cons 'begin (read-input-file))
                                    '((current-module)))
                           a)))
         (set-current-input-port (pop! *input-ports*))
@@ -140,7 +140,7 @@ along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
       (push! *input-ports* (current-input-port))
       (set-current-input-port
        (open-input-file (string-append %moduledir (module->file module))))
-      (let ((x (core:eval (append2 (cons 'begin (read-input-file-env a))
+      (let ((x (core:eval (append2 (cons 'begin (read-input-file))
                                    '((current-module)))
                           a)))
         (set-current-input-port (pop! *input-ports*))
@@ -151,7 +151,7 @@ along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
       (define topic-alist `((#\newline . ,show-commands)
                             (#\c . ,copying)
                             (#\w . ,warranty)))
-      (let* ((word (read-env '()))
+      (let* ((word (reader-read))
              (topic (find (negate char-whitespace?) (symbol->list word))))
         (display (assoc-ref topic-alist topic))
         *unspecified*))
@@ -180,7 +180,7 @@ along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
       (force-output)
       (catch #t
         (lambda ()
-          (let ((sexp (read-env a)))
+          (let ((sexp (reader-read)))
             (when (not (eq? sexp '()))
               (when print-sexp?
                 (display "[sexp=")

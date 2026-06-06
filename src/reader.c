@@ -5,6 +5,7 @@
  * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
  * Copyright © 2026 Adam Faiz <adam.faiz@disroot.org>
+ * Copyright © 2026 Timothy Sample <samplet@ngyro.com>
  *
  * This file is part of GNU Mes.
  *
@@ -30,17 +31,17 @@
 #include <string.h>
 
 struct scm *
-read_input_file_env_ (struct scm *e, struct scm *a)
+read_input_file_ (struct scm *e)
 {
   if (e == cell_nil)
     return e;
-  return cons (e, read_input_file_env_ (read_env (a), a));
+  return cons (e, read_input_file_ (reader_read ()));
 }
 
 struct scm *
-read_input_file_env (struct scm *a)
+read_input_file ()
 {
-  return read_input_file_env_ (read_env (cell_nil), cell_nil);
+  return read_input_file_ (reader_read ());
 }
 
 int
@@ -57,8 +58,8 @@ reader_read_line_comment (int c)
 
 int reader_eat_whitespace (int c);
 void reader_read_block_comment (int s, int c);
-struct scm *reader_read_hash (int c, struct scm *a);
-struct scm *reader_read_list (int c, struct scm *a);
+struct scm *reader_read_hash (int c);
+struct scm *reader_read_list (int c);
 
 int
 reader_identifier_p (int c)
@@ -115,7 +116,7 @@ reader_read_identifier_or_number (int c)
 }
 
 struct scm *
-reader_read_sexp_ (int c, struct scm *a)
+reader_read_sexp_ (int c)
 {
  reset_reader:
   if (c == EOF)
@@ -131,24 +132,24 @@ reader_read_sexp_ (int c, struct scm *a)
       goto reset_reader;
     }
   if (c == '(')
-    return reader_read_list (readchar (), a);
+    return reader_read_list (readchar ());
   if (c == ')')
     return cell_nil;
   if (c == '#')
-    return reader_read_hash (readchar (), a);
+    return reader_read_hash (readchar ());
   if (c == '`')
-    return cons (cell_symbol_quasiquote, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+    return cons (cell_symbol_quasiquote, cons (reader_read_sexp_ (readchar ()), cell_nil));
   if (c == ',')
     {
       if (peekchar () == '@')
         {
           readchar ();
-          return cons (cell_symbol_unquote_splicing, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+          return cons (cell_symbol_unquote_splicing, cons (reader_read_sexp_ (readchar ()), cell_nil));
         }
-      return cons (cell_symbol_unquote, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+      return cons (cell_symbol_unquote, cons (reader_read_sexp_ (readchar ()), cell_nil));
     }
   if (c == '\'')
-    return cons (cell_symbol_quote, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+    return cons (cell_symbol_quote, cons (reader_read_sexp_ (readchar ()), cell_nil));
   if (c == '"')
     return reader_read_string ();
   if (c == '.')
@@ -176,7 +177,7 @@ reader_eat_whitespace (int c)
       if (p == ';')
         {
           readchar ();
-          reader_read_sexp_ (readchar (), cell_nil);
+          reader_read_sexp_ (readchar ());
           return reader_eat_whitespace (readchar ());
         }
     }
@@ -184,26 +185,26 @@ reader_eat_whitespace (int c)
 }
 
 struct scm *
-reader_read_list (int c, struct scm *a)
+reader_read_list (int c)
 {
   c = reader_eat_whitespace (c);
   if (c == ')')
     return cell_nil;
   if (c == EOF)
     error (cell_symbol_not_a_pair, make_string0 ("EOF in list"));
-  struct scm *s = reader_read_sexp_ (c, a);
+  struct scm *s = reader_read_sexp_ (c);
   if (s == cell_dot)
     {
-      s = reader_read_list (readchar (), a);
+      s = reader_read_list (readchar ());
       return s->car;
     }
-  return cons (s, reader_read_list (readchar (), a));
+  return cons (s, reader_read_list (readchar ()));
 }
 
 struct scm *
-read_env (struct scm *a)
+reader_read ()
 {
-  return reader_read_sexp_ (readchar (), a);
+  return reader_read_sexp_ (readchar ());
 }
 
 void
@@ -222,17 +223,17 @@ reader_read_block_comment (int s, int c)
 }
 
 struct scm *
-reader_read_hash (int c, struct scm *a)
+reader_read_hash (int c)
 {
   if (c == '!')
     {
       reader_read_block_comment (c, readchar ());
-      return reader_read_sexp_ (readchar (), a);
+      return reader_read_sexp_ (readchar ());
     }
   if (c == '|')
     {
       reader_read_block_comment (c, readchar ());
-      return reader_read_sexp_ (readchar (), a);
+      return reader_read_sexp_ (readchar ());
     }
   if (c == 'f')
     return cell_f;
@@ -243,15 +244,15 @@ reader_read_hash (int c, struct scm *a)
       if (peekchar () == '@')
         {
           readchar ();
-          return cons (cell_symbol_unsyntax_splicing, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+          return cons (cell_symbol_unsyntax_splicing, cons (reader_read_sexp_ (readchar ()), cell_nil));
         }
 
-      return cons (cell_symbol_unsyntax, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+      return cons (cell_symbol_unsyntax, cons (reader_read_sexp_ (readchar ()), cell_nil));
     }
   if (c == '\'')
-    return cons (cell_symbol_syntax, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+    return cons (cell_symbol_syntax, cons (reader_read_sexp_ (readchar ()), cell_nil));
   if (c == '`')
-    return cons (cell_symbol_quasisyntax, cons (reader_read_sexp_ (readchar (), a), cell_nil));
+    return cons (cell_symbol_quasisyntax, cons (reader_read_sexp_ (readchar ()), cell_nil));
   if (c == ':')
     {
       struct scm *x = reader_read_identifier_or_number (readchar ());
@@ -269,19 +270,19 @@ reader_read_hash (int c, struct scm *a)
   if (c == '\\')
     return reader_read_character ();
   if (c == '(')
-    return list_to_vector (reader_read_list (readchar (), a));
+    return list_to_vector (reader_read_list (readchar ()));
   if (c == ';')
     {
-      reader_read_sexp_ (readchar (), cell_nil);
-      return reader_read_sexp_ (readchar (), a);
+      reader_read_sexp_ (readchar ());
+      return reader_read_sexp_ (readchar ());
     }
-  return reader_read_sexp_ (readchar (), a);
+  return reader_read_sexp_ (readchar ());
 }
 
 struct scm *
-reader_read_sexp (struct scm *c, struct scm *s, struct scm *a)
+reader_read_sexp (struct scm *c, struct scm *s)
 {
-  return reader_read_sexp_ (c->value, a);
+  return reader_read_sexp_ (c->value);
 }
 
 struct scm *

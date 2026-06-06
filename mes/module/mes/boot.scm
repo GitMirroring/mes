@@ -218,23 +218,23 @@
         (eval form))
       (begin
         (eval form)
-        (%read-and-eval on-last! next-form (read-env '())))))
+        (%read-and-eval on-last! next-form (reader-read)))))
 
 (define (read-and-eval on-last! form)
   (if (null? form)
       (begin
         (on-last!)
         *unspecified*)
-      (%read-and-eval on-last! form (read-env '()))))
+      (%read-and-eval on-last! form (reader-read))))
 
 (define (load-from-current-input)
-  (read-and-eval (lambda () *unspecified*) (read-env '())))
+  (read-and-eval (lambda () *unspecified*) (reader-read)))
 
 (define (load-from-port port)
   (define prev (set-current-input-port port))
   (read-and-eval (lambda ()
                    (set-current-input-port prev))
-                 (read-env '())))
+                 (reader-read)))
 
 (define (check-close-port)
   ((lambda (v)
@@ -251,7 +251,7 @@
                    (if has-close-port?
                        (close-port port)
                        #t))
-                 (read-env '())))
+                 (reader-read)))
 
 (define (primitive-load filename)
   (if (if (number? filename)
