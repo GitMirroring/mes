@@ -116,8 +116,7 @@
 ;; boot-03.scm
 (define guile? #f)
 (define mes? #t)
-(define (primitive-eval e) (core:eval e (current-environment)))
-(define eval core:eval)
+(define primitive-eval eval)
 
 (define (port-filename port) "<stdin>")
 (define (port-line port) 0)

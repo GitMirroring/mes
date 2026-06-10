@@ -35,5 +35,5 @@ elif [ ${b%${b#?}} = 5 ]; then
 elif [ ${b%${b#?}} = 6 ]; then
     cat "$t" | MES_BOOT=boot-01.scm $MES
 else
-    MES_BOOT=$t $MES;
+    cat "$t" | MES_BOOT=boot.scm $MES
 fi

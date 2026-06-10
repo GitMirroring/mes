@@ -131,10 +131,7 @@ open_boot ()
   char *boot = __open_boot_buf;
   char *file_name = __open_boot_file_name;
   strcpy (g_datadir, ".");
-  if (getenv ("MES_BOOT") != 0)
-    strcpy (boot, getenv ("MES_BOOT"));
-  else
-    strcpy (boot, "boot-5.scm");
+  strcpy (boot, "boot.scm");
   if (getenv ("MES_PREFIX") != 0)
     {
       strcpy (g_datadir, getenv ("MES_PREFIX"));

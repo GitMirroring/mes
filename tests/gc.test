@@ -6,7 +6,7 @@ export MES_ARENA
 export MES_MAX_ARENA
 export MES_BOOT
 if [ "$MES" != guile ]; then
-    MES_BOOT=$0 exec ${MES-bin/mes}
+    MES_BOOT=boot.scm exec ${MES-bin/mes} < "$0"
 fi
 exec ${MES-bin/mes} --no-auto-compile -L ${0%/*} -L module -C module -s "$0" "$@"
 !#
