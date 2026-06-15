@@ -145,11 +145,6 @@ extern struct utsname *__uts;
 extern struct scm *scm_hash_table_type;
 extern struct scm *scm_variable_type;
 
-struct scm *cast_charp_to_scmp (char const *i);
-struct scm **cast_charp_to_scmpp (char const *i);
-char *cast_voidp_to_charp (void const *i);
-long cast_scmp_to_long (struct scm *i);
-
 struct scm *alloc (long n);
 struct scm *apply (struct scm *f, struct scm *x, struct scm *a);
 struct scm *apply_builtin (struct scm *fn, struct scm *x);

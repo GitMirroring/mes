@@ -63,7 +63,6 @@ gcc -g -D HAVE_CONFIG_H=1                       \
     lib/mes/assert_msg.c                        \
                                                 \
     src/builtins.c                              \
-    src/cc.c                                    \
     src/core.c                                  \
     src/display.c                               \
     src/eval-apply.c                            \
@@ -294,7 +293,6 @@ $CC -g -D HAVE_CONFIG_H=1                               \
     lib/linux/$mes_cpu-mes-$compiler/syscall.c          \
                                                         \
     src/builtins.c                                      \
-    src/cc.c                                            \
     src/core.c                                          \
     src/display.c                                       \
     src/eval-apply.c                                    \

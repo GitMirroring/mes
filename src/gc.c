@@ -36,7 +36,7 @@ int g_dump_filedes;
 char *
 cell_bytes (struct scm *x)
 {
-  char *p = cast_voidp_to_charp (x);
+  char *p = (char *) x;
   return p + sizeof (struct scm);
 }
 
@@ -91,8 +91,8 @@ gc_init ()
   long alloc_bytes = arena_bytes + (STACK_SIZE * sizeof (struct scm));
 
   g_arena = malloc (alloc_bytes);
-  g_cells = cast_charp_to_scmp (g_arena);
-  g_stack_array = cast_charp_to_scmpp (g_arena + arena_bytes);
+  g_cells = (struct scm *) g_arena;
+  g_stack_array = (struct scm **)(g_arena + arena_bytes);
 
   /* The vector that holds the arena. */
   cell_arena = g_cells;
@@ -346,7 +346,7 @@ gc_up_arena ()
   if (p == 0)
     {
       eputs ("realloc failed, g_free=");
-      eputs (ltoa (cast_voidp_to_long (g_free)));
+      eputs (ltoa ((long) g_free));
       eputs (":");
       long i = g_free - g_cells;
       i = i / M2_CELL_SIZE;
@@ -427,13 +427,13 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
           if (g_debug > 5)
             {
               eputs ("copying bytes[");
-              eputs (ntoab (cast_voidp_to_long (cell_bytes (src)), 16, 0));
+              eputs (ntoab ((long) cell_bytes (src), 16, 0));
               eputs (", ");
               eputs (ntoab (a, 10, 0));
               eputs ("]: ");
               eputs (cell_bytes (src));
               eputs ("\n to [");
-              eputs (ntoab (cast_voidp_to_long (cell_bytes (dest)), 16, 0));
+              eputs (ntoab ((long) cell_bytes (dest), 16, 0));
             }
           memcpy (cell_bytes (dest), cell_bytes (src), a);
           if (g_debug > 5)
@@ -632,16 +632,16 @@ gc_ ()
   g_free = g_news + M2_CELL_SIZE;
 
   if (ARENA_SIZE < MAX_ARENA_SIZE
-      && cast_voidp_to_charp (g_cells) == g_arena + M2_CELL_SIZE)
+      && (char *)(g_cells) == g_arena + M2_CELL_SIZE)
     {
       if (g_debug == 2)
         eputs ("+");
       if (g_debug > 2)
         {
           eputs (" up[");
-          eputs (ltoa (cast_voidp_to_long (g_cells)));
+          eputs (ltoa ((long) g_cells));
           eputs (",");
-          eputs (ltoa (cast_voidp_to_long (g_news)));
+          eputs (ltoa ((long) g_news));
           eputs (":");
           eputs (ltoa (ARENA_SIZE));
           eputs (",");
@@ -756,8 +756,8 @@ void
 gc_dump_register (char const* n, struct scm *r)
 {
   dumps (n); dumps (": ");
-  long i = cast_scmp_to_long (r);
-  long a = cast_charp_to_long (g_arena);
+  long i = (long) r;
+  long a = (long) g_arena;
   i = i - a;
   i = i / M2_CELL_SIZE;
   dumps (ltoa (i));
