@@ -35,7 +35,7 @@ assert_max_string (size_t i, char const *msg, char const *string)
       eputs (":string too long[");
       eputs (itoa (i));
       eputs ("]:");
-      char *p = cast_voidp_to_charp (string);
+      char *p = (char *) string;
       p[MAX_STRING - 1] = 0;
       eputs (p);
       error (cell_symbol_system_error, cell_f);

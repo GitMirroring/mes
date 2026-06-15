@@ -42,7 +42,7 @@ car_ (struct scm *x)
   struct scm *a = x->car;
   if (x->type == TPAIR || x->type == TBINDING)
     return a;
-  return make_number (cast_scmp_to_long (a));
+  return make_number ((long) a);
 }
 
 struct scm *
@@ -51,7 +51,7 @@ cdr_ (struct scm *x)
   struct scm *d = x->cdr;
   if (x->type == TPAIR || x->type == TCLOSURE)
     return d;
-  return make_number (cast_scmp_to_long (d));
+  return make_number ((long) d);
 }
 
 struct scm *

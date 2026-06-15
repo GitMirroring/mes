@@ -109,7 +109,7 @@ struct scm *
 init_builtin (struct scm *builtin_type, char const *name, int arity, void* function, struct scm *a)
 {
   struct scm *s = cstring_to_symbol (name);
-  long n = cast_voidp_to_long (function);
+  long n = (long) function;
   return acons (s,
                 make_builtin (builtin_type, symbol_to_string (s), make_number (arity),
                               make_number (n)), a);
