@@ -33,13 +33,6 @@
 
 int g_dump_filedes;
 
-char *
-cell_bytes (struct scm *x)
-{
-  char *p = (char *) x;
-  return p + sizeof (struct scm);
-}
-
 #if __M2__
 #define U3 3
 #else

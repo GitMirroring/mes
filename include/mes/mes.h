@@ -145,6 +145,10 @@ extern struct utsname *__uts;
 extern struct scm *scm_hash_table_type;
 extern struct scm *scm_template_type;
 
+#define cell_bytes(x) ((char *)(x) + sizeof (struct scm))
+#define vector_body(x) ((struct scm **)cell_bytes (x))
+#define vector_bytes(x) (((x)->length) * sizeof (struct scm*))
+
 struct scm *alloc (long n);
 struct scm *apply_builtin (struct scm *fn, struct scm *x);
 struct scm *apply_builtin0 (struct scm *fn);
@@ -174,8 +178,6 @@ struct scm *make_string (char const *s, size_t length);
 struct scm *make_string0 (char const *s);
 struct scm *make_string_port (struct scm *x);
 struct scm *make_variable_type ();
-size_t vector_bytes (struct scm * v);
-struct scm **vector_body (struct scm * v);
 struct scm *make_vector_ (long k, struct scm *e);
 struct scm *make_vector_uninit_ (long k);
 struct scm *mes_builtins (struct scm *a);
@@ -217,7 +219,6 @@ void assert_struct (long pos, struct scm *x);
 #if 0
 void assert_type (long type, char const *name_name, struct scm *x)
 #endif
-char *cell_bytes (struct scm *x);
 int peekchar ();
 int readchar ();
 int unreadchar ();

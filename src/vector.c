@@ -22,18 +22,6 @@
 #include "mes/lib.h"
 #include "mes/mes.h"
 
-size_t
-vector_bytes (struct scm *v)
-{
-  return v->length * sizeof (struct scm*);
-}
-
-struct scm **
-vector_body (struct scm * v)
-{
-  return ((struct scm **)cell_bytes (v));
-}
-
 struct scm *
 make_vector_uninit_ (long k)
 {
