@@ -1208,7 +1208,8 @@ important for Mes to be as fast as possible, while still being simple.
 make -f simple.make benchmark
 @end example
 
-Runs a simple benchmark for the Mes interpreter and dump the results in
+Runs a simple benchmark for the Mes interpreter and dumps the benchmark
+results in @code{benchmark/log}. Programs output is written to
 @code{benchmark/out}.  That should be enough for testing if your changes
 affected its performance.  Make sure to run them before and after your
 change, and saving the results, as the makefile will overwrite them.
