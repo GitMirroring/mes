@@ -214,8 +214,10 @@ make_bytevector_ (long size, long value)
 struct scm *
 bytevector_fill_x_ (struct scm *bv, long value, long start, long end)
 {
-  assert_msg (start <= end, "start < end");
-  assert_msg (bv->length >= end, "bv->length >= end");
+  if (start > end || bv->length < end)
+    error (cell_symbol_out_of_range,
+           cons (list3 (bv, make_number (start), make_number (end)),
+                 cstring_to_symbol ("bytevector-fill!")));
   long i;
   char *p = cell_bytes (bv);
   for (i = start; i < end; i = i + 1)
@@ -233,23 +235,33 @@ bytevector_fill_x (struct scm *x)               /*:((arity . n)) */
   struct scm *end;   /* optional */
 
   vec = x->car;
-  assert_msg (vec->type == TBYTES, "vec->type == TBYTES");
+  if (vec->type != TBYTES)
+    error (cell_symbol_wrong_type_arg,
+           cons (vec, cstring_to_symbol ("bytevector-fill!")));
   x = x->cdr;
 
-  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_number_of_args,
+           cons (make_number (length__(x)), cstring_to_symbol ("bytevector-fill!")));
   fill = x->car;
   x = x->cdr;
 
   if (x->type != TPAIR)
     return bytevector_fill_x_ (vec, fill->value, 0, vec->length);
   start = x->car;
-  assert_number("bytevector_fill_x: start", start);
+
+  if (start->type != TNUMBER)
+    error (cell_symbol_not_a_number,
+           cons (start, cstring_to_symbol ("bytevector-fill!")));
   x = x->cdr;
 
   if (x->type != TPAIR)
     return bytevector_fill_x_ (vec, fill->value, start->value, vec->length);
   end = x->car;
-  assert_number("bytevector_fill_x: end", end);
+
+  if (end->type != TNUMBER)
+    error (cell_symbol_not_a_number,
+           cons (end, cstring_to_symbol ("bytevector-fill!")));
 
   return bytevector_fill_x_ (vec, fill->value, start->value, end->value);
 }
@@ -264,7 +276,7 @@ make_bytevector (struct scm *args)
 
   if (args->type != TPAIR)
     error (cell_symbol_wrong_number_of_args,
-           cstring_to_symbol ("make-bytevector"));
+           cons (make_number (length__(args)), cstring_to_symbol ("make-bytevector")));
 
   size = args->car;
   args = args->cdr;
@@ -290,7 +302,7 @@ make_bytevector (struct scm *args)
 
   if (args != cell_nil)
     error (cell_symbol_wrong_number_of_args,
-           cstring_to_symbol ("make-bytevector"));
+           cons (make_number (length__(args)), cstring_to_symbol ("make-bytevector")));
 
   if (init_p)
     return make_bytevector_ (size->value, init->value);
@@ -361,45 +373,4 @@ bytevector_u8_set_x (struct scm *bv, struct scm *k, struct scm *value)
            cons (make_string0 ("bytevector-u8-set!: value out of range"), value));
   bytevector_u8_set_x_ (bv, k->value, value->value);
   return cell_unspecified;
-}
-
-#if 0
-void
-assert_type (long type, char const *name_name, struct scm *x)
-{
-  if (x->type != type)
-    {
-      eputs (name);
-      eputs (": ");
-      error (cell_wrong_type_arg, cons (x, cell_nil));
-    }
-}
-#endif
-
-void
-assert_num (long pos, struct scm *x)
-{
-  if (x->type != TNUMBER)
-    error (cell_symbol_wrong_type_arg,
-           cons (cell_type_number, cons (make_number (pos), x)));
-}
-
-void
-assert_struct (long pos, struct scm *x)
-{
-  if (x->type != TSTRUCT)
-    error (cell_symbol_wrong_type_arg,
-           cons (cell_type_struct, cons (make_number (pos), x)));
-}
-
-void
-assert_range (int assert, long i)
-{
-  if (assert == 0)
-    {
-      eputs ("value out of range: ");
-      eputs (ltoa (i));
-      eputs (": ");
-      assert_msg (assert, "value out of range");
-    }
 }

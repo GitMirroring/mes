@@ -1178,20 +1178,26 @@ accessor_set:
 struct scm *
 procedure_disassemble (struct scm *closure)
 {
-  assert_msg (closure->type == TCLOSURE, "closure->type != TCLOSURE");
+  if (closure->type != TCLOSURE)
+    error (cell_symbol_wrong_type_arg,
+           cons (closure, cstring_to_symbol ("procedure-disassemble")));
   template_disassemble (closure->template);
   return cell_unspecified;
 }
 struct scm *
 procedure_name (struct scm *closure)
 {
-  assert_msg (closure->type == TCLOSURE, "closure->type != TCLOSURE");
+  if (closure->type != TCLOSURE)
+    error (cell_symbol_wrong_type_arg,
+           cons (closure, cstring_to_symbol ("procedure-name")));
   return template_name (closure->template);
 }
 struct scm *
 procedure_arguments (struct scm *closure)
 {
-  assert_msg (closure->type == TCLOSURE, "closure->type != TCLOSURE");
+  if (closure->type != TCLOSURE)
+    error (cell_symbol_wrong_type_arg,
+           cons (closure, cstring_to_symbol ("procedure-arguments")));
   return template_arguments (closure->template);
 }
 /* TODO: Maybe add a procedure-captures to be able to inspect the closure? */

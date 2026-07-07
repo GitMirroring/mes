@@ -51,15 +51,18 @@ make_struct (struct scm *type, struct scm *fields, struct scm *printer)
 struct scm *
 struct_length (struct scm *x)
 {
-  assert_msg (x->type == TSTRUCT, "x->type == TSTRUCT");
+  if (x->type != TSTRUCT)
+    error (cell_symbol_wrong_type_arg, cons (x, cstring_to_symbol ("struct-length")));
   return make_number (x->length);
 }
 
 struct scm *
 struct_ref_ (struct scm *x, long i)
 {
-  assert_struct (1, x);
-  assert_range (i < x->length, i);
+  if (x->type != TSTRUCT)
+    error (cell_symbol_wrong_type_arg, cons (x, cstring_to_symbol ("struct-ref")));
+  if (i >= x->length)
+    error (cell_symbol_out_of_range, cons (make_number (i), cstring_to_symbol ("struct-ref")));
   struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
   return *loc;
 }
@@ -67,8 +70,10 @@ struct_ref_ (struct scm *x, long i)
 struct scm *
 struct_set_x_ (struct scm *x, long i, struct scm *e)
 {
-  assert_msg (x->type == TSTRUCT, "x->type == TSTRUCT");
-  assert_msg (i < x->length, "i < x->length");
+  if (x->type != TSTRUCT)
+    error (cell_symbol_wrong_type_arg, cons (x, cstring_to_symbol ("struct-set!")));
+  if (i >= x->length)
+    error (cell_symbol_out_of_range, cons (make_number (i), cstring_to_symbol ("struct-set!")));
   struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
   *loc = e;
   return cell_unspecified;

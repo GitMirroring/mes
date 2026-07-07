@@ -213,9 +213,6 @@ struct scm *apply (struct scm *fn, struct scm *x);
 long bytevector_u8_ref_ (struct scm *bv, long k);
 void bytevector_u8_set_x_ (struct scm *bv, long k, long value);
 FUNCTION builtin_function (struct scm *builtin);
-void assert_num (long pos, struct scm *x);
-void assert_range (int assert, long x);
-void assert_struct (long pos, struct scm *x);
 struct scm *list2 (struct scm *x, struct scm *y);
 struct scm *list3 (struct scm *x, struct scm *y, struct scm *z);
 #if 0

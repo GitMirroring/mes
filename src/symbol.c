@@ -78,6 +78,7 @@ init_symbols_ ()                  /*:((internal)) */
   cell_symbol_unbound_variable = init_symbol (g_symbol, TSYMBOL, "unbound-variable");
   cell_symbol_wrong_number_of_args = init_symbol (g_symbol, TSYMBOL, "wrong-number-of-args");
   cell_symbol_wrong_type_arg = init_symbol (g_symbol, TSYMBOL, "wrong-type-arg");
+  cell_symbol_out_of_range = init_symbol (g_symbol, TSYMBOL, "out-of-range");
 
   cell_symbol_buckets = init_symbol (g_symbol, TSYMBOL, "buckets");
   cell_symbol_builtin = init_symbol (g_symbol, TSYMBOL, "<builtin>");

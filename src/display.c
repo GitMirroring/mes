@@ -280,7 +280,8 @@ display_error_ (struct scm *x)
 struct scm *
 display_port_ (struct scm *x, struct scm *p)
 {
-  assert_msg (p->type == TNUMBER, "p->type == TNUMBER");
+  if (p->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg, cons (p, cstring_to_symbol ("core:display-port")));
   return fdisplay_ (x, p->value, 0);
 }
 
@@ -301,7 +302,8 @@ write_error_ (struct scm *x)
 struct scm *
 write_port_ (struct scm *x, struct scm *p)
 {
-  assert_msg (p->type == TNUMBER, "p->type == TNUMBER");
+  if (p->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg, cons (p, cstring_to_symbol ("core:write-port")));
   return fdisplay_ (x, p->value, 1);
 }
 

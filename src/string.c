@@ -45,22 +45,10 @@ assert_max_string (size_t i, char const *msg, char const *string)
 struct scm *
 string_equal_p (struct scm *a, struct scm *b)   /*:((name . "string=?")) */
 {
-  if (!((a->type == TSTRING && b->type == TSTRING) || (a->type == TKEYWORD || b->type == TKEYWORD)))
-    {
-      eputs ("type a: ");
-      eputs (itoa (a->type));
-      eputs ("\n");
-      eputs ("type b: ");
-      eputs (itoa (b->type));
-      eputs ("\n");
-      eputs ("a= ");
-      write_error_ (a);
-      eputs ("\n");
-      eputs ("b= ");
-      write_error_ (b);
-      eputs ("\n");
-      assert_msg ((a->type == TSTRING && b->type == TSTRING) || (a->type == TKEYWORD || b->type == TKEYWORD), "(a->type == TSTRING && b->type == TSTRING) || (a->type == TKEYWORD || b->type == TKEYWORD)");
-    }
+  if (!((a->type == TSTRING && b->type == TSTRING) ||
+        (a->type == TKEYWORD || b->type == TKEYWORD)))
+    error (cell_symbol_wrong_type_arg,
+           cons (list2 (a, b), cstring_to_symbol ("string-equal?")));
   if (a == b)
     return cell_t;
   if (a->string == b->string)
@@ -194,7 +182,9 @@ string_append (struct scm *args)           /*:((arity . n)) */
   while (x != cell_nil)
     {
       string = x->car;
-      assert_msg (string->type == TSTRING, "string->type == TSTRING");
+      if (string->type != TSTRING)
+        error (cell_symbol_wrong_type_arg,
+               cons (string, cstring_to_symbol ("string-append")));
       size = size + string->length;
       x = x->cdr;
     }
@@ -214,7 +204,9 @@ string_append (struct scm *args)           /*:((arity . n)) */
 struct scm *
 string_length (struct scm *string)
 {
-  assert_msg (string->type == TSTRING, "string->type == TSTRING");
+  if (string->type != TSTRING)
+    error (cell_symbol_wrong_type_arg,
+           cons (string, cstring_to_symbol ("string-length")));
   return make_number (string->length);
 }
 
@@ -224,15 +216,20 @@ string_ref_ (struct scm *str, long i)
   size_t size = str->length;
   char const *p = cell_bytes (str->string);
   if (i > size)
-    error (cell_symbol_system_error, cons (make_string0 ("value out of range"), make_number (i)));
+    error (cell_symbol_out_of_range,
+           cons (make_number (i), cstring_to_symbol ("string-ref")));
   return p[i];
 }
 
 struct scm *
 string_ref (struct scm *str, struct scm *k)
 {
-  assert_msg (str->type == TSTRING, "str->type == TSTRING");
-  assert_msg (k->type == TNUMBER, "k->type == TNUMBER");
+  if (str->type != TSTRING)
+    error (cell_symbol_wrong_type_arg,
+           cons (str, cstring_to_symbol ("string-ref")));
+  if (k->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg,
+           cons (k, cstring_to_symbol ("string-ref")));
   return make_char (string_ref_ (str, k->value));
 }
 
@@ -242,7 +239,8 @@ string_set_x_ (struct scm *str, long i, char c)
   char *p = cell_bytes (str->string);
   size_t size = str->length;
   if (i > size)
-    error (cell_symbol_system_error, cons (make_string0 ("value out of range"), make_number (i)));
+    error (cell_symbol_out_of_range,
+           cons (make_number (i), cstring_to_symbol ("string-set!")));
   p[i] = c;
   return cell_unspecified;
 }
@@ -250,9 +248,15 @@ string_set_x_ (struct scm *str, long i, char c)
 struct scm *
 string_set_x (struct scm *str, struct scm *k, struct scm *c)
 {
-  assert_msg (str->type == TSTRING, "str->type == TSTRING");
-  assert_msg (k->type == TNUMBER, "k->type == TNUMBER");
-  assert_msg (c->type == TCHAR, "c->type == TCHAR");
+  if (str->type != TSTRING)
+    error (cell_symbol_wrong_type_arg,
+           cons (str, cstring_to_symbol ("string-set!")));
+  if (k->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg,
+           cons (k, cstring_to_symbol ("string-set!")));
+  if (c->type != TCHAR)
+    error (cell_symbol_wrong_type_arg,
+           cons (c, cstring_to_symbol ("string-set!")));
   return string_set_x_ (str, k->value, c->value);
 }
 
@@ -260,8 +264,10 @@ struct scm *
 string_copy_x_ (struct scm *str, long start, struct scm *source, long begin,
               long end)
 {
-  assert_msg (str->length - start >= end - begin,
-              "str->length - start >= end - begin");
+  if (str->length - start < end - begin)
+    error (cell_symbol_out_of_range,
+           cons (list3 (str, make_number (start), make_number (end)),
+                 cstring_to_symbol ("string-copy!")));
   long i;
   for (i = begin; i < end; i = i + 1)
     string_set_x_ (str, i - begin + start, string_ref_ (source, i));
@@ -279,17 +285,26 @@ string_copy_x (struct scm *x)               /*:((arity . n)) */
   struct scm *end;   /* optional */
 
   str = x->car;
-  assert_msg (str->type == TSTRING, "str->type == TSTRING");
+  if (str->type != TSTRING)
+    error (cell_symbol_wrong_type_arg,
+           cons (str, cstring_to_symbol ("string-copy!")));
   x = x->cdr;
 
-  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_type_arg,
+           cons (x, cstring_to_symbol ("string-copy!")));
   start = x->car;
   assert_number("string_copy_x: start", start);
-  x = x->cdr;
 
-  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  x = x->cdr;
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_type_arg,
+           cons (x, cstring_to_symbol ("string-copy!")));
+
   source = x->car;
-  assert_msg (source->type == TSTRING, "source->type == TSTRING");
+  if (source->type != TSTRING)
+    error (cell_symbol_wrong_type_arg,
+           cons (source, cstring_to_symbol ("string-copy!")));
   x = x->cdr;
 
   if (x->type != TPAIR)
@@ -333,7 +348,9 @@ make_string_init (struct scm *x)
   if (x->cdr != cell_nil)
     {
       x = x->cdr->car;
-      assert_msg (x->type == TCHAR, "x->type == TCHAR");
+      if (x->type != TCHAR)
+        error (cell_symbol_wrong_type_arg,
+               cons (x, cstring_to_symbol ("make-string")));
       c = x->value;
     }
 

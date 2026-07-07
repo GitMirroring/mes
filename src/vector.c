@@ -44,7 +44,9 @@ struct scm *
 make_vector (struct scm *x)               /*:((arity . n)) */
 {
   struct scm *k = x->car;
-  assert_number ("make-vector", k);
+  if (k->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg,
+           cons (k, cstring_to_symbol ("make-vector")));
   long n = k->value;
   struct scm *e = cell_unspecified;
   if (x->cdr != cell_nil)
@@ -56,15 +58,21 @@ make_vector (struct scm *x)               /*:((arity . n)) */
 struct scm *
 vector_length (struct scm *x)
 {
-  assert_msg (x->type == TVECTOR, "x->type == TVECTOR");
+  if (x->type != TVECTOR)
+    error (cell_symbol_wrong_type_arg,
+           cons (x, cstring_to_symbol ("vector-length")));
   return make_number (x->length);
 }
 
 struct scm *
 vector_ref_ (struct scm *x, long i)
 {
-  assert_msg (x->type == TVECTOR, "x->type == TVECTOR");
-  assert_msg (i < x->length, "i < x->length");
+  if (x->type != TVECTOR)
+    error (cell_symbol_wrong_type_arg,
+           cons (x, cstring_to_symbol ("vector-ref")));
+  if (i >= x->length)
+    error (cell_symbol_out_of_range,
+           cons (make_number (i), cstring_to_symbol ("vector-ref")));
   struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
   return *loc;
 }
@@ -78,8 +86,12 @@ vector_ref (struct scm *x, struct scm *i)
 struct scm *
 vector_set_x_ (struct scm *x, long i, struct scm *e)
 {
-  assert_msg (x->type == TVECTOR, "x->type == TVECTOR");
-  assert_msg (i < x->length, "i < x->length");
+  if (x->type != TVECTOR)
+    error (cell_symbol_wrong_type_arg,
+           cons (x, cstring_to_symbol ("vector-set!")));
+  if (i >= x->length)
+    error (cell_symbol_out_of_range,
+           cons (make_number (i), cstring_to_symbol ("vector-set!")));
   struct scm **loc = vector_body (x) + i * M2_PTR_SIZE;
   *loc = e;
   return cell_unspecified;
@@ -118,8 +130,12 @@ vector_to_list (struct scm *v)
 struct scm *
 vector_fill_x_ (struct scm *vec, struct scm *fill, long start, long end)
 {
-  assert_msg (start <= end, "start < end");
-  assert_msg (vec->length >= end, "vec->length >= end");
+  if (start > end)
+    error (cell_symbol_out_of_range,
+           cons (make_number (start), cstring_to_symbol ("vector-fill!")));
+  if (vec->length < end)
+    error (cell_symbol_out_of_range,
+           cons (make_number (end), cstring_to_symbol ("vector-fill!")));
   long i;
   for (i = start; i < end; i = i + 1)
     vector_set_x_ (vec, i, fill);
@@ -136,23 +152,31 @@ vector_fill_x (struct scm *x)               /*:((arity . n)) */
   struct scm *end;   /* optional */
 
   vec = x->car;
-  assert_msg (vec->type == TVECTOR, "vec->type == TVECTOR");
+  if (vec->type != TVECTOR)
+    error (cell_symbol_wrong_type_arg,
+           cons (vec, cstring_to_symbol ("vector-fill!")));
   x = x->cdr;
 
-  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_number_of_args,
+           cons (make_number (length__(x)), cstring_to_symbol ("vector-fill!")));
   fill = x->car;
   x = x->cdr;
 
   if (x->type != TPAIR)
     return vector_fill_x_ (vec, fill, 0, vec->length);
   start = x->car;
-  assert_number("vector_fill_x: start", start);
+  if (start->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg,
+           cons (start, cstring_to_symbol ("vector-fill!")));
   x = x->cdr;
 
   if (x->type != TPAIR)
     return vector_fill_x_ (vec, fill, start->value, vec->length);
   end = x->car;
-  assert_number("vector_fill_x: end", end);
+  if (end->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg,
+           cons (end, cstring_to_symbol ("vector-fill!")));
 
   return vector_fill_x_ (vec, fill, start->value, end->value);
 }
@@ -161,8 +185,11 @@ struct scm *
 vector_copy_x_ (struct scm *vec, long start, struct scm *source, long begin,
               long end)
 {
-  assert_msg (vec->length - start >= end - begin,
-              "vec->length - start >= end - begin");
+  if (vec->length - start < end - begin)
+    error (cell_symbol_out_of_range,
+           cons (list3 (make_number (start), make_number (begin), make_number (end)),
+                 cstring_to_symbol ("vector-copy!")));
+
   long i;
   for (i = begin; i < end; i = i + 1)
     vector_set_x_ (vec, i - begin + start, vector_ref_ (source, i));
@@ -179,30 +206,47 @@ vector_copy_x (struct scm *x)               /*:((arity . n)) */
   struct scm *begin; /* optional */
   struct scm *end;   /* optional */
 
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_number_of_args,
+           cons (make_number (length__(x)), cstring_to_symbol ("vector-copy!")));
+
   vec = x->car;
-  assert_msg (vec->type == TVECTOR, "vec->type == TVECTOR");
-  x = x->cdr;
+  if (vec->type != TVECTOR)
+    error (cell_symbol_wrong_type_arg, cons (vec, cstring_to_symbol ("vector-copy!")));
 
-  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  x = x->cdr;
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_number_of_args,
+           cons (make_number (length__(x)), cstring_to_symbol ("vector-copy!")));
+
   start = x->car;
-  assert_number("vector_copy_x: start", start);
-  x = x->cdr;
+  if (start->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg, cons (start, cstring_to_symbol ("vector-copy!")));
 
-  assert_msg (x->type == TPAIR, "x->type == TPAIR");
+  x = x->cdr;
+  if (x->type != TPAIR)
+    error (cell_symbol_wrong_number_of_args,
+           cons (make_number (length__(x)), cstring_to_symbol ("vector-copy!")));
+
   source = x->car;
-  assert_msg (source->type == TVECTOR, "source->type == TVECTOR");
-  x = x->cdr;
+  if (source->type != TVECTOR)
+    error (cell_symbol_wrong_type_arg, cons (source, cstring_to_symbol ("vector-copy!")));
 
+  x = x->cdr;
   if (x->type != TPAIR)
     return vector_copy_x_ (vec, start->value, source, 0, source->length);
-  begin = x->car;
-  assert_number("vector_copy_x: begin", begin);
-  x = x->cdr;
 
+  begin = x->car;
+  if (begin->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg, cons (begin, cstring_to_symbol ("vector-copy!")));
+
+  x = x->cdr;
   if (x->type != TPAIR)
     return vector_copy_x_ (vec, start->value, source, begin->value, source->length);
+
   end = x->car;
-  assert_number("vector_copy_x: end", end);
+  if (end->type != TNUMBER)
+    error (cell_symbol_wrong_type_arg, cons (end, cstring_to_symbol ("vector-copy!")));
 
   return vector_copy_x_ (vec, start->value, source, begin->value, end->value);
 }

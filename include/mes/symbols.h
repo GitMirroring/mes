@@ -53,6 +53,7 @@ extern struct scm *cell_symbol_throw;
 extern struct scm *cell_symbol_unbound_variable;
 extern struct scm *cell_symbol_wrong_number_of_args;
 extern struct scm *cell_symbol_wrong_type_arg;
+extern struct scm *cell_symbol_out_of_range;
 extern struct scm *cell_symbol_buckets;
 extern struct scm *cell_symbol_builtin;
 extern struct scm *cell_symbol_frame;
