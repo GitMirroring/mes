@@ -1068,39 +1068,3 @@ apply (struct scm *f, struct scm *x, struct scm *a)     /*:((internal)) */
   R3 = cell_vm_apply;
   return eval_apply ();
 }
-
-struct scm *
-primitive_load (struct scm *filename)     /*:((arity . 1))*/
-{
-  struct scm *input;
-
-  if ((filename->type == TNUMBER) && filename->value == 0)
-    input = current_input_port ();
-  else if (filename->type == TSTRING)
-    input = set_current_input_port (open_input_file (filename));
-  else if (filename->type == TPORT)
-    input = set_current_input_port (filename);
-  else
-    {
-      eputs ("primitive_load failed, filename=");
-      display_error_ (filename);
-      assert_msg (0, "primitive-load-boom 0");
-    }
-
-  struct scm *forms = read_input_file_env (cell_nil);
-  forms = cons (cell_symbol_begin, forms);
-  set_current_input_port (input);
-
-  struct scm *env = cell_nil;
-  env = cons (cons (cell_symbol_program, forms), env);
-
-  gc_push_frame ();
-  /* Store 'input' in R2 so it does not get GCed during evaluation. */
-  push_cc (forms, cell_unspecified, env, cell_unspecified);
-  R3 = cell_vm_begin_expand;
-  struct scm *result = eval_apply ();
-  input = R2;
-  gc_pop_frame ();
-
-  return result;
-}

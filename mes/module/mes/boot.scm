@@ -249,7 +249,7 @@
                        #t))
                  (read-env '())))
 
-(define (primitive-load* filename)
+(define (primitive-load filename)
   (if (if (number? filename)
           (= filename 0)
           #f)
@@ -259,8 +259,6 @@
           (if (string? filename)
               (load-from-file filename)
               (error "primitive-load failed" filename)))))
-
-(set! primitive-load primitive-load*)
 
 ;; Boot dispatch
 (define (boot-file basename)
