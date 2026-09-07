@@ -68,6 +68,18 @@ cdr (struct scm *x)
 }
 
 struct scm *
+list2 (struct scm *x, struct scm *y)
+{
+  return cons (y, cons (x, cell_nil));
+}
+
+struct scm *
+list3 (struct scm *x, struct scm *y, struct scm *z)
+{
+  return cons (x, list2 (y, z));
+}
+
+struct scm *
 list (struct scm *x)                    /*:((arity . n)) */
 {
   return x;

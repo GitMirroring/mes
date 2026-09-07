@@ -216,6 +216,8 @@ FUNCTION builtin_function (struct scm *builtin);
 void assert_num (long pos, struct scm *x);
 void assert_range (int assert, long x);
 void assert_struct (long pos, struct scm *x);
+struct scm *list2 (struct scm *x, struct scm *y);
+struct scm *list3 (struct scm *x, struct scm *y, struct scm *z);
 #if 0
 void assert_type (long type, char const *name_name, struct scm *x)
 #endif
