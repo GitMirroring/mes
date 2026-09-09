@@ -224,8 +224,6 @@ main (int argc, char **argv)
 
   struct scm *program = read_boot ();
   R0 = acons (cell_symbol_program, program, cell_nil);
-  R2 = program;
-  push_cc (R2, cell_unspecified, R0, cell_unspecified);
 
   if (g_debug > 2)
     gc_stats_ ("\n gc boot");
@@ -235,8 +233,19 @@ main (int argc, char **argv)
       write_error_ (R1);
       eputs ("\n");
     }
-  R3 = cell_vm_begin;
-  R1 = eval_apply ();
+
+  /* Kickstart the initial boot file doing the bare minimum: eval one by one.
+   * It will evaluate the bootstrapping macro expander and drive from there.
+   */
+  struct scm *cur;
+  for (cur = program; cur != cell_nil; cur = cur->cdr)
+    {
+      push_cc (cur->car, cur, R0, cell_unspecified);
+      R3 = cell_vm_eval;
+      R1 = eval_apply ();
+      cur = R2;
+    }
+
   if (g_debug != 0)
     {
       write_error_ (R1);
