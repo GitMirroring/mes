@@ -73,10 +73,6 @@ MES_SOURCES =					\
 MES_SOURCES_M2 =				\
  $(MES_SOURCES)
 
-TEST_GC_SOURCES =				\
- $(LIBMES_SOURCES)				\
- src/test/gc.c
-
 M2_SOURCES =					\
  lib/linux/$(M2_PLANET_ARCH)-mes-m2/crt1.c	\
  lib/mes/__init_io.c				\
@@ -182,9 +178,6 @@ gc-m2: bin/gc-m2
 bin/mes-gcc: simple.make $(GCC_SOURCES) $(MES_SOURCES) $(INCLUDES) | bin
 	$(CC) $(CFLAGS) -o $@ $(GCC_SOURCES) $(MES_SOURCES)
 	cp -f $@ bin/mes
-
-bin/gc-gcc: simple.make $(GCC_SOURCES) $(TEST_GC_SOURCES) $(INCLUDES) | bin
-	$(CC) $(CFLAGS) -D GC_TEST=1 -o $@ $(GCC_SOURCES) $(TEST_GC_SOURCES)
 
 M2_PLANET_INCLUDES =				\
  include/mes/config.h				\
