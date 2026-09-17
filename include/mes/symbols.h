@@ -111,11 +111,4 @@ extern struct scm *cell_type_broken_heart;
 extern struct scm *cell_symbol_program;
 extern struct scm *cell_symbol_test;
 
-// CONSTANT SYMBOL_MAX 113
-#define SYMBOL_MAX 113
-
-#define CELL_UNSPECIFIED 7
-
-#define CELL_SYMBOL_RECORD_TYPE 77
-
 #endif /* __MES_SYMBOLS_H */
