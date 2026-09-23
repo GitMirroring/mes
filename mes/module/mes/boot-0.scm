@@ -135,9 +135,6 @@
 
 (define-macro (include file) (list 'load file))
 
-(if (not (defined? '%datadir))
-    (module-define! (current-environment) '%datadir "mes"))
-
 (define %moduledir (string-append %datadir "/module/"))
 
 (include (string-append %moduledir "mes/type-0.mes"))
