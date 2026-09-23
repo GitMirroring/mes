@@ -79,7 +79,7 @@
   (loop rest (list)))
 
 (define (apply f h . t)
-  (if (null? t) (core:apply f h (current-environment))
+  (if (null? t) (core:apply f h)
       (apply f (apply cons* (cons h t)))))
 
 (define (append . rest)
