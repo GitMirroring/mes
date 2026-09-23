@@ -4,7 +4,7 @@
 ;;; Copyright (C) 1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007
 ;;; Free Software Foundation, Inc.
 ;;; Copyright (C) 2019,2020,2024 Janneke Nieuwenhuizen <janneke@gnu.org>
-;;; Copyright (C) 2022 Timothy Smaple <samplet@ngyro.com>
+;;; Copyright (C) 2022,2026 Timothy Smaple <samplet@ngyro.com>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
@@ -102,27 +102,24 @@
 ;; triggers for code evaluated at the top-level, for example from the
 ;; REPL or when loading a file.
 
-;; Mes: This has been largely rewritten for Mes.
+;; Mes: This has been largely rewritten for Mes, and always runs
+;; 'load-toplevel' expressions.
 
 (define-macro (eval-case . clauses)
-  (define env (gensym 'env))
-  (define tests `((load-toplevel . (or (not (pair? ,env))
-                                       (not (pair? ,env))
-                                       (not (eq? '*closure* (caar ,env)))))))
-  `(let ((,env (current-environment)))
-     (cond ,@(map (lambda (clause)
-                    (cond
-                     ((not (list? clause))
-                      (error "syntax error in eval-case"))
-                     ((eq? 'else (car clause))
-                      clause)
-                     ((not (list? (car clause)))
-                      (error "syntax error in eval-case"))
-                     (else `((or ,@(map (lambda (test)
-                                          (assq-ref tests test))
-                                        (car clause)))
-                             ,@(cdr clause)))))
-                  clauses))))
+  (define tests `((load-toplevel . #t)))
+  `(cond ,@(map (lambda (clause)
+                  (cond
+                   ((not (list? clause))
+                    (error "syntax error in eval-case"))
+                   ((eq? 'else (car clause))
+                    clause)
+                   ((not (list? (car clause)))
+                    (error "syntax error in eval-case"))
+                   (else `((or ,@(map (lambda (test)
+                                        (assq-ref tests test))
+                                      (car clause)))
+                           ,@(cdr clause)))))
+                clauses)))
 
 
 
