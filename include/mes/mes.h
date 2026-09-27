@@ -151,6 +151,7 @@ extern struct utsname *__uts;
 
 extern struct scm *scm_hash_table_type;
 extern struct scm *scm_template_type;
+extern struct scm *scm_module_type;
 
 #define cell_bytes(x) ((char *)(x) + sizeof (struct scm))
 #define vector_body(x) ((struct scm **)cell_bytes (x))
@@ -160,6 +161,7 @@ struct scm *alloc (long n);
 struct scm *cstring_to_list (char const *s);
 struct scm *cstring_to_symbol (char const *s);
 struct scm *cell_ref (struct scm *cell, long index);
+struct scm *make_module_type ();
 struct scm *fdisplay_ (struct scm *, int, int);
 struct scm *init_symbols ();
 struct scm *init_time (struct scm *a);

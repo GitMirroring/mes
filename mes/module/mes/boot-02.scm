@@ -33,7 +33,7 @@
 (define (defined? x)
   ((lambda (v)
      (if v (if (eq? (variable-ref v) *undefined*) #f #t) #f))
-   (core:hashq-ref (initial-module) x #f)))
+   (module-variable (initial-module) x)))
 
 (define (cond-expand-expander clauses)
   (if (defined? (car (car clauses)))

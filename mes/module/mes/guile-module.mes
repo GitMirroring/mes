@@ -65,7 +65,7 @@
   (filter (lambda (x) (not (equal? x item))) lst))
 
 (define make-weak-value-hash-table make-hash-table)
-(define (%get-pre-modules-obarray) (initial-module))
+(define (%get-pre-modules-obarray) (module-obarray (initial-module)))
 (define (make-mutex) '*mutex*)
 (define (lock-mutex m) #t)
 (define (unlock-mutex m) #t)
@@ -327,14 +327,16 @@
 ;; bindings that would otherwise not be found locally in the module.
 ;;
 ;; NOTE: If you change anything here, you also need to change
-;; libguile/modules.h.
+;; src/module.c. That file defines the module type like so:
 ;;
-(define module-type
-  (make-record-type 'module
-		    '(obarray uses binder eval-closure transformer name kind
-		      duplicates-handlers duplicates-interface
-		      observers weak-observers observer-id)
-		    %print-module))
+;; (define module-type
+;;   (make-record-type 'module
+;; 		    '(obarray uses binder eval-closure transformer name kind
+;; 		      duplicates-handlers duplicates-interface
+;; 		      observers weak-observers observer-id)
+;; 		    %print-module))
+
+(struct-set! module-type 3 %print-module)
 
 ;; make-module &opt size uses binder
 ;;
@@ -573,14 +575,14 @@
 ;;;
 ;;; If the symbol is not found at all, return #f.
 ;;;
-;;(define (module-local-variable m v)
-;;;  (caddr
-;;;   (list m v
-;;	 (let ((b (module-obarray-ref (module-obarray m) v)))
-;;	   (or (and (variable? b) b)
-;;	       (and (module-binder m)
-;;		    ((module-binder m) m v #f)))))
-;;;))
+(define (module-local-variable m v)
+;  (caddr
+;   (list m v
+	 (let ((b (module-obarray-ref (module-obarray m) v)))
+	   (or (and (variable? b) b)
+	       (and (module-binder m)
+		    ((module-binder m) m v #f)))))
+;))
 
 ;; module-variable module symbol
 ;;
@@ -590,8 +592,8 @@
 ;; NOTE: This function is superseded with C code (see modules.c)
 ;;;      when using the standard eval closure.
 ;;
-;; (define (module-variable m v)
-;;   (module-search module-local-variable m v))
+(define (module-variable m v)
+  (module-search module-local-variable m v))
 
 ;;; {Mapping modules x symbols --> bindings}
 ;;;
@@ -674,11 +676,11 @@
 ;; there is no binding for SYMBOL, create a new uninitialized
 ;; variable.  Return the local variable.
 ;;
-;; (define (module-ensure-local-variable! module symbol)
-;;   (or (module-local-variable module symbol)
-;;       (let ((var (make-undefined-variable)))
-;; 	(module-add! module symbol var)
-;; 	var)))
+(define (module-ensure-local-variable! module symbol)
+  (or (module-local-variable module symbol)
+      (let ((var (make-undefined-variable)))
+	(module-add! module symbol var)
+	var)))
 
 ;; module-add! module symbol var
 ;;

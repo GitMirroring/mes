@@ -85,9 +85,4 @@ enum opcode
 #define STRUCT_TYPE 0
 #define STRUCT_PRINTER 1
 
-#define MODULE_OBARRAY 3
-#define MODULE_USES 4
-#define MODULE_BINDER 5
-#define MODULE_EVAL_CLOSURE 6
-
 #endif /* __MES_CONSTANTS_H */

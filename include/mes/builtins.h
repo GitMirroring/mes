@@ -110,6 +110,7 @@ struct scm *set_current_module (struct scm *module);
 struct scm *module_variable (struct scm *module, struct scm *name);
 struct scm *module_local_variable (struct scm *module, struct scm *name);
 struct scm *module_ensure_local_variable_x (struct scm *module, struct scm *name);
+struct scm *module_define_x (struct scm *module, struct scm *name, struct scm *value);
 /* src/posix.c */
 struct scm *abort_ ();
 struct scm *exit_ (struct scm *x);

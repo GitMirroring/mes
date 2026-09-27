@@ -568,7 +568,6 @@
                   (proc (lambda (val)
                           (apply-continuation cont val)))))))
 
-  (hashq-set! (initial-module) 'dynamic-wind (make-variable dynamic-wind))
-  (hashq-set! (initial-module) 'call-with-current-continuation
-              (make-variable call/cc))
-  (hashq-set! (initial-module) 'call/cc (make-variable call/cc)))
+  (module-define! (initial-module) 'dynamic-wind dynamic-wind)
+  (module-define! (initial-module) 'call-with-current-continuation call/cc)
+  (module-define! (initial-module) 'call/cc call/cc))

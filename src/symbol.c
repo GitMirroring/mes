@@ -167,6 +167,9 @@ init_symbols ()                  /*:((internal)) */
   /* types */
   a = acons (cstring_to_symbol ("hash-table-type"), scm_hash_table_type, a);
 
+  scm_module_type = make_module_type ();
+  a = acons (cstring_to_symbol ("module-type"), scm_module_type, a);
+
   /* the closure */
   a = acons (cell_closure, a, a);
 

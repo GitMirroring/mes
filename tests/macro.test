@@ -69,11 +69,9 @@ exec ${MES-bin/mes} --no-auto-compile -L ${0%/*} -L module -C module -e '(tests 
   ((lambda (fluid)
      (list
       'begin
-      (list '(lambda (var val) (variable-set! var val))
-            (list 'core:hashq-ref
-                  '(initial-module)
-                  (list 'quote fluid)
-                  '(make-variable #f))
+      (list 'module-define!
+            (list 'current-module)
+            (list 'quote fluid)
             (list '(lambda (v)
                      (lambda ( . rest)
                        (if (null? rest) v

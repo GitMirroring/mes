@@ -397,7 +397,7 @@ eval_compiled ()
         throw:
           {
             struct scm *throw =
-              hashq_ref_ (initial_module (), cell_symbol_throw, cell_f);
+              module_variable (initial_module (), cell_symbol_throw);
             if (throw == cell_f)    /* Throw not defined yet, just die */
               {
                 display_error_ (stack_pop ());

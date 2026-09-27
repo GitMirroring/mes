@@ -154,7 +154,7 @@
                  (reader-read)))
 
 (define (check-close-port)
-  (core:define v (core:hashq-ref (initial-module) 'close-port #f))
+  (core:define v (module-variable (initial-module) 'close-port))
   (if v (if (eq? (variable-ref v) *undefined*) #f #t) #f))
 
 (define has-close-port? (check-close-port))

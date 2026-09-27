@@ -407,6 +407,8 @@ gc_flip ()
     scm_hash_table_type = scm_hash_table_type - dist;
   if (scm_template_type)
     scm_template_type = scm_template_type - dist;
+  if (scm_module_type)
+    scm_module_type = scm_module_type - dist;
   M0 = M0 - dist;
   M1 = M1 - dist;
 }
@@ -570,6 +572,8 @@ gc_ ()
     scm_hash_table_type = gc_copy (scm_hash_table_type);
   if (scm_template_type)
     scm_template_type = gc_copy (scm_template_type);
+  if (scm_module_type)
+    scm_module_type = gc_copy (scm_module_type);
   M0 = gc_copy (M0);
   M1 = gc_copy (M1);
 
