@@ -82,12 +82,8 @@ enum opcode
 #define BUILTINS_SIZE 255
 
 /* Struct types */
-
 #define STRUCT_TYPE 0
 #define STRUCT_PRINTER 1
-
-#define GC_FRAME_SIZE 5
-#define GC_FRAME_PROCEDURE 4
 
 #define MODULE_OBARRAY 3
 #define MODULE_USES 4
