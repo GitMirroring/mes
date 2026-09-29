@@ -4,6 +4,7 @@
  * Copyright © 2018 Jeremiah Orians <jeremiah@pdp10.guru>
  * Copyright © 2025 Stefan <stefan-guix@vodafonemail.de>
  * Copyright © 2025 Ekaitz Zarraga <ekaitz@elenq.tech>
+ * Copyright © 2026 Adam Faiz <adam.faiz@disroot.org>
  *
  * This file is part of GNU Mes.
  *
@@ -254,7 +255,7 @@ reader_read_hash (int c, struct scm *a)
   if (c == ':')
     {
       struct scm *x = reader_read_identifier_or_number (readchar ());
-      struct scm *msg = make_string0 ("keyword perifx ':' not followed by a symbol: ");
+      struct scm *msg = make_string0 ("keyword prefix ':' not followed by a symbol: ");
       if (x->type == TNUMBER)
         error (cell_symbol_system_error, cons (msg, x));
       return symbol_to_keyword (x);
