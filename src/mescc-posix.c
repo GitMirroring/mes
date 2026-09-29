@@ -174,6 +174,7 @@ close_port (struct scm *port)
   if (port->type == TNUMBER)
     if (close (port->value) != 0)
       error (cell_symbol_system_error, cons (make_string0 ("Error closing port"), port));
+  return cell_unspecified;
 }
 
 struct scm *
