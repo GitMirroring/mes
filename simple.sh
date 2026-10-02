@@ -75,11 +75,11 @@ gcc -g -D HAVE_CONFIG_H=1                       \
     src/module.c                                \
     src/posix.c                                 \
     src/reader.c                                \
-    src/stack.c                                 \
     src/string.c                                \
     src/struct.c                                \
     src/symbol.c                                \
     src/variable.c                              \
+    src/compiler.c                              \
     src/vector.c
 
 ## Check ##
@@ -305,11 +305,11 @@ $CC -g -D HAVE_CONFIG_H=1                               \
     src/module.c                                        \
     src/posix.c                                         \
     src/reader.c                                        \
-    src/stack.c                                         \
     src/string.c                                        \
     src/struct.c                                        \
     src/symbol.c                                        \
     src/variable.c                                      \
+    src/compiler.c                                      \
     src/vector.c
 
 ## Check ##

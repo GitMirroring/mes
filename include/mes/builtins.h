@@ -52,17 +52,11 @@ struct scm *write_ (struct scm *x);
 struct scm *write_error_ (struct scm *x);
 struct scm *write_port_ (struct scm *x, struct scm *p);
 /* src/eval-apply.c */
-struct scm *pairlis (struct scm *x, struct scm *y, struct scm *a);
-struct scm *set_car_x (struct scm *x, struct scm *e);
-struct scm *set_cdr_x (struct scm *x, struct scm *e);
-struct scm *add_formals (struct scm *formals, struct scm *x);
-struct scm *eval_apply ();
-struct scm *make_binding (struct scm *name, struct scm *variable);
+struct scm *display_backtrace (struct scm *kont);
 /* src/gc.c */
+struct scm *make_binding (struct scm *name, struct scm *variable);
 struct scm *gc_stats ();
 struct scm *cons (struct scm *x, struct scm *y);
-struct scm *gc_check ();
-struct scm *gc ();
 /* src/hash.c */
 struct scm *hashq (struct scm *x, struct scm *size);
 struct scm *hash (struct scm *x, struct scm *size);
@@ -83,6 +77,9 @@ struct scm *hash_clear_x (struct scm *table);
 struct scm *type_ (struct scm *x);
 struct scm *car_ (struct scm *x);
 struct scm *cdr_ (struct scm *x);
+struct scm *set_car_x (struct scm *x, struct scm *e);
+struct scm *set_cdr_x (struct scm *x, struct scm *e);
+struct scm *pairlis (struct scm *x, struct scm *y, struct scm *a);
 struct scm *xassq (struct scm *x, struct scm *a);
 struct scm *memq (struct scm *x, struct scm *a);
 struct scm *equal2_p (struct scm *a, struct scm *b);
@@ -113,6 +110,7 @@ struct scm *initial_module ();
 struct scm *current_module ();
 struct scm *set_current_module (struct scm *module);
 struct scm *module_variable (struct scm *module, struct scm *name);
+struct scm *module_local_variable (struct scm *module, struct scm *name);
 struct scm *module_ensure_local_variable_x (struct scm *module, struct scm *name);
 /* src/posix.c */
 struct scm *abort_ ();
@@ -204,6 +202,11 @@ struct scm *list_to_vector (struct scm *x);
 struct scm *vector_to_list (struct scm *v);
 struct scm *vector_copy_x (struct scm *x);
 struct scm *vector_fill_x (struct scm *x);
+/* src/compiler.c */
+struct scm *compile_top_level_exp (struct scm *exp, struct scm *mod);
+struct scm *procedure_name (struct scm *closure);
+struct scm *procedure_arguments (struct scm *closure);
+struct scm *procedure_disassemble (struct scm *closure);
 
 /* This is a conditional compilation hack for M2-Planet in bootstrap
    mode.  The following file will not be included in the M2-Planet build

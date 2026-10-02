@@ -18,6 +18,16 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
 
+;; Define basic keywords.  This is only used to make the expander easier
+;; to read.  Once the expander is running, it is in charge of inserting
+;; the 'core:' forms.
+(core:define lambda core:lambda)
+(core:define quote core:quote)
+(core:define begin core:begin)
+(core:define if core:if)
+(core:define define core:define)
+(core:define set! core:set!)
+
 ;; Boot just enough type checking to run the loader and expander
 (define (symbol? x)
   (eq? (core:type x) <cell:symbol>))
@@ -51,7 +61,7 @@
       form))
 
 (define (expand-keyword-pair keyword rest)
-  (define xformer (core:hashq-ref %macro-table keyword #f))
+  (core:define xformer (core:hashq-ref %macro-table keyword #f))
   (if xformer
       (core:apply xformer rest)
       (cons keyword (expand-cdr rest))))
@@ -67,124 +77,31 @@
 
 (define core:macro-expand expand)
 
-;; The binder
-(define (name->binding name)
-  (define var (module-variable (current-module) name))
-  (if var
-      (make-binding name var)
-      (make-binding name (module-ensure-local-variable! (current-module) name))))
-
-(define (formals->alist formals)
-  (if (null? formals)
-      '()
-      (if (symbol? formals)
-          (list (cons formals #t))
-          (cons (cons (car formals) #t)
-                (formals->alist (cdr formals))))))
-
-(define (add-formals formals env)
-  (cons (formals->alist formals) env))
-
-(define (lexical? name env)
-  (if (null? env)
-      #f
-      (if (assq name (car env))
-          #t
-          (lexical? name (cdr env)))))
-
-(define (bind! form env)
-  (if (pair? form)
-      (if (eq? (car form) 'quote)
-          form
-          (if (eq? (car form) 'lambda)
-              (bind-lambda! form env)
-              (if (eq? (car form) 'define)
-                  (bind-define! form env)
-                  (begin
-                    (set-car! form (bind! (car form) env))
-                    (set-cdr! form (bind-cdr! (cdr form) env))
-                    form))))
-      (if (symbol? form)
-          (if (lexical? form env)
-              form
-              (name->binding form))
-          form)))
-
-(define (bind-lambda! form env)
-  (define formals (car (cdr form)))
-  (define body (cdr (cdr form)))
-  (set-cdr! (cdr form) (bind-body! body (add-formals formals env)))
-  form)
-
-(define (gather-defines forms defines)
-  (if (pair? forms)
-      (if (pair? (car forms))
-          (if (eq? (car (car forms)) 'define)
-              (gather-defines
-               (cdr forms)
-               (cons (if (pair? (car (cdr (car forms))))
-                         (car (car (cdr (car forms))))
-                         (car (cdr (car forms))))
-                     defines))
-              defines)
-          defines)
-      defines))
-
-(define (bind-body! body env)
-  (bind-cdr! body (add-formals (gather-defines body '()) env)))
-
-(define (bind-define! form env)
-  (if (pair? (car (cdr form)))
-      (begin
-        (set-cdr! (cdr form)
-                  (bind-body! (cdr (cdr form))
-                              (add-formals (cdr (car (cdr form))) env)))
-        form)
-      (begin
-        (set-cdr! (cdr form) (bind-cdr! (cdr (cdr form)) env))
-        form)))
-
-(define (bind-cdr! rest env)
-  (if (pair? rest)
-      (if (eq? (car rest) *undefined*)
-          (begin
-            (set-cdr! rest (bind-cdr! (cdr rest) env))
-            rest)
-          (begin
-            (set-car! rest (bind! (car rest) env))
-            (set-cdr! rest (bind-cdr! (cdr rest) env))
-            rest))
-      (bind! rest env)))
-
-;; Use the expander and binder for 'eval'
+;; Use the expander for 'eval'
 (define (eval form)
-  (core:eval-expanded (bind! (expand form) '()) '((#f . #f))))
-
-;; Emulate the old 'core:eval'.
-(define (core:eval form env)
-  (core:eval-expanded (bind! (expand form) (list env)) env))
+  (core:apply (compile-top-level (expand form) (current-module)) '()))
 
 ;; System macros
 (define (quote-expander form)
-  (list 'quote form))
+  (list core:quote form))
 
 (define (lambda-expander formals . body)
-  (cons 'lambda (cons formals (expand-cdr body))))
+  (cons core:lambda (cons formals (expand-cdr body))))
 
 (define (if-expander test consequent . rest)
-  (define alternate (if (pair? rest) (car rest) *unspecified*))
-  (list 'if (expand test) (expand consequent) (expand alternate)))
+  (core:define alternate (if (pair? rest) (car rest) *unspecified*))
+  (list core:if (expand test) (expand consequent) (expand alternate)))
 
 (define (begin-expander . forms)
-  (cons 'begin (expand-cdr forms)))
+  (cons core:begin (expand-cdr forms)))
 
 (define (set!-expander name exp)
-  (list 'set! name (expand exp)))
+  (list core:set! name (expand exp)))
 
 (define (define-expander name+formals . body)
   (if (pair? name+formals)
-      (cons 'define (cons name+formals (expand-cdr body)))
-      (list 'define name+formals (expand (car body)))))
+      (cons core:define (cons name+formals (expand-cdr body)))
+      (list core:define name+formals (expand (car body)))))
 
 (define-macro! 'quote quote-expander)
 (define-macro! 'lambda lambda-expander)
@@ -231,21 +148,20 @@
   (read-and-eval (lambda () *unspecified*) (reader-read)))
 
 (define (load-from-port port)
-  (define prev (set-current-input-port port))
+  (core:define prev (set-current-input-port port))
   (read-and-eval (lambda ()
                    (set-current-input-port prev))
                  (reader-read)))
 
 (define (check-close-port)
-  ((lambda (v)
-     (if v (if (eq? (variable-ref v) *undefined*) #f #t) #f))
-   (core:hashq-ref (initial-module) 'close-port #f)))
+  (core:define v (core:hashq-ref (initial-module) 'close-port #f))
+  (if v (if (eq? (variable-ref v) *undefined*) #f #t) #f))
 
 (define has-close-port? (check-close-port))
 
 (define (load-from-file filename)
-  (define port (open-input-file filename))
-  (define prev (set-current-input-port port))
+  (core:define port (open-input-file filename))
+  (core:define prev (set-current-input-port port))
   (read-and-eval (lambda ()
                    (set-current-input-port prev)
                    (if has-close-port?

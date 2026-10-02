@@ -53,23 +53,32 @@ struct scm
     long car_value;
     long length;
     struct scm *ref;
-    struct scm *binding;
+    struct scm *name;       /* for TBINDING */
     long port;
+    struct scm *env;        /* for TCLOSURE */
+    struct scm *state;      /* for TCONTINUATION */
+    struct
+      {
+        unsigned short pc;
+        unsigned short fp;
+      } frame;              /* for TFRAME */
   };
   union
   {
     struct scm *cdr;
     long cdr_value;
-    struct scm *closure;
-    struct scm *continuation;
     struct scm *builtin;
+    struct scm *binding;    /* for TBINDING */
+    struct scm *stack;      /* for TCONTINUATION */
     struct scm *string;
-    struct scm *structure;
     long value;
-    FUNCTION function;
     struct scm *variable;   /* for TVARIABLE */
+    struct scm *template;   /* for TCLOSURE */
+    struct scm *closure;    /* for TFRAME */
+
+    FUNCTION function;
     struct scm *vector;
-    long lexical_p; /* for bindings */
+    struct scm *structure;
   };
 };
 
@@ -91,14 +100,16 @@ extern struct scm *g_symbols;
 extern struct scm *g_symbol_max;
 extern int g_mini;
 
-/* a/env */
-extern struct scm *R0;
-/* param 1 */
-extern struct scm *R1;
-/* save 2 */
-extern struct scm *R2;
-/* continuation */
-extern struct scm *R3;
+/* evaluator */
+extern int g_booted;
+extern long g_stack;
+extern struct scm **STACK;
+
+#if !__M2__
+#include <setjmp.h>
+extern jmp_buf JMP_BUF;
+#endif
+
 /* initial module obarray */
 extern struct scm *M0;
 /* current module */
@@ -115,11 +126,9 @@ extern char *g_arena;
 extern struct scm *g_free;
 extern struct scm *g_symbol;
 
-extern struct scm **g_stack_array;
 extern struct scm *g_cells;
 extern struct scm *g_cells_end;
 extern struct scm *g_news;
-extern long g_stack;
 extern size_t gc_count;
 extern struct timespec *gc_start_time;
 extern struct timespec *gc_end_time;
@@ -137,9 +146,9 @@ extern struct timespec *__get_internal_run_time_ts;
 extern struct utsname *__uts;
 
 extern struct scm *scm_hash_table_type;
+extern struct scm *scm_template_type;
 
 struct scm *alloc (long n);
-struct scm *apply (struct scm *f, struct scm *x, struct scm *a);
 struct scm *apply_builtin (struct scm *fn, struct scm *x);
 struct scm *apply_builtin0 (struct scm *fn);
 struct scm *apply_builtin1 (struct scm *fn, struct scm *x);
@@ -152,18 +161,17 @@ struct scm *cell_ref (struct scm *cell, long index);
 struct scm *fdisplay_ (struct scm *, int, int);
 struct scm *init_symbols ();
 struct scm *init_time (struct scm *a);
-struct scm *lookup_binding (struct scm *name, struct scm *define_p);
-struct scm *lookup_value (struct scm *name);
 struct scm *make_builtin_type ();
 struct scm *make_bytes (size_t length);
 struct scm *make_cell (long type, struct scm *car, struct scm *cdr);
 struct scm *make_pointer_cell (long type, long car, void *cdr);
 struct scm *make_value_cell (long type, long car, long cdr);
+struct scm *make_frame (struct scm *closure, unsigned int pc, unsigned int fp);
 struct scm *make_char (int n);
-struct scm *make_continuation (long n);
 struct scm *make_hash_table_ (long size);
 struct scm *make_hash_table_type ();
 struct scm *make_initial_module (struct scm *a);
+struct scm *make_closure (struct scm *env, struct scm *template);
 struct scm *make_number (long n);
 struct scm *make_ref (struct scm *x);
 struct scm *make_string (char const *s, size_t length);
@@ -188,6 +196,20 @@ struct scm *vector_fill_x_ (struct scm *vec, struct scm *fill, long start, long 
 struct scm *make_bytevector_ (long size, long value);
 struct scm *make_bytevector_uninit_ (long size);
 struct scm *bytevector_fill_x_ (struct scm *bv, long value, long start, long end);
+
+struct scm *template_name (struct scm *template);
+struct scm *template_arity (struct scm *template);
+struct scm *template_source (struct scm *template);
+struct scm *template_module (struct scm *template);
+struct scm *template_code (struct scm *template);
+struct scm *template_literals (struct scm *template);
+struct scm *template_locals (struct scm *template);
+struct scm *template_arguments (struct scm *template);
+struct scm *compile_procedure (struct scm *exp, struct scm *name, struct scm *mod);
+char *inst_to_string (enum opcode inst);
+struct scm *eval_compiled ();
+struct scm *apply (struct scm *fn, struct scm *x);
+
 long bytevector_u8_ref_ (struct scm *bv, long k);
 void bytevector_u8_set_x_ (struct scm *bv, long k, long value);
 FUNCTION builtin_function (struct scm *builtin);
@@ -211,14 +233,35 @@ void copy_cell (struct scm *to, struct scm *from);
 void gc_ ();
 void gc_dump_arena (struct scm *cells, long size);
 void gc_init ();
-void gc_peek_frame ();
-void gc_pop_frame ();
-void gc_push_frame ();
 void gc_stats_ (char const* where);
+struct scm *gc_check ();
+struct scm *gc ();
 void init_symbols_ ();
 long seconds_and_nanoseconds_to_long (long s, long ns);
 
 #include "mes/builtins.h"
 #include "mes/symbols.h"
+
+#if !__M2__
+#define stack_init()        (g_stack = 0)
+#define stack_index(i)      (STACK [i])
+#define stack_set(i, v)     (STACK [i] = v)
+#define stack_push(val)     (STACK [g_stack++] = val)
+#define stack_pop()         (STACK [--g_stack])
+#define stack_drop(n)       (g_stack -= n)
+#define stack_peek()        (STACK[g_stack-1])
+#define stack_empty_p()     (g_stack == 0)
+#define stack_rewind_to(to) (stack_drop (g_stack - (to)))
+#else
+struct scm *stack_index (long i);
+void stack_set (long i, struct scm *v);
+void stack_init ();
+void stack_push (struct scm *x);
+struct scm *stack_pop ();
+void stack_drop (long n);
+struct scm *stack_peek ();
+int stack_empty_p ();
+void stack_rewind_to (long to);
+#endif
 
 #endif /* __MES_MES_H */

@@ -32,6 +32,7 @@ exec ${MES-bin/mes} --no-auto-compile -L ${0%/*} -L module -C module -s "$0" "$@
    (guile #f)
    (mes (eq? (current-module) (initial-module)))))
 
+((if mes-core? core:display display) (gc-stats))
 (gc)
 ((if mes-core? core:display display) (gc-stats))
 ((if mes-core? core:display display) "\n")

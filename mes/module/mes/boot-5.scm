@@ -42,6 +42,12 @@
 
 (define-macro (cond-expand . clauses)
   (cons 'begin (cond-expand-expander clauses)))
+
+;; expose basic internals to scheme
+(define (call/cc x) (core:call/cc x))
+(define call-with-current-continuation call/cc)
+(define (gc) (core:gc))
+
 ;; end boot-00.scm
 
 ;; boot-01.scm
@@ -162,6 +168,22 @@
 (mes-use-module (mes base))
 (mes-use-module (mes quasiquote))
 (mes-use-module (mes let))
+
+(define (values . x)
+  (if (eq? 'values (core:ref-mark))
+    (apply %values x)
+    (car x)))
+
+(define (call-with-mark m f)
+  (core:set-mark! m)
+  (f))
+
+(define (call-with-values producer consumer)
+  (let ((vals (call-with-mark 'values producer)))
+    (if (values? vals)
+      (apply consumer (core:cdr vals))
+      (consumer vals))))
+
 (mes-use-module (mes scm))
 
 (define-macro (define-module module . rest)

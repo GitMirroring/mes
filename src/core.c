@@ -149,10 +149,14 @@ length (struct scm *x)
 struct scm *
 error (struct scm *key, struct scm *x)
 {
-  struct scm *throw = hashq_ref_ (initial_module (), cell_symbol_throw, cell_f);
-  if (throw != cell_f)
-    return apply (variable_ref (throw), cons (key, cons (x, cell_nil)), R0);
 
+#if !__M2__
+  /* M2 doesn't have setjmp/longjmp */
+  stack_push (cons (key, cons (x, cell_nil)));
+  longjmp (JMP_BUF, 1);
+#endif
+
+  /* Just die */
   display_error_ (key);
   eputs (": ");
   write_error_ (x);

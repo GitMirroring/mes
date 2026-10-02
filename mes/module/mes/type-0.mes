@@ -77,10 +77,7 @@
   (eq? (if #f #f) x))
 
 (define (procedure? p)
-  (and (or (builtin? p)
-           (and (pair? p) (eq? (car p) 'lambda))
-           (closure? p))
-       #t))
+  (or (builtin? p) (closure? p)))
 
 (define (special? x)
   (eq? (core:type x) <cell:special>))

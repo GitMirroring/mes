@@ -70,7 +70,6 @@
 
 
 (define (identity x) x)
-(define call/cc call-with-current-continuation)
 
 (define (command-line) %argv)
 (define (read) (reader-read))

@@ -181,6 +181,7 @@ lib/string/strcmp.c
 lib/string/strcpy.c
 lib/string/strncmp.c
 lib/posix/raise.c
+lib/$mes_cpu-mes-$compiler/setjmp.c
 "
 
 if test $mes_kernel = gnu; then
@@ -339,7 +340,6 @@ lib/stub/localtime.c
 lib/stub/putenv.c
 lib/stub/realpath.c
 lib/stub/sigemptyset.c
-lib/$mes_cpu-mes-$compiler/setjmp.c
 "
 
 libc_gnu_SOURCES="
@@ -465,10 +465,10 @@ src/mes.c
 src/module.c
 src/posix.c
 src/reader.c
-src/stack.c
 src/string.c
 src/struct.c
 src/symbol.c
 src/variable.c
+src/compiler.c
 src/vector.c
 "

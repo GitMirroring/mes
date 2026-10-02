@@ -44,7 +44,38 @@ enum cell_type
   TBINDING,
   TVECTOR,
   TVARIABLE,
+  TFRAME,
   TBROKEN_HEART,
+};
+
+/* VM opcodes */
+enum opcode
+{
+  /* These 4 could be just an OP_LITERAL */
+  OP_UNSPECIFIED,
+  OP_NIL,
+  OP_FALSE,
+  OP_TRUE,
+
+  OP_LITERAL,
+  OP_DROP,
+  OP_BRANCH,
+  OP_JUMP,
+  OP_SET,
+  OP_REF_LOCAL,
+  OP_REF_CLOSURE,
+  OP_RESOLVE,
+  OP_CLOSURE,
+  OP_GC,
+  OP_CC,
+  OP_CALL,
+  OP_TAIL_CALL,
+  OP_RETURN,
+  OP_APPLY,
+  OP_TAIL_APPLY,
+  OP_REF_MARK,
+  OP_SET_MARK,
+  OP_UNREACHABLE = 0xAA, /* Value is easy to read */
 };
 
 /* Struct types */

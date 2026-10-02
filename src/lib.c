@@ -49,9 +49,38 @@ struct scm *
 cdr_ (struct scm *x)
 {
   struct scm *d = x->cdr;
-  if (x->type == TPAIR || x->type == TCLOSURE)
+  if (x->type == TPAIR || x->type == TCLOSURE || x->type == TBINDING
+      || x->type == TVARIABLE || x->type == TVALUES)
     return d;
   return make_number ((long) d);
+}
+
+struct scm *
+set_car_x (struct scm *x, struct scm *e)
+{
+  if (x->type != TPAIR)
+    error (cell_symbol_not_a_pair, cons (x, cstring_to_symbol ("set-car!")));
+  x->car = e;
+  return cell_unspecified;
+}
+
+struct scm *
+set_cdr_x (struct scm *x, struct scm *e)
+{
+  if (x->type != TPAIR)
+    error (cell_symbol_not_a_pair, cons (x, cstring_to_symbol ("set-cdr!")));
+  x->cdr = e;
+  return cell_unspecified;
+}
+
+struct scm *
+pairlis (struct scm *x, struct scm *y, struct scm *a)
+{
+  if (x == cell_nil)
+    return a;
+  if (x->type != TPAIR)
+    return cons (cons (x, y), a);
+  return cons (cons (car (x), car (y)), pairlis (cdr (x), cdr (y), a));
 }
 
 struct scm *

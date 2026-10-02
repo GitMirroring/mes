@@ -132,7 +132,6 @@ mes_builtins (struct scm *a)            /*:((internal)) */
       a = init_builtin (builtin_type, "core:write", 1, &write_, a);
       a = init_builtin (builtin_type, "core:display-error", 1, &display_error_, a);
       a = init_builtin (builtin_type, "getenv", 1, &getenv_, a);
-      a = init_builtin (builtin_type, "gc", 0, &gc, a);
       a = init_builtin (builtin_type, ">", -1, &greater_p, a);
       a = init_builtin (builtin_type, "<", -1, &less_p, a);
       a = init_builtin (builtin_type, "make-vector", -1, &make_vector, a);
@@ -151,7 +150,7 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "list", -1, &list, a);
   a = init_builtin (builtin_type, "null?", 1, &null_p, a);
   a = init_builtin (builtin_type, "eq?", 2, &eq_p, a);
-  a = init_builtin (builtin_type, "values", -1, &values, a);
+  a = init_builtin (builtin_type, "%values", -1, &values, a);
   a = init_builtin (builtin_type, "acons", 3, &acons, a);
   a = init_builtin (builtin_type, "length", 1, &length, a);
   a = init_builtin (builtin_type, "error", 2, &error, a);
@@ -168,16 +167,11 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "core:write-error", 1, &write_error_, a);
   a = init_builtin (builtin_type, "core:write-port", 2, &write_port_, a);
   /* src/eval-apply.c */
-  a = init_builtin (builtin_type, "pairlis", 3, &pairlis, a);
-  a = init_builtin (builtin_type, "set-car!", 2, &set_car_x, a);
-  a = init_builtin (builtin_type, "set-cdr!", 2, &set_cdr_x, a);
-  a = init_builtin (builtin_type, "add-formals", 2, &add_formals, a);
-  a = init_builtin (builtin_type, "make-binding", 2, &make_binding, a);
+  a = init_builtin (builtin_type, "display-backtrace", 1, &display_backtrace, a);
   /* src/gc.c */
+  a = init_builtin (builtin_type, "make-binding", 2, &make_binding, a);
   a = init_builtin (builtin_type, "gc-stats", 0, &gc_stats, a);
   a = init_builtin (builtin_type, "cons", 2, &cons, a);
-  a = init_builtin (builtin_type, "gc-check", 0, &gc_check, a);
-  a = init_builtin (builtin_type, "gc", 0, &gc, a);
   /* src/hash.c */
   a = init_builtin (builtin_type, "hashq", 2, &hashq, a);
   a = init_builtin (builtin_type, "hash", 2, &hash, a);
@@ -195,6 +189,9 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "hash-buckets", 1, &hash_buckets, a);
   a = init_builtin (builtin_type, "hash-clear!", 1, &hash_clear_x, a);
   /* src/lib.c */
+  a = init_builtin (builtin_type, "pairlis", 3, &pairlis, a);
+  a = init_builtin (builtin_type, "set-car!", 2, &set_car_x, a);
+  a = init_builtin (builtin_type, "set-cdr!", 2, &set_cdr_x, a);
   a = init_builtin (builtin_type, "core:type", 1, &type_, a);
   a = init_builtin (builtin_type, "core:car", 1, &car_, a);
   a = init_builtin (builtin_type, "core:cdr", 1, &cdr_, a);
@@ -228,6 +225,7 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "current-module", 0, &current_module, a);
   a = init_builtin (builtin_type, "set-current-module", 1, &set_current_module, a);
   a = init_builtin (builtin_type, "module-variable", 2, &module_variable, a);
+  a = init_builtin (builtin_type, "module-local-variable", 2, &module_local_variable, a);
   a = init_builtin (builtin_type, "module-ensure-local-variable!", 2, &module_ensure_local_variable_x, a);
   /* src/posix.c */
   a = init_builtin (builtin_type, "abort", 0, &abort_, a);
@@ -286,11 +284,6 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "reader-read-octal", 0, &reader_read_octal, a);
   a = init_builtin (builtin_type, "reader-read-hex", 0, &reader_read_hex, a);
   a = init_builtin (builtin_type, "reader-read-string", 0, &reader_read_string, a);
-  /* src/stack.c */
-  a = init_builtin (builtin_type, "frame-printer", 1, &frame_printer, a);
-  a = init_builtin (builtin_type, "make-stack", -1, &make_stack, a);
-  a = init_builtin (builtin_type, "stack-length", 1, &stack_length, a);
-  a = init_builtin (builtin_type, "stack-ref", 2, &stack_ref, a);
   /* src/string.c */
   a = init_builtin (builtin_type, "string=?", 2, &string_equal_p, a);
   a = init_builtin (builtin_type, "symbol->string", 1, &symbol_to_string, a);
@@ -327,6 +320,11 @@ mes_builtins (struct scm *a)            /*:((internal)) */
   a = init_builtin (builtin_type, "vector->list", 1, &vector_to_list, a);
   a = init_builtin (builtin_type, "vector-copy!", -1, &vector_copy_x, a);
   a = init_builtin (builtin_type, "vector-fill!", -1, &vector_fill_x, a);
+  /* src/compiler.c */
+  a = init_builtin (builtin_type, "compile-top-level", 2, &compile_top_level_exp, a);
+  a = init_builtin (builtin_type, "procedure-disassemble", 1, &procedure_disassemble, a);
+  a = init_builtin (builtin_type, "procedure-arguments", 1, &procedure_arguments, a);
+  a = init_builtin (builtin_type, "procedure-name", 1, &procedure_name, a);
 
   /* This is a conditional compilation hack for M2-Planet in bootstrap
      mode.  The following file will not be included in the M2-Planet

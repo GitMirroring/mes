@@ -31,25 +31,6 @@ extern struct scm *cell_unspecified;
 extern struct scm *cell_closure;
 extern struct scm *cell_circular;
 
-extern struct scm *cell_vm_apply;
-extern struct scm *cell_vm_apply2;
-extern struct scm *cell_vm_begin;
-extern struct scm *cell_vm_begin_eval;
-extern struct scm *cell_vm_begin_read_input_file;
-extern struct scm *cell_vm_call_with_current_continuation2;
-extern struct scm *cell_vm_call_with_values2;
-extern struct scm *cell_vm_eval;
-extern struct scm *cell_vm_eval2;
-extern struct scm *cell_vm_eval_check_func;
-extern struct scm *cell_vm_eval_define;
-extern struct scm *cell_vm_eval_set_x;
-extern struct scm *cell_vm_evlis;
-extern struct scm *cell_vm_evlis2;
-extern struct scm *cell_vm_evlis3;
-extern struct scm *cell_vm_if;
-extern struct scm *cell_vm_if_expr;
-extern struct scm *cell_vm_return;
-
 extern struct scm *cell_symbol_lambda;
 extern struct scm *cell_symbol_begin;
 extern struct scm *cell_symbol_if;
@@ -63,9 +44,6 @@ extern struct scm *cell_symbol_quasisyntax;
 extern struct scm *cell_symbol_unsyntax;
 extern struct scm *cell_symbol_unsyntax_splicing;
 extern struct scm *cell_symbol_set_x;
-extern struct scm *cell_symbol_call_with_values;
-extern struct scm *cell_symbol_call_with_current_continuation;
-extern struct scm *cell_symbol_current_environment;
 extern struct scm *cell_symbol_car;
 extern struct scm *cell_symbol_cdr;
 extern struct scm *cell_symbol_not_a_number;
@@ -110,5 +88,17 @@ extern struct scm *cell_type_vector;
 extern struct scm *cell_type_broken_heart;
 extern struct scm *cell_symbol_program;
 extern struct scm *cell_symbol_test;
+
+extern struct scm *cell_symbol_core_apply;
+extern struct scm *cell_symbol_core_lambda;
+extern struct scm *cell_symbol_core_begin;
+extern struct scm *cell_symbol_core_if;
+extern struct scm *cell_symbol_core_quote;
+extern struct scm *cell_symbol_core_define;
+extern struct scm *cell_symbol_core_set_x;
+extern struct scm *cell_symbol_core_call_cc;
+extern struct scm *cell_symbol_core_gc;
+extern struct scm *cell_symbol_core_ref_mark;
+extern struct scm *cell_symbol_core_set_mark_x;
 
 #endif /* __MES_SYMBOLS_H */

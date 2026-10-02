@@ -60,10 +60,10 @@ LIBMES_SOURCES =				\
  src/posix.c					\
  src/reader.c					\
  src/string.c					\
- src/stack.c					\
  src/struct.c					\
  src/symbol.c					\
  src/variable.c					\
+ src/compiler.c					\
  src/vector.c
 
 MES_SOURCES =					\

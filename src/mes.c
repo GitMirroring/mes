@@ -33,36 +33,9 @@
 #include <time.h>
 
 struct scm *
-mes_g_stack (struct scm *a)             /*:((internal)) */
-{
-  g_stack = STACK_SIZE;
-  R0 = a;
-  R1 = make_char (0);
-  R2 = make_char (0);
-  R3 = make_char (0);
-  return R0;
-}
-
-struct scm *
 mes_environment (int argc, char **argv)
 {
   struct scm *a = init_symbols ();
-
-  /* These are symbols that the evaluator treats specially.  We bind
-     them to themselves so that they can be looked up and bound at
-     expansion time. */
-  a = acons (cell_symbol_call_with_current_continuation,
-             cell_symbol_call_with_current_continuation, a);
-  a = acons (cell_symbol_call_with_values,
-             cell_symbol_call_with_values, a);
-  a = acons (cell_symbol_current_environment,
-             cell_symbol_current_environment, a);
-  a = acons (cell_symbol_lambda, cell_symbol_lambda, a);
-  a = acons (cell_symbol_quote, cell_symbol_quote, a);
-  a = acons (cell_symbol_begin, cell_symbol_begin, a);
-  a = acons (cell_symbol_if, cell_symbol_if, a);
-  a = acons (cell_symbol_set_x, cell_symbol_set_x, a);
-  a = acons (cell_symbol_define, cell_symbol_define, a);
 
   char *compiler = "gnuc";
 #if __MESC__
@@ -97,8 +70,7 @@ mes_environment (int argc, char **argv)
     lst = cons (make_string0 (argv[i]), lst);
   a = acons (cell_symbol_argv, lst, a);
 #endif
-
-  return mes_g_stack (a);
+  return a;
 }
 
 int
@@ -223,36 +195,31 @@ main (int argc, char **argv)
     }
 
   struct scm *program = read_boot ();
-  R0 = acons (cell_symbol_program, program, cell_nil);
 
   if (g_debug > 2)
     gc_stats_ ("\n gc boot");
   if (g_debug > 3)
     {
       eputs ("program: ");
-      write_error_ (R1);
+      write_error_ (program);
       eputs ("\n");
     }
-
   /* Kickstart the initial boot file doing the bare minimum: eval one by one.
    * It will evaluate the bootstrapping macro expander and drive from there.
    */
+  struct scm *result;
   struct scm *cur;
   for (cur = program; cur != cell_nil; cur = cur->cdr)
     {
-      push_cc (cur->car, cur, R0, cell_unspecified);
-      R3 = cell_vm_eval;
-      R1 = eval_apply ();
-      cur = R2;
+      stack_push (cur);   /* Preserve from garbage collection */
+      result = apply (compile_top_level_exp (cur->car, current_module ()), cell_nil);
+      cur = stack_pop (); /* Recover pointer just in case it was moved */
     }
-
   if (g_debug != 0)
     {
-      write_error_ (R1);
+      eputs ("program result: ");
+      write_error_ (result);
       eputs ("\n");
-    }
-  if (g_debug != 0)
-    {
       if (g_debug > 5)
         {
           eputs ("initial module obarray\n");
@@ -262,7 +229,6 @@ main (int argc, char **argv)
       if (g_debug < 3)
         gc_stats_ ("\ngc run");
 
-      gc ();
       if (g_debug < 3)
         gc_stats_ (" => ");
 

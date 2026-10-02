@@ -78,6 +78,8 @@ gc_init ()
   p = getenv ("MES_STACK");
   if (p != 0)
     STACK_SIZE = atoi (p);
+  /* TODO: Our TFRAMEs only support unsigned shorts for frame pointers */
+  assert_msg (STACK_SIZE < (2 << 16), "MES_STACK: Max allowed: 2 << 16");
   p = getenv ("MES_MAX_STRING");
   if (p != 0)
     MAX_STRING = atoi (p);
@@ -90,7 +92,8 @@ gc_init ()
   g_free = g_cells;
 
   /* Allocate stack */
-  g_stack_array = malloc (STACK_SIZE * sizeof (struct scm **));
+  STACK = malloc (STACK_SIZE * sizeof (struct scm **));
+  stack_init ();
 
   /* FIXME: remove MES_MAX_STRING, grow dynamically. */
   g_buf = malloc (MAX_STRING);
@@ -227,9 +230,18 @@ make_char (int n)
 }
 
 struct scm *
-make_continuation (long n)
+make_frame (struct scm *closure, unsigned int pc, unsigned int fp)
 {
-  return make_value_cell (TCONTINUATION, n, g_stack);
+  struct scm *cell = make_cell (TFRAME, 0, closure);
+  cell->frame.pc = pc;
+  cell->frame.fp = fp;
+  return cell;
+}
+
+struct scm *
+make_closure (struct scm *env, struct scm *template)
+{
+  return make_cell (TCLOSURE, env, template);
 }
 
 struct scm *
@@ -261,6 +273,12 @@ struct scm *
 make_string0 (char const *s)
 {
   return make_string (s, strlen (s));
+}
+
+struct scm *
+make_binding (struct scm *name, struct scm *variable)
+{
+  return make_cell (TBINDING, name, variable);
 }
 
 struct scm *
@@ -302,13 +320,10 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
           assert_msg (0, "gc_cellcpy: broken heart");
           break;
         case TREF:
-        case TBINDING:
           dest->car_value = a - dist;
           dest->cdr_value = d;
           break;
         case TBYTES:
-        case TCLOSURE:
-        case TCONTINUATION:
         case TBUILTIN:
         case TKEYWORD:
         case TPORT:
@@ -319,10 +334,14 @@ gc_cellcpy (struct scm *dest, struct scm *src, size_t n)
         case TVALUES:
         case TVARIABLE:
         case TVECTOR:
+        case TFRAME:
           dest->car_value = a;
           dest->cdr_value = d - dist;
           break;
         case TPAIR:
+        case TBINDING:
+        case TCLOSURE:
+        case TCONTINUATION:
           dest->car_value = a - dist;
           dest->cdr_value = d - dist;
           break;
@@ -375,16 +394,17 @@ gc_flip ()
 
   long dist = g_news - g_cells;
   g_free = g_free - dist;
+  long i;
+  for (i = 0; i <= g_stack; i++)
+    stack_set (i, stack_index (i) - dist);
   g_symbols = g_symbols - dist;
   g_ports = g_ports - dist;
   if (scm_hash_table_type)
     scm_hash_table_type = scm_hash_table_type - dist;
+  if (scm_template_type)
+    scm_template_type = scm_template_type - dist;
   M0 = M0 - dist;
   M1 = M1 - dist;
-
-  long i;
-  for (i = g_stack; i < STACK_SIZE; i = i + 1)
-    g_stack_array[i] = g_stack_array[i] - dist;
 }
 
 struct scm *
@@ -469,18 +489,18 @@ gc_loop (struct scm *scan)
           assert_msg (0, "gc_loop: broken heart");
           break;
         case TPAIR:
+        case TBINDING:
+        case TCLOSURE:
+        case TCONTINUATION:
           car = gc_copy (scan->car);
           gc_relocate_car (scan, car);
           cdr = gc_copy (scan->cdr);
           gc_relocate_cdr (scan, cdr);
           break;
         case TREF:
-        case TBINDING:
           car = gc_copy (scan->car);
           gc_relocate_car (scan, car);
           break;
-        case TCLOSURE:
-        case TCONTINUATION:
         case TBUILTIN:
         case TKEYWORD:
         case TPORT:
@@ -489,6 +509,7 @@ gc_loop (struct scm *scan)
         case TSYMBOL:
         case TVALUES:
         case TVARIABLE:
+        case TFRAME:
           /* TSTRUCT and TVECTOR are handled by gc_copy */
           cdr = gc_copy (scan->cdr);
           gc_relocate_cdr (scan, cdr);
@@ -507,8 +528,7 @@ gc_loop (struct scm *scan)
 struct scm *
 gc_check ()
 {
-  long used = ((g_free - g_cells) / M2_CELL_SIZE) + GC_SAFETY;
-  if (used >= ARENA_SIZE)
+  if (gc_used () + GC_SAFETY >= ARENA_SIZE)
     return gc ();
   return cell_unspecified;
 }
@@ -538,12 +558,14 @@ gc_ ()
   g_ports = gc_copy (g_ports);
   if (scm_hash_table_type)
     scm_hash_table_type = gc_copy (scm_hash_table_type);
+  if (scm_template_type)
+    scm_template_type = gc_copy (scm_template_type);
   M0 = gc_copy (M0);
   M1 = gc_copy (M1);
 
   long i;
-  for (i = g_stack; i < STACK_SIZE; i = i + 1)
-    g_stack_array[i] = gc_copy (g_stack_array[i]);
+  for (i = 0; i <= g_stack; i++)
+    stack_set (i, gc_copy (stack_index (i)));
 
   gc_loop (new_cell_nil);
 }
@@ -558,14 +580,9 @@ gc ()
       eputs ("symbols: ");
       write_error_ (g_symbols);
       eputs ("\n");
-      eputs ("R0: ");
-      write_error_ (R0);
-      eputs ("\n");
     }
   clock_gettime (CLOCK_PROCESS_CPUTIME_ID, gc_start_time);
-  gc_push_frame ();
   gc_ ();
-  gc_pop_frame ();
   clock_gettime (CLOCK_PROCESS_CPUTIME_ID, gc_end_time);
   long time = seconds_and_nanoseconds_to_long
     (gc_end_time->tv_sec - gc_start_time->tv_sec,
@@ -577,42 +594,10 @@ gc ()
       eputs ("symbols: ");
       write_error_ (g_symbols);
       eputs ("\n");
-      eputs ("R0: ");
-      write_error_ (R0);
-      eputs ("\n");
     }
   if (getenv ("MES_DUMP") != 0)
     gc_dump_arena (g_cells, gc_used ());
   return cell_unspecified;
-}
-
-void
-gc_push_frame ()
-{
-  if (g_stack < GC_FRAME_SIZE)
-    assert_msg (0, "STACK FULL");
-  g_stack_array[g_stack - 1] = cell_f;
-  g_stack_array[g_stack - 2] = R0;
-  g_stack_array[g_stack - 3] = R1;
-  g_stack_array[g_stack - 4] = R2;
-  g_stack_array[g_stack - 5] = R3;
-  g_stack = g_stack - GC_FRAME_SIZE;
-}
-
-void
-gc_peek_frame ()
-{
-  R3 = g_stack_array[g_stack];
-  R2 = g_stack_array[g_stack + 1];
-  R1 = g_stack_array[g_stack + 2];
-  R0 = g_stack_array[g_stack + 3];
-}
-
-void
-gc_pop_frame ()
-{
-  gc_peek_frame ();
-  g_stack = g_stack + GC_FRAME_SIZE;
 }
 
 void
@@ -642,27 +627,12 @@ gc_dump_register (char const* n, struct scm *r)
 void
 gc_dump_state ()
 {
-  gc_dump_register ("R0", R0);
-  gc_dump_register ("R1", R1);
-  gc_dump_register ("R2", R2);
-  gc_dump_register ("R3", R3);
   gc_dump_register ("M0", M0);
   gc_dump_register ("M1", M1);
   gc_dump_register ("g_symbols", g_symbols);
   gc_dump_register ("g_symbol_max", g_symbol_max);
   gc_dump_register ("g_ports", g_ports);
   gc_dump_register ("cell_nil", cell_nil);
-}
-
-void
-gc_dump_stack ()
-{
-  long i = g_stack;
-  while (i < STACK_SIZE)
-    {
-      gc_dump_register (itoa (i), g_stack_array[i]);
-      i = i + 1;
-    }
 }
 
 void
@@ -681,7 +651,6 @@ gc_dump_arena (struct scm *cells, long size)
   dumps ("stack="); dumps (ltoa (g_stack)); dumpc ('\n');
   dumps ("size="); dumps (ltoa (size)); dumpc ('\n');
   gc_dump_state ();
-  gc_dump_stack ();
   while (end->type == 0 && end->car == 0 && end->cdr == 0)
     {
       end = end - M2_CELL_SIZE;
@@ -713,6 +682,7 @@ gc_dump_arena (struct scm *cells, long size)
               if (t != TBYTES)
                 {
                   if (t == TCLOSURE
+                      || t == TFRAME
                       || t == TCONTINUATION
                       || t == TBUILTIN
                       || t == TKEYWORD

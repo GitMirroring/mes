@@ -32,6 +32,12 @@
 
 (define-macro (cond-expand . clauses)
   (cons 'begin (cond-expand-expander clauses)))
+
+;; expose basic internals to scheme
+(define (call/cc x) (core:call/cc x))
+(define call-with-current-continuation call/cc)
+(define (gc) (core:gc))
+
 ;; end boot-00.scm
 
 ;; boot-01.scm

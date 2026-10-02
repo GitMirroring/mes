@@ -1,6 +1,7 @@
 /* -*-comment-start: "//";comment-end:""-*-
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2020,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+ * Copyright © 2026 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
  *
@@ -55,25 +56,6 @@ init_symbols_ ()                  /*:((internal)) */
   cell_closure = init_symbol (g_symbol, TSPECIAL, "*closure*");
   cell_circular = init_symbol (g_symbol, TSPECIAL, "*circular*");
 
-  cell_vm_apply = init_symbol (g_symbol, TSPECIAL, "core:apply");
-  cell_vm_apply2 = init_symbol (g_symbol, TSPECIAL, "*vm-apply2*");
-  cell_vm_begin = init_symbol (g_symbol, TSPECIAL, "*vm-begin*");
-  cell_vm_begin_eval = init_symbol (g_symbol, TSPECIAL, "*vm:begin-eval*");
-  cell_vm_begin_read_input_file = init_symbol (g_symbol, TSPECIAL, "*vm-begin-read-input-file*");
-  cell_vm_call_with_current_continuation2 = init_symbol (g_symbol, TSPECIAL, "*vm-call-with-current-continuation2*");
-  cell_vm_call_with_values2 = init_symbol (g_symbol, TSPECIAL, "*vm-call-with-values2*");
-  cell_vm_eval = init_symbol (g_symbol, TSPECIAL, "core:eval-expanded");
-  cell_vm_eval2 = init_symbol (g_symbol, TSPECIAL, "*vm-eval2*");
-  cell_vm_eval_check_func = init_symbol (g_symbol, TSPECIAL, "*vm-eval-check-func*");
-  cell_vm_eval_define = init_symbol (g_symbol, TSPECIAL, "*vm-eval-define*");
-  cell_vm_eval_set_x = init_symbol (g_symbol, TSPECIAL, "*vm-eval-set!*");
-  cell_vm_evlis = init_symbol (g_symbol, TSPECIAL, "*vm-evlis*");
-  cell_vm_evlis2 = init_symbol (g_symbol, TSPECIAL, "*vm-evlis2*");
-  cell_vm_evlis3 = init_symbol (g_symbol, TSPECIAL, "*vm-evlis3*");
-  cell_vm_if = init_symbol (g_symbol, TSPECIAL, "*vm-if*");
-  cell_vm_if_expr = init_symbol (g_symbol, TSPECIAL, "*vm-if-expr*");
-  cell_vm_return = init_symbol (g_symbol, TSPECIAL, "*vm-return*");
-
   cell_symbol_lambda = init_symbol (g_symbol, TSYMBOL, "lambda");
   cell_symbol_begin = init_symbol (g_symbol, TSYMBOL, "begin");
   cell_symbol_if = init_symbol (g_symbol, TSYMBOL, "if");
@@ -87,9 +69,6 @@ init_symbols_ ()                  /*:((internal)) */
   cell_symbol_unsyntax = init_symbol (g_symbol, TSYMBOL, "unsyntax");
   cell_symbol_unsyntax_splicing = init_symbol (g_symbol, TSYMBOL, "unsyntax-splicing");
   cell_symbol_set_x = init_symbol (g_symbol, TSYMBOL, "set!");
-  cell_symbol_call_with_values = init_symbol (g_symbol, TSYMBOL, "call-with-values");
-  cell_symbol_call_with_current_continuation = init_symbol (g_symbol, TSYMBOL, "call-with-current-continuation");
-  cell_symbol_current_environment = init_symbol (g_symbol, TSYMBOL, "current-environment");
   cell_symbol_car = init_symbol (g_symbol, TSYMBOL, "car");
   cell_symbol_cdr = init_symbol (g_symbol, TSYMBOL, "cdr");
   cell_symbol_not_a_number = init_symbol (g_symbol, TSYMBOL, "not-a-number");
@@ -137,6 +116,18 @@ init_symbols_ ()                  /*:((internal)) */
 
   cell_symbol_program = init_symbol (g_symbol, TSYMBOL, "%program");
   cell_symbol_test = init_symbol (g_symbol, TSYMBOL, "%%test");
+
+  cell_symbol_core_apply   = init_symbol (g_symbol, TSPECIAL, "core:apply");
+  cell_symbol_core_lambda  = init_symbol (g_symbol, TSPECIAL, "core:lambda");
+  cell_symbol_core_quote   = init_symbol (g_symbol, TSPECIAL, "core:quote");
+  cell_symbol_core_begin   = init_symbol (g_symbol, TSPECIAL, "core:begin");
+  cell_symbol_core_if      = init_symbol (g_symbol, TSPECIAL, "core:if");
+  cell_symbol_core_define  = init_symbol (g_symbol, TSPECIAL, "core:define");
+  cell_symbol_core_set_x   = init_symbol (g_symbol, TSPECIAL, "core:set!");
+  cell_symbol_core_call_cc = init_symbol (g_symbol, TSPECIAL, "core:call/cc");
+  cell_symbol_core_gc      = init_symbol (g_symbol, TSPECIAL, "core:gc");
+  cell_symbol_core_ref_mark   = init_symbol (g_symbol, TSPECIAL, "core:ref-mark");
+  cell_symbol_core_set_mark_x = init_symbol (g_symbol, TSPECIAL, "core:set-mark!");
 }
 
 struct scm *
@@ -151,8 +142,6 @@ init_symbols ()                  /*:((internal)) */
   g_ports = cell_nil;
 
   struct scm *a = cell_nil;
-  a = acons (cell_symbol_call_with_values, cell_symbol_call_with_values, a);
-  a = acons (cell_symbol_current_environment, cell_symbol_current_environment, a);
 
   a = acons (cell_symbol_mes_version, make_string0 (MES_VERSION), a);
   a = acons (cell_symbol_mes_datadir, make_string0 (g_datadir), a);

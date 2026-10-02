@@ -73,7 +73,7 @@
   (define (core:write-error o) (write o (current-error-port)))
   (define core:write-port write)
   (define core:macro-expand identity)
-  (define (core:apply f a . m) (apply f a))
+  (define core:apply apply)
   (define (core:car f a . m) (apply f a))
   (define append2 append)
   (define equal2? equal?)

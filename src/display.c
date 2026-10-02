@@ -122,18 +122,26 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
         }
       break;
     case TCLOSURE:
-      fdputs ("#<closure ", fd);
-      struct scm *circ = x->cdr->car;
-      struct scm *name = circ->cdr->car;
-      struct scm *args = x->cdr->cdr->car;
-      display_helper (name->car, 0, "", fd, 0);
-      fdputc (' ', fd);
-      display_helper (args, 0, "", fd, 0);
+      fdputs ("#<procedure ", fd);
+      display_helper (procedure_name (x), 0, "", fd, 0);
+      display_helper (procedure_arguments (x), 0, " ", fd, 0);
+      fdputs (">", fd);
+      break;
+    case TFRAME:
+      fdputs ("#<frame ", fd);
+      fdputs ("fp: ", fd);
+      fdputs (ltoa (x->frame.fp), fd);
+      fdputs (" pc: ", fd);
+      fdputs (ltoa (x->frame.pc), fd);
+      fdputs (" closure: ", fd);
+      display_helper (x->closure, 1, "", fd, 0);
       fdputs (">", fd);
       break;
     case TBINDING:
       fdputs ("#<binding ", fd);
-      display_helper (x->binding->car, cont, "", fd, 0);
+      display_helper (x->name, cont, "", fd, 0);
+      fdputs (": ", fd);
+      display_helper (x->binding, cont, "", fd, 0);
       fdputs (">", fd);
       break;
     case TNUMBER:
@@ -203,6 +211,12 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
     case TREF:
       fdisplay_ (x->ref, fd, write_p);
       break;
+    case TCONTINUATION:
+      fdputs ("#<continuation", fd);
+      /* TODO: fix me */
+      display_helper (x->stack, 0, " ", fd, write_p);
+      fdputc ('>', fd);
+      break;
     case TVARIABLE:
       fdputs ("#<variable", fd);
       display_helper (x->variable, 0, " ", fd, write_p);
@@ -213,8 +227,8 @@ display_helper (struct scm *x, int cont, char *sep, int fd, int write_p)
         struct scm *printer = struct_ref_ (x, STRUCT_PRINTER);
         if (printer->type == TREF)
           printer = printer->ref;
-        if (printer->type == TCLOSURE || printer->type == TBUILTIN )
-          apply (printer, cons (x, cell_nil), R0);
+        if (printer->type == TCLOSURE || printer->type == TBUILTIN)
+          apply (printer, cons (x, cell_nil));
         else
           {
             fdputs ("#<", fd);

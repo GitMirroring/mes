@@ -573,14 +573,14 @@
 ;;;
 ;;; If the symbol is not found at all, return #f.
 ;;;
-(define (module-local-variable m v)
-;  (caddr
-;   (list m v
-	 (let ((b (module-obarray-ref (module-obarray m) v)))
-	   (or (and (variable? b) b)
-	       (and (module-binder m)
-		    ((module-binder m) m v #f)))))
-;))
+;;(define (module-local-variable m v)
+;;;  (caddr
+;;;   (list m v
+;;	 (let ((b (module-obarray-ref (module-obarray m) v)))
+;;	   (or (and (variable? b) b)
+;;	       (and (module-binder m)
+;;		    ((module-binder m) m v #f)))))
+;;;))
 
 ;; module-variable module symbol
 ;;
@@ -590,9 +590,8 @@
 ;; NOTE: This function is superseded with C code (see modules.c)
 ;;;      when using the standard eval closure.
 ;;
-(define (module-variable m v)
-  (module-search module-local-variable m v))
-
+;; (define (module-variable m v)
+;;   (module-search module-local-variable m v))
 
 ;;; {Mapping modules x symbols --> bindings}
 ;;;
@@ -675,11 +674,11 @@
 ;; there is no binding for SYMBOL, create a new uninitialized
 ;; variable.  Return the local variable.
 ;;
-(define (module-ensure-local-variable! module symbol)
-  (or (module-local-variable module symbol)
-      (let ((var (make-undefined-variable)))
-	(module-add! module symbol var)
-	var)))
+;; (define (module-ensure-local-variable! module symbol)
+;;   (or (module-local-variable module symbol)
+;;       (let ((var (make-undefined-variable)))
+;; 	(module-add! module symbol var)
+;; 	var)))
 
 ;; module-add! module symbol var
 ;;
