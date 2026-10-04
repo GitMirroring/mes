@@ -58,9 +58,9 @@ struct scm
   {
     struct scm *car;
     long car_value;
-    long length;
+    long port;              /* for TPORT */
+    long length;            /* for TSTRING, TBYTES, TVECTOR and TSTRUCT */
     struct scm *name;       /* for TBINDING */
-    long port;
     struct scm *env;        /* for TCLOSURE */
     struct scm *state;      /* for TCONTINUATION */
     struct
@@ -75,8 +75,8 @@ struct scm
     long cdr_value;
     struct scm *binding;    /* for TBINDING */
     struct scm *stack;      /* for TCONTINUATION */
-    struct scm *string;
-    long value;
+    struct scm *string;     /* for TSTRING */
+    long value;             /* for TNUMBER and TCHAR */
     struct scm *variable;   /* for TVARIABLE */
     long builtin;           /* for TBUILTIN */
     struct scm *template;   /* for TCLOSURE */
