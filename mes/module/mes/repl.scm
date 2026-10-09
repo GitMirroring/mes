@@ -123,14 +123,14 @@ along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
     (define (id-sym count)
       (string->symbol (string-append "$" (number->string count))))
 
-    (define (expand)
+    (define (exp)
       (let ((sexp (read)))
         (when #t print-sexp?
               (display "[sexp=")
               (display sexp)
               (display "]")
               (newline))
-        (core:macro-expand sexp)))
+        (expand sexp)))
 
     (define (help . x) (display help-commands) *unspecified*)
     (define (show . x)
@@ -151,7 +151,7 @@ along with GNU Mes.  If not, see <http://www.gnu.org/licenses/>.
                              "No such module: ~A~%" name)))
         name))
     (define (meta command)
-      (let ((command-alist `((expand . expand)
+      (let ((command-alist `((expand . ,exp)
                              (help . ,help)
                              (quit . ,quit)
                              (show . ,show)
