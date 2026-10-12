@@ -41,10 +41,8 @@ cell_bytes (struct scm *x)
 }
 
 #if __M2__
-#define U10 10
 #define U100 100
 #else
-#define U10 10U
 #define U100 100U
 #endif
 
