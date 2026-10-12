@@ -1,5 +1,5 @@
 # GNU Mes --- Maxwell Equations of Software
-# Copyright © 2018,2019,2021,2022,2023,2024,2025 Janneke Nieuwenhuizen <janneke@gnu.org>
+# Copyright © 2018,2019,2021,2022,2023,2024,2025,2026 Janneke Nieuwenhuizen <janneke@gnu.org>
 # Copyright © 2023 Vagrant Cascadian <vagrant@debian.org>
 #
 # This file is part of GNU Mes.
@@ -99,6 +99,11 @@ build: | $(ARCH_HEADERS)
 	$(SHELL) build.sh
 
 src/${program_prefix}mes: build
+
+.git/hooks/pre-push: build-aux/pre-push.sh
+	@if [ -d .git ]; then cp -f $^ $@; fi
+
+all: .git/hooks/pre-push
 
 include/arch/%.h: $(srcdest)include/$(mes_kernel)/$(mes_cpu)/%.h | arch-dir
 	cp -f $< $@
