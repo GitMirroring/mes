@@ -82,14 +82,15 @@ gc_init ()
   if (p != 0)
     MAX_STRING = atoi (p);
 
+  /* Allocate the heap */
   long arena_bytes = arena_bytes_ ();
-  long alloc_bytes = arena_bytes + (STACK_SIZE * sizeof (struct scm));
-
-  g_arena = malloc (alloc_bytes);
+  g_arena = malloc (arena_bytes);
   g_cells = (struct scm *) g_arena;
   g_cells_end = (struct scm *) (g_arena + arena_bytes);
   g_free = g_cells;
-  g_stack_array = (struct scm **)(g_arena + arena_bytes);
+
+  /* Allocate stack */
+  g_stack_array = malloc (STACK_SIZE * sizeof (struct scm **));
 
   /* FIXME: remove MES_MAX_STRING, grow dynamically. */
   g_buf = malloc (MAX_STRING);
@@ -184,12 +185,6 @@ copy_cell (struct scm *to, struct scm *from)
   to->type = from->type;
   to->car = from->car;
   to->cdr = from->cdr;
-}
-
-void
-copy_stack (long index, struct scm *from)
-{
-  g_stack_array[index] = from;
 }
 
 struct scm *
@@ -548,7 +543,7 @@ gc_ ()
 
   long i;
   for (i = g_stack; i < STACK_SIZE; i = i + 1)
-    copy_stack (i, gc_copy (g_stack_array[i]));
+    g_stack_array[i] = gc_copy (g_stack_array[i]);
 
   gc_loop (new_cell_nil);
 }
