@@ -1,7 +1,7 @@
 ;;; guix.scm -- Guix package definition
 
 ;;; GNU Mes --- Maxwell Equations of Software
-;;; Copyright © 2018,2019,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
+;;; Copyright © 2018-2026 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;;
 ;;; This file is part of GNU Mes.
 ;;;
@@ -30,7 +30,7 @@
 ;;
 ;; To use as the basis for a development environment, run:
 ;;
-;;   guix time-machine --commit=ffb616b69dced25b840f2e5178062072d89623eb -- shell
+;;   guix time-machine --commit=d5b0c1c2e3765191edb49257b66d5f99195a987b -- shell
 ;;
 ;;; Code:
 
