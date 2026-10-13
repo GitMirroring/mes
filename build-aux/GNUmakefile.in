@@ -161,6 +161,20 @@ all-go:
 clean-go:
 	rm -f $(shell find . -name '*.go')
 
+AM_DEFAULT_VERBOSITY = 0
+AM_V_GUILEC = $(AM_V_GUILEC_$(V))
+AM_V_GUILEC_ = $(AM_V_GUILEC_$(AM_DEFAULT_VERBOSITY))
+AM_V_GUILEC_0 = @echo "  GUILEC  " $@;
+GUILD = guild
+GUILEC_FLAGS =					\
+ --load-path=$(top-srcdir)			\
+ -Warity-mismatch				\
+ -Wformat					\
+ -Wunbound-variable
+%.go: %.scm
+	$(AM_V_GUILEC)GUILE_AUTO_COMPILE=0	\
+	$(GUILD) compile $(GUILEC_FLAGS) -o "$@" "$<"
+
 check:
 	$(SHELL) check.sh
 
