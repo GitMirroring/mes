@@ -117,6 +117,7 @@ extern struct scm *g_symbol;
 
 extern struct scm **g_stack_array;
 extern struct scm *g_cells;
+extern struct scm *g_cells_end;
 extern struct scm *g_news;
 extern long g_stack;
 extern size_t gc_count;

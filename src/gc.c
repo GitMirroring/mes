@@ -2,7 +2,7 @@
  * GNU Mes --- Maxwell Equations of Software
  * Copyright © 2016,2017,2018,2019,2020,2021,2022 Jan (janneke) Nieuwenhuizen <janneke@gnu.org>
  * Copyright © 2022 Gabriel Wicki <gabriel@erlikon.ch>
- * Copyright © 2023 Timothy Sample <samplet@ngyro.com>
+ * Copyright © 2023,2026 Timothy Sample <samplet@ngyro.com>
  * Copyright © 2025,2026 Ekaitz Zarraga <ekaitz@elenq.tech>
  *
  * This file is part of GNU Mes.
@@ -87,6 +87,7 @@ gc_init ()
 
   g_arena = malloc (alloc_bytes);
   g_cells = (struct scm *) g_arena;
+  g_cells_end = (struct scm *) (g_arena + arena_bytes);
   g_free = g_cells;
   g_stack_array = (struct scm **)(g_arena + arena_bytes);
 
@@ -133,10 +134,7 @@ alloc (long n)
 {
   struct scm *x = g_free;
   g_free = g_free + (n * M2_CELL_SIZE);
-  long i = g_free - g_cells;
-  i = i / M2_CELL_SIZE;
-
-  if (i > ARENA_SIZE)
+  if (g_free >= g_cells_end)
     assert_msg (0, "alloc: out of memory");
   return x;
 }
@@ -146,9 +144,7 @@ make_cell (long type, struct scm *car, struct scm *cdr)
 {
   struct scm *x = g_free;
   g_free = g_free + M2_CELL_SIZE;
-  long i = g_free - g_cells;
-  i = i / M2_CELL_SIZE;
-  if (i > ARENA_SIZE)
+  if (g_free >= g_cells_end)
     assert_msg (0, "make_cell: out of memory");
   x->type = type;
   x->car = car;
@@ -161,9 +157,7 @@ make_pointer_cell (long type, long car, void *cdr)
 {
   struct scm *x = g_free;
   g_free = g_free + M2_CELL_SIZE;
-  long i = g_free - g_cells;
-  i = i / M2_CELL_SIZE;
-  if (i > ARENA_SIZE)
+  if (g_free >= g_cells_end)
     assert_msg (0, "make_pointer_cell: out of memory");
   x->type = type;
   x->length = car;
@@ -176,9 +170,7 @@ make_value_cell (long type, long car, long cdr)
 {
   struct scm *x = g_free;
   g_free = g_free + M2_CELL_SIZE;
-  long i = g_free - g_cells;
-  i = i / M2_CELL_SIZE;
-  if (i > ARENA_SIZE)
+  if (g_free >= g_cells_end)
     assert_msg (0, "make_value_cell: out of memory");
   x->type = type;
   x->length = car;
