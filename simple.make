@@ -253,7 +253,7 @@ check-base: $(MES)
 	MES_DEBUG=4 MES_PREFIX=mes MES=$(MES) tests/base.test
 
 check-gc: $(MES)
-	MES_DEBUG=3 MES_ARENA=10000 MES_BOOT=boot.scm $(MES) < tests/gc.test
+	MES_DEBUG=3 MES_ARENA=40000 MES_BOOT=boot.scm $(MES) < tests/gc.test
 
 check-mescc: $(MES)
 	rm -f a.out

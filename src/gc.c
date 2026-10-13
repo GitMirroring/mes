@@ -41,9 +41,9 @@ cell_bytes (struct scm *x)
 }
 
 #if __M2__
-#define U100 100
+#define U3 3
 #else
-#define U100 100U
+#define U3 3U
 #endif
 
 size_t
@@ -71,7 +71,7 @@ gc_init ()
   p = getenv ("MES_ARENA");
   if (p != 0)
     ARENA_SIZE = atoi (p);
-  GC_SAFETY = ARENA_SIZE / U100;
+  GC_SAFETY = ARENA_SIZE / U3;
   p = getenv ("MES_SAFETY");
   if (p != 0)
     GC_SAFETY = atoi (p);
@@ -397,21 +397,17 @@ gc_copy (struct scm *old)               /*:((internal)) */
 {
   if (old->type == TBROKEN_HEART)
     return old->car;
-  struct scm *new = g_free;
-  g_free = g_free + M2_CELL_SIZE;
+  struct scm *new = alloc (1);
   copy_cell (new, old);
   switch (new->type)
     {
     case TSTRUCT:
     case TVECTOR:
       {
-        new->vector = g_free;
+        new->vector = alloc (old->length);
         long i;
         for (i = 0; i < old->length; i = i + 1)
-          {
-            copy_cell (g_free, cell_ref (old->vector, i));
-            g_free = g_free + M2_CELL_SIZE;
-          }
+          copy_cell (cell_ref (new->vector, i), cell_ref (old->vector, i));
         break;
       }
     case TBYTES:
@@ -419,8 +415,10 @@ gc_copy (struct scm *old)               /*:((internal)) */
         char const *src = cell_bytes (old);
         char *dest = cell_bytes (new);
         size_t length = new->length;
+        struct scm *new_bytes = alloc (bytes_cells (length) - 1);
+        if ((char *) new_bytes != cell_bytes (new))
+          assert_msg (0, "gc_copy: could not copy bytes");
         memcpy (dest, src, length);
-        g_free = g_free + ((bytes_cells (length) - 1) * M2_CELL_SIZE);
 
         if (g_debug > 4)
           {

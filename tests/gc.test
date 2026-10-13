@@ -1,6 +1,6 @@
 #! /bin/sh
 # -*-scheme-*-
-MES_ARENA=20000
+MES_ARENA=40000
 export MES_ARENA
 export MES_BOOT
 if [ "$MES" != guile ]; then
