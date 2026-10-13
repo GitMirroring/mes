@@ -82,8 +82,24 @@ General Public Licence version 3 or later.  See the file [[file:COPYING][COPYING
   [13] https://nlnet.nl/project/GNUMes-arm
   [14] https://nlnet.nl/project/GNUMes-ARM_RISC-V
 
+* Copyright Notices
+
+GNU Mes is made available under the GNU GPL version 3 or later license,
+and authors retain their copyright.  For copyright notices, we adhere to
+the guidance documented in (info "(maintain) Copyright Notices"), and
+explicitly allow ranges instead of individual years.  Here's an example
+of the preferred style used for copyright notices in source file
+headers:
+
+#+begin_comment
+Copyright © 2019-2023, 2025 Your Name <your@email.org>
+#+end_comment
+
+Meaning there were copyright-able changes made for the years 2019, 2020, 2021,
+2022, 2023 and 2025.
+
 * Legalese
-Copyright © 2016,2017,2018,2019,2020,2021,2022,2023 Janneke Nieuwenhuizen <[[mailto:janneke@gnu.org][janneke@gnu.org]]>
+Copyright © 2016-2023, 2026 Janneke Nieuwenhuizen <[[mailto:janneke@gnu.org][janneke@gnu.org]]>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
