@@ -20,24 +20,33 @@
 
 ;;; Commentary:
 ;;
-;; GNU Guix development package.  To build and install, run:
+;; This file is used to setup a reproducible development environment
+;; using the GNU Guix package manager.  It can be used implicitly by
+;; envrc by adding
 ;;
-;;   guix package -f guix.scm
+;;    eval $($guix shell --search-paths)
 ;;
-;; To build it, but not install it, run:
+;; to your .envrc file.
 ;;
-;;   guix build -f guix.scm
+;; To build and install GNU Mes, run:
 ;;
-;; To use as the basis for a development environment, run:
+;;    guix install -f guix.scm
 ;;
-;;   guix time-machine --commit=d5b0c1c2e3765191edb49257b66d5f99195a987b -- shell
+;; To build Mes, but not install it, run:
+;;
+;;    guix build -f guix.scm
+;;
+;; To use as to setup a development environment manually, run:
+;;
+;;    guix time-machine --commit=d5b0c1c2e3765191edb49257b66d5f99195a987b -- shell
+;;
+;; Substitutes may be available through: http://dezynen.org:8181
 ;;
 ;;; Code:
 
-(define %source-dir (dirname (current-filename)))
-(add-to-load-path (string-append %source-dir "/guix"))
+(define %source-dir (and=> (current-filename) dirname))
+(add-to-load-path (in-vicinity (or %source-dir ".") ".guix/module"))
+(use-modules (mes packages mes))
 
-(use-modules (git mes))
-
-;; Return it here so `guix build/environment/package' can consume it directly.
+;; Return mes.git package for `guix build/install/shell'.
 mes.git
