@@ -377,7 +377,7 @@ update-hash: $(TARBALL)
 	sed -i 											\
 		-e 's,version #!mes!# "[^"]*"),version #!mes!# "$(VERSION)"),'			\
 		-e 's,(base32 #!mes!# "[^"]*"),(base32 #!mes!# "$(shell $(GUIX) hash $<)"),' 	\
-		guix/git/mes.scm
+		.guix/module/mes/packages/mes.scm
 else
 $(warning update-hash: no guix)
 endif
@@ -430,8 +430,8 @@ guix-build:
 
 release: check-signature update-hash
 	git commit -m 'guix: mes: Update to $(VERSION).'			\
-	    -m '* guix/git/mes.scm (mes)[source]: Update to $(VERSION).'	\
-	    guix/git/mes.scm
+	    -m '* .guix/module/mes/packages/mes.scm (mes)[source]: Update to $(VERSION).'	\
+	    .guix/module/mes/packages/mes.scm
 	git checkout ChangeLog
 
 GPG_KEY_ID:=1A858392E331EAFDB8C27FFBF3C1A0D9C1D65273
