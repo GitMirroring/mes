@@ -357,11 +357,14 @@ eval_compiled ()
         case OP_RESOLVE:
           {
             struct scm *target = stack_pop ();
-            assert_msg (target->type == TBINDING,
-                        "eval_compiled: OP_RESOLVE: expected binding.");
-            assert_msg (variable_p (target->binding) == cell_t,
-                        "eval_compiled: expected variable in binding");
-            stack_push (variable_ref (target->binding));
+
+            if (target->type != TBINDING)
+              assert_msg (0, "eval_compiled: OP_RESOLVE: expected binding.");
+            if (target->binding->type != TVARIABLE)
+              assert_msg (0, "eval_compiled: expected variable in binding");
+
+            stack_push (target->binding->variable);
+
             if (stack_peek () == cell_undefined)
               error (cell_symbol_unbound_variable, cons (target->name, proc));
             break;
@@ -369,11 +372,13 @@ eval_compiled ()
         case OP_SET:
           {
             struct scm *target = stack_pop ();
-            assert_msg (target->type == TBINDING,
-                        "eval_compiled: OP_SET: expected binding");
-            assert_msg (variable_p (target->binding) == cell_t,
-                        "eval_compiled: expected variable in binding");
-            variable_set_x (target->binding, stack_pop ());
+
+            if (target->type != TBINDING)
+              assert_msg (0, "eval_compiled: OP_SET: expected binding");
+            if (target->binding->type != TVARIABLE)
+              assert_msg (0, "eval_compiled: expected variable in binding");
+
+            target->binding->variable = stack_pop ();
             stack_push (cell_unspecified);
             break;
           }
@@ -405,7 +410,7 @@ eval_compiled ()
                 exit (1);
               }
             else
-              stack_push (variable_ref (throw));
+              stack_push (throw->variable);
             /* fallthrough */
           }
 
