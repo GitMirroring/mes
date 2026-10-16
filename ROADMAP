@@ -41,6 +41,10 @@ on Libera Chat!
   - Split-off Mes CC.
   - Use BLUE build for development, see https://codeberg.org/lapislazuli/blue/.
 ** after release 2.0
+  - Further performace improvements
+     + Inline calls known to be builtins at compile time.
+     + Only box local variables that are mutated.
+     + Use tagged pointers and type punning.
   - Remove stage0 dependency
     + Bootstrap from s-exp'y assembly, see https://git.ngyro.com/germ/.
     + Use Scheme assember and linker.
