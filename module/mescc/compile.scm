@@ -2329,7 +2329,7 @@
 (define (global->info storage type name o init info)
   (let* ((rank (->rank type))
          (size (->size type info))
-         (data (cond ((not init) (string->list (make-string size #\nul)))
+         (data (cond ((or (not init) (null? init)) `((#:init-null ,size)))
                      ((c-array? type)
                       (let* ((string (array-init->string init))
                              (size (or (and string (max size (1+ (string-length string))))
