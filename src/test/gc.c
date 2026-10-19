@@ -24,12 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-int g_debug;
-
 void
 test_setup ()
 {
-  cell_arena = g_arena;
+  cell_arena = (struct scm*) g_arena;
   g_cells = cell_arena + M2_CELL_SIZE;
   cell_zero = g_cells;
 
@@ -55,7 +53,7 @@ print_arena (long length)
   struct scm *v = cell_arena;
   v->type = TVECTOR;
   v->length = length;
-  eputs ("arena["); eputs (ntoab (g_cells, 16, 0)); eputs ("]: "); write_ (v); eputs ("\n");
+  eputs ("arena["); eputs (ntoab ((long) g_cells, 16, 0)); eputs ("]: "); write_ (v); eputs ("\n");
 }
 
 void
@@ -129,7 +127,7 @@ test_list ()
   cons (a, lst);
 
   g_free = g_symbol_max + M2_CELL_SIZE;
-  test_gc ("cons");
+  test_gc ("list");
 }
 
 void
