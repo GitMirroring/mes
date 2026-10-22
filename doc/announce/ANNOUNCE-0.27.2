@@ -6,8 +6,11 @@ Subject: GNU Mes 0.27.2 released
 Mes 0.27.2 is a bug-fix release.  It represents 76 commits by five
 people over one year.  This release supports development builds with
 gcc-16 and adds support for using NYACC versions 2.02.4 and 3.00.0.
+
 This release really prepares for 0.28 that will bring the compiler and a
 massive rewrite of the Mes core; stay tuned!
+
+We are most grateful for NLnet sponsoring this work.
 
 Enjoy!
 
@@ -26,12 +29,12 @@ Mes + MesCC + Mes C Library can build a bootstrappable TinyCC
 <https://gitlab.com/janneke/tinycc> that is self-hosting.  Using this
 bootstrappable-tcc and the Mes C library we can build gcc-4.6.  This is
 enough to bootstrap Guix for i686-linux, x86_64-linux, armhf-linux,
-aarch64-linux, and riscv64-linux
+aarch64-linux, and riscv64-linux.
 
 Mes was inspired by The Maxwell Equations of Software: LISP-1.5 --
 John McCarthy page 13, Guix's source/binary packaging transparency and
 Jeremiah Orians's Stage0 <https://github.com/oriansj/stage0>, a
-~500-byte self-hosting hex assembler.
+~300-byte self-hosting hex assembler.
 
 ==================================================================
 
