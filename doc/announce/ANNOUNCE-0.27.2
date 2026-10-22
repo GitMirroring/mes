@@ -6,8 +6,11 @@ Subject: GNU Mes 0.27.2 released
 Mes 0.27.2 is a bug-fix release.  It represents 76 commits by five
 people over one year.  This release supports development builds with
 gcc-16 and adds support for using NYACC versions 2.02.4 and 3.00.0.
+
 This release really prepares for 0.28 that will bring the compiler and a
 massive rewrite of the Mes core; stay tuned!
+
+We are most grateful for NLnet sponsoring this work.
 
 Enjoy!
 
@@ -26,12 +29,12 @@ Mes + MesCC + Mes C Library can build a bootstrappable TinyCC
 <https://gitlab.com/janneke/tinycc> that is self-hosting.  Using this
 bootstrappable-tcc and the Mes C library we can build gcc-4.6.  This is
 enough to bootstrap Guix for i686-linux, x86_64-linux, armhf-linux,
-aarch64-linux, and riscv64-linux
+aarch64-linux, and riscv64-linux.
 
 Mes was inspired by The Maxwell Equations of Software: LISP-1.5 --
 John McCarthy page 13, Guix's source/binary packaging transparency and
 Jeremiah Orians's Stage0 <https://github.com/oriansj/stage0>, a
-~500-byte self-hosting hex assembler.
+~300-byte self-hosting hex assembler.
 
 ==================================================================
 
@@ -57,8 +60,8 @@ Use a mirror for higher download bandwidth:
 
 Here are the SHA1 and SHA256 checksums:
 
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  mes-0.27.2.tar.gz
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  mes-0.27.2.tar.gz
+  76ab84f70ff2cec4c7975b6b93647d2bc537350a  mes-0.27.2.tar.gz
+  f77a0037a82d5d1756b99154c5fefe7c1fe8bebae0e2e4c37f2f455e2750eeb0  mes-0.27.2.tar.gz
 
 Use a .sig file to verify that the corresponding file (without the
 .sig suffix) is intact.  First, be sure to download both the .sig file
