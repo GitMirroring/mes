@@ -3,6 +3,7 @@
 #+STARTUP: content hidestars
 
 Copyright © 2016-2026 Janneke Nieuwenhuizen <janneke@gnu.org>
+Copyright © 2026 Ekaitz Zarraga <ekaitz@elenq.tech>
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -10,6 +11,28 @@ Copyright © 2016-2026 Janneke Nieuwenhuizen <janneke@gnu.org>
 
 Please send Mes bug reports to bug-mes@gnu.org.
 
+* Changes in 0.28 since 0.27.2
+** Core
+*** Evaluator is replaced by a compiler and a bytecode virtual machine.
+*** Macro expander is written in Scheme.
+*** Stack and Heap are now allocated separatedly.
+*** Structs and Vectors are now Bytes with raw pointers to their elements.
+*** Builtins are now indices to a static table.
+*** initial-module is now a module instead of just an obarray.
+*** Variables are now basic types and not records.
+*** Builtins now fail throwing exceptions instead of halting the execution.
+*** Overall, the interpreter performance has been improved by a 40% (execution
+time).
+** Mes
+*** REPL accepts multiple return values.
+*** Module eval-closure is removed.
+*** current-environment is removed.
+*** 4 new functions are added:
+bytevector-fill!, procedure-name, procedure-arguments, procedure-disassemble
+** MesCC
+*** Memory used in global uninitialized arrays is vastly reduced.
+** Noteworthy bug fixes
+*** close-port now returns a value: *unspecified*.
 * Changes in 0.27.2 since 0.27.1
 ** Core
 *** Cast functions were removed.
