@@ -256,7 +256,7 @@ eval_compiled ()
   struct scm *fn = cell_nil;
   long argno = 0;
 
-#if !__M2__
+#if (__riscv && (__GNUC__ || __TINYC__)) || (!__riscv && !__M2__)
   int res = setjmp (JMP_BUF);
   if (res != 0)
     goto throw;

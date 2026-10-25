@@ -107,7 +107,7 @@ extern int g_booted;
 extern long g_stack;
 extern struct scm **STACK;
 
-#if !__M2__
+#if (__riscv && (__GNUC__ || __TINYC__)) || (!__riscv && !__M2__)
 #include <setjmp.h>
 extern jmp_buf JMP_BUF;
 #endif

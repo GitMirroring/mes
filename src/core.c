@@ -162,7 +162,7 @@ struct scm *
 error (struct scm *key, struct scm *x)
 {
 
-#if !__M2__
+#if (__riscv && (__GNUC__ || __TINYC__)) || (!__riscv && !__M2__)
   /* M2 doesn't have setjmp/longjmp */
   stack_push (cons (key, cons (x, cell_nil)));
   longjmp (JMP_BUF, 1);
