@@ -29,6 +29,7 @@
   #:use-module (ice-9 popen)
   #:use-module (ice-9 rdelim)
 
+  #:use-module (gnu packages build-tools)
   #:use-module (gnu packages cross-base)
   #:use-module (gnu packages gdb)
   #:use-module (gnu packages graphviz)
@@ -125,5 +126,6 @@ Guile.")
                         #:select? vcs-file?))
     (native-inputs
      `(("gdb" ,gdb)
+       ("gnulib" ,gnulib)
        ("time" ,time)
        ,@(package-native-inputs mes)))))

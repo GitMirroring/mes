@@ -434,15 +434,14 @@ release: check-signature update-hash
 	    .guix/module/mes/packages/mes.scm
 	git checkout ChangeLog
 
-GPG_KEY_ID:=1A858392E331EAFDB8C27FFBF3C1A0D9C1D65273
-GEN_ANNOUNCE=$(GNULIB)/build-aux/announce-gen
-GNULIB=../../gnulib
+GPG_KEY_ID:=$(shell git config user.signingkey)
+GEN_ANNOUNCE=$(GNULIB_SRCDIR)/build-aux/announce-gen
 gen-announce:
 	$(GEN_ANNOUNCE)					\
-	    --release-type=beta				\
+	    --release-type=stable			\
 	    --package-name=mes				\
 	    --previous-version='0.27.2'			\
-            --current-version=$(VERSION)		\
+	    --current-version=$(VERSION)		\
 	    --gpg-key-id=$(GPG_KEY_ID)			\
 	    --url-directory=https://ftp.gnu.org/gnu/mes	\
 	    --news=NEWS					\
