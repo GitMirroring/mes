@@ -1618,7 +1618,7 @@ It will be ready sooner if you help.
 @end quotation
 
 @cindex contact, irc, mailing list
-Join us on @code{#bootstrappable} on the Libera Chat IRC network or on
+Join us on @code{#mes} on the Libera Chat IRC network or on
 @email{bug-mes@@gnu.org} to share your experience---good or bad.
 
 @cindex bug, bug report, reporting a bug

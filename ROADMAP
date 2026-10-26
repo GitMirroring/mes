@@ -18,8 +18,8 @@ The goals of the GNU Mes project are two-fold:
 Since its inception, the project has gone a long way towards that goal.  Below
 is a list of items we want for version "1.0" of GNU Mes.
 
-You're welcome to discuss this road map on bug-mes@gnu.org or #bootstrappable
-on Libera Chat!
+You're welcome to discuss this road map on bug-mes@gnu.org or #mes on
+Libera Chat!
 
 * TODO
 ** 0.27.2
