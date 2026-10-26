@@ -7,6 +7,7 @@ MES_ARENA=100000000 exec ${SCHEME-guile} -L . --no-auto-compile -e '(configure)'
 ;;; Copyright © 2016-2026 Janneke Nieuwenhuizen <janneke@gnu.org>
 ;;; Copyright © 2020 Vagrant Cascadian <vagrant@reproducible-builds.org>
 ;;; Copyright © 2021 W. J. van der Laan <laanwj@protonmail.com>
+;;; Copyright © 2026 Ekaitz Zarraga <ekaitz@elenq.tech>
 ;;;
 ;;; configure: This file is part of GNU Mes.
 ;;;
@@ -38,7 +39,7 @@ MES_ARENA=100000000 exec ${SCHEME-guile} -L . --no-auto-compile -e '(configure)'
 (define PACKAGE "mes")
 (define PACKAGE-NAME "GNU Mes")
 (define PACKAGE-BUGREPORT "bug-mes@gnu.org")
-(define VERSION "0.27.2")
+(define VERSION "0.28")
 
 (cond-expand
  (guile)

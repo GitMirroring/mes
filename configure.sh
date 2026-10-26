@@ -2,7 +2,7 @@
 
 # GNU Mes --- Maxwell Equations of Software
 # Copyright © 2018-2026 Janneke Nieuwenhuizen <janneke@gnu.org>
-# Copyright © 2023, 2024 Ekaitz Zarraga <ekaitz@elenq.tech>
+# Copyright © 2023-2024,2026 Ekaitz Zarraga <ekaitz@elenq.tech>
 #
 # This file is part of GNU Mes.
 #
@@ -21,7 +21,7 @@
 
 set -e
 
-VERSION=0.27.2
+VERSION=0.28
 srcdir=${srcdir-$(dirname $0)}
 srcdest=
 if test "$srcdir" != "."; then
