@@ -58,13 +58,13 @@
 (define-public mes
   (package
     (name "mes")
-    (version #!mes!# "0.27.2")
+    (version #!mes!# "0.28")
     (source (origin
               (method url-fetch)
               (uri (string-append
                     "https://ftp.gnu.org/pub/gnu/mes/mes-" version ".tar.gz"))
               (sha256
-               (base32 #!mes!# "1c7fa0kmwi9ggz1y9qp0pazfh7vwzvzcam4ip5b1fp9dm0vh0ypp"))))
+               (base32 #!mes!# "0hkqy0pllpam8yj1b9cs708z29ir15jbhvda5v6xl4ylfq5jxn92"))))
     (build-system gnu-build-system)
     (supported-systems '("aarch64-linux" "armhf-linux" "i686-linux"
                          "x86_64-linux" "riscv64-linux"))
